@@ -15,8 +15,8 @@
 
 <title>Predictive Standard Deviation</title>
 
-<script src="site_libs/header-attrs-2.32/header-attrs.js"></script>
-<script src="site_libs/jquery-3.7.1/jquery-3.7.1.min.js"></script>
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -415,7 +415,7 @@ div.tocify {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+workflowr <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -426,8 +426,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> </a>
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -440,9 +440,9 @@ aria-hidden="true"></span> </a>
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 1
+aria-hidden="true"></span> 0
 </p>
 <p>
 <strong>Knit directory:</strong> <code>near_monotone_smoothing/</code>
@@ -465,21 +465,18 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
-<span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
-changes </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges"
+<div id="strongRMarkdownfilestronguptodate"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown file has unstaged changes. To know which version of
-the R Markdown file created these results, you’ll want to first commit
-it to the Git repo. If you’re still working on the analysis, you can
-ignore this warning. When you’re finished, you can run
-<code>wflow_publish</code> to commit the R Markdown file and build the
-HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
 </div>
 </div>
 </div>
@@ -570,15 +567,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZnearmonotonesmoothingtree46d2d2e45afbc36efdf6dc0cf06e19ab5293680ctargetblank46d2d2ea">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZnearmonotonesmoothingtree0a93f9ecb2fc300d038ff63ec01c6d0978068671targetblank0a93f9ea">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/near_monotone_smoothing/tree/46d2d2e45afbc36efdf6dc0cf06e19ab5293680c" target="_blank">46d2d2e</a>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/tree/0a93f9ecb2fc300d038ff63ec01c6d0978068671" target="_blank">0a93f9e</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZnearmonotonesmoothingtree46d2d2e45afbc36efdf6dc0cf06e19ab5293680ctargetblank46d2d2ea"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZnearmonotonesmoothingtree0a93f9ecb2fc300d038ff63ec01c6d0978068671targetblank0a93f9ea"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -588,7 +585,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/near_monotone_smoothing/tree/46d2d2e45afbc36efdf6dc0cf06e19ab5293680c" target="_blank">46d2d2e</a>.
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/tree/0a93f9ecb2fc300d038ff63ec01c6d0978068671" target="_blank">0a93f9e</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -603,22 +600,36 @@ were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .claude/
+    Ignored:    .vscode/
     Ignored:    BayesGP
+    Ignored:    Rplots.pdf
+    Ignored:    analysis/.DS_Store
+    Ignored:    analysis/.RData
+    Ignored:    analysis/.Rhistory
+    Ignored:    code/.DS_Store
+    Ignored:    code/.Rhistory
+    Ignored:    code/fitGP_cc.o
+    Ignored:    code/fitGP_cc.so
+    Ignored:    code/fitGP_known_sd.o
+    Ignored:    code/fitGP_known_sd.so
+    Ignored:    code/sim_MGP.o
+    Ignored:    code/sim_MGP.so
+    Ignored:    outputs/
+    Ignored:    talk/.DS_Store
+    Ignored:    talk/BIRS-IMAG.key
+    Ignored:    talk/Template/
+    Ignored:    talk/presentation2024-latex-rebuild.pptx
+    Ignored:    talk/presentation2024.key
+    Ignored:    talk/presentation2024.key.backup-2026-05-11
 
 Untracked files:
-    Untracked:  analysis/simulation_psd_calibration_check.R
-    Untracked:  log/2026-10-04_coverage_mcse_log.md
-    Untracked:  log/2026-10-04_simulation_psd_calibration_log.md
-    Untracked:  log/2026-10-04_tiwp2_fem_boundary_prediction_log.md
-    Untracked:  plan/2026-10-04_coverage_mcse_plan.md
-    Untracked:  plan/2026-10-04_psd_theory_tracked_revision_plan.md
-    Untracked:  plan/2026-10-04_simulation_psd_calibration_plan.md
-    Untracked:  plan/2026-10-04_tiwp2_fem_boundary_prediction_plan.md
+    Untracked:  log/2026-10-04_psd_review_resolution_log.md
 
 Unstaged changes:
-    Modified:   analysis/PSD.rmd
-    Modified:   analysis/simulation1.rmd
-    Modified:   analysis/simulation2.rmd
+    Deleted:    script_for_presentation.R
+    Deleted:    toy.r
 
 </code></pre>
 <p>
@@ -664,6 +675,58 @@ Message
 <tbody>
 <tr>
 <td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/0a93f9ecb2fc300d038ff63ec01c6d0978068671/analysis/PSD.rmd" target="_blank">0a93f9e</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-10-04
+</td>
+<td>
+Simplify PSD proofs and unify transformation notation
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/60b882acbec7ade46f3c37e672ddc67cecc3c99e/analysis/PSD.rmd" target="_blank">60b882a</a>
+</td>
+<td>
+AgueroZZ
+</td>
+<td>
+2026-10-04
+</td>
+<td>
+Correct simulation PSD calibration and coverage MCSEs; track theory
+revisions
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/near_monotone_smoothing/839c051ba2cfc6fa7e3b16a1e21e35cd84510e28/docs/PSD.html" target="_blank">839c051</a>
+</td>
+<td>
+AgueroZZ
+</td>
+<td>
+2026-10-04
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
 html
 </td>
 <td>
@@ -690,7 +753,7 @@ html
 Ziang Zhang
 </td>
 <td>
-2026-10-04
+2026-10-03
 </td>
 <td>
 Build site.
@@ -754,72 +817,19 @@ Initial commit of near-monotone smoothing workflowr project
 </div>
 </div>
 </div>
-<!-- PSD tracked-revision display: start -->
-<style>
-.psd-change-delete, .psd-change-add {
-  padding: 0.6em 0.8em;
-  margin: 0.6em 0;
-  border-left: 3px solid;
-}
-.psd-change-delete {
-  color: #8a3341;
-  background: #fff1f2;
-  border-color: #b94a48;
-  text-decoration: line-through;
-}
-.psd-change-delete p, .psd-change-delete .math {
-  text-decoration: line-through;
-}
-.psd-change-delete .math.display {
-  display: block;
-  position: relative;
-}
-.psd-change-delete .math.display::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  border-top: 1px solid #b94a48;
-  pointer-events: none;
-}
-.psd-change-add {
-  background: #fff3a3;
-  border-color: #b8860b;
-}
-</style>
-<div id="psd-review-legend" class="psd-change-add">
-<p><strong>Tracked revision (2026-10-04):</strong> Struck-through text
-records removed original wording or formulas. Yellow highlights mark
-rewritten or added content. Unmarked content is retained from the
-original page.</p>
-</div>
-<!-- PSD tracked-revision display: end -->
 <div id="introduction" class="section level2">
 <h2><strong>Introduction</strong></h2>
 <p>Recall that the M-GP is defined by: <span
 class="math display">\[L_af(x) = \sigma \xi(x),\]</span></p>
-<div id="operator-curvature-delete" class="psd-change-delete">
-<p>where <span class="math inline">\(L_a = D^2 - \alpha(x)D\)</span> and
-<span class="math inline">\(\alpha(x) = -1/a(x+c)\)</span>.</p>
-</div>
-<div id="operator-curvature-add" class="psd-change-add">
 <p>where <span class="math inline">\(L_a = D^2 - \alpha(x)D\)</span> and
 <span class="math inline">\(\alpha(x) = -\frac{1}{a(x+c)}\)</span>.</p>
-</div>
 <p>The monotone function implied by <span
 class="math inline">\(\alpha(x)\)</span> is <span
-class="math inline">\(g = D^{-1}[\exp(D^{-1}\alpha)]\)</span>.</p>
+class="math inline">\(m = D^{-1}[\exp(D^{-1}\alpha)]\)</span>.</p>
 <p>The t-IWP2 can be defined by a similar SDE: <span
 class="math display">\[\tilde{L}_af(x) = \sigma \xi(x),\]</span></p>
-<div id="operator-name-delete" class="psd-change-delete">
 <p>where <span class="math inline">\(\tilde{L}_a =
-g&#39;(x)^{-3/2}L_\alpha\)</span>.</p>
-</div>
-<div id="operator-name-add" class="psd-change-add">
-<p>where <span class="math inline">\(\tilde{L}_a =
-g&#39;(x)^{-3/2}L_a\)</span>.</p>
-</div>
+m&#39;(x)^{-3/2}L_a\)</span>.</p>
 <p>We want to put prior on the standard deviation parameter <span
 class="math inline">\(\sigma\)</span> hence on the function <span
 class="math inline">\(f\)</span> in an interpretable way. One way to do
@@ -827,23 +837,6 @@ this is through the notion of <span
 class="math inline">\(h\)</span>-step predictive standard deviation
 (PSD) which is defined as: <span class="math display">\[\sigma_x(h) =
 \text{SD}[f(x+h)|f(u):u\leq x].\]</span></p>
-<div id="psd-conditions-add" class="psd-change-add">
-<p>We consider a right-unbounded domain <span
-class="math inline">\([x_0,\infty)\)</span> with <span
-class="math inline">\(x_0+c&gt;0\)</span>, and fix <span
-class="math inline">\(\sigma\geq0\)</span>, <span
-class="math inline">\(h&gt;0\)</span>, and an increasing transformation
-<span class="math inline">\(g\)</span> with <span
-class="math inline">\(g&#39;(x)&gt;0\)</span>. We also write <span
-class="math inline">\(m=g\)</span> below. The transformation’s scale and
-normalization are held fixed when taking the limit in <span
-class="math inline">\(x\)</span>. For interior starting locations, the
-exact past trajectory determines the current function value and
-derivative. At the initial boundary, the innovation PSD also conditions
-on the initial derivative (or uses a fixed initial state). It measures
-uncertainty from future innovations, rather than the full posterior
-uncertainty given noisy data.</p>
-</div>
 <p>For process defined by time invariant differential operator, the PSD
 is invariant to the choice of <span class="math inline">\(x\)</span>.
 For example, the h-step PSD for an IWP-2 can be shown as <span
@@ -861,32 +854,17 @@ Let <span class="math inline">\(G_t(\tau)\)</span> denotes the Green
 function of the operator <span class="math inline">\(L_a\)</span>, the
 PSD <span class="math inline">\(\sigma_x(h)\)</span> can be written
 as:</p>
-<div id="variance-scale-delete" class="psd-change-delete">
-<p><span class="math display">\[\sigma^2_x(h) = \int_{x}^{x +
-h}G^2_{x+h}(t)dt.\]</span></p>
-</div>
-<div id="variance-scale-add" class="psd-change-add">
 <p><span class="math display">\[\sigma^2_x(h) = \sigma^2\int_{x}^{x +
 h}G^2_{x+h}(t)dt.\]</span></p>
-</div>
 <p>Recall for the M-GP, the Green function is given by: <span
 class="math display">\[G_t(\tau) =
-\frac{1}{g&#39;(\tau)}[g(t)-g(\tau)].\]</span></p>
-<div id="green-reference-delete" class="psd-change-delete">
-<p>Using property of the Green function (see <a
-href="https://people.uncw.edu/hermanr/mat463/odebook/">textbook</a>
-Equation 8.36), we can show that the Green function of t-IWP2 is given
-by:</p>
-</div>
-<div id="green-reference-add" class="psd-change-add">
+\frac{1}{m&#39;(\tau)}[m(t)-m(\tau)].\]</span></p>
 <p>Using the initial-value Green function formula in the <a
 href="https://people.uncw.edu/hermanr/mat463/ODEBook/Book/ODE2.pdf#page=280">textbook</a>,
 Equation 8.38, we can show that the Green function of t-IWP2 is given
 by:</p>
-</div>
 <p><span class="math display">\[\tilde{G}_t(\tau) =
-g&#39;(\tau)^{1/2}[g(t)-g(\tau)].\]</span></p>
-<div id="tiwp2-exact-psd-add" class="psd-change-add">
+m&#39;(\tau)^{1/2}[m(t)-m(\tau)].\]</span></p>
 <p>For t-IWP2, the corresponding variance is <span
 class="math display">\[
 \sigma_x^2(h)
@@ -895,7 +873,6 @@ class="math display">\[
 \]</span> The last equality follows by substituting <span
 class="math inline">\(v=m(t)\)</span>, using <span
 class="math inline">\(m&#39;(t)&gt;0\)</span>.</p>
-</div>
 <div id="psd-of-m-gp-has-a-nice-limit" class="section level3">
 <h3><em>PSD of M-GP has a nice limit</em></h3>
 <p>As mentioned above, the PSD of M-GP generally depends on both the
@@ -909,27 +886,14 @@ PSD of M-GP has a nice limit as <span class="math inline">\(x\to
 specifying the location <span class="math inline">\(x\)</span>.</p>
 <blockquote>
 <p><strong>Corollary 1 (Limiting PSD of M-GP):</strong></p>
-</blockquote>
-<blockquote>
-<div id="mgp-limit-conditions-delete" class="psd-change-delete">
-<p>Assume <span class="math inline">\(\alpha(x) =
--\frac{1}{a(x+c)}\)</span> where <span class="math inline">\(a \neq
-0\)</span>. For the M-GP defined by <span
-class="math inline">\(\alpha(x)\)</span> <span
-class="math display">\[\sigma^2(h) = \lim_{x \to \infty}\sigma_x^2(h) =
-\frac{\sigma^2 h^3}{3}.\]</span></p>
-</div>
-</blockquote>
-<blockquote>
-<div id="mgp-limit-conditions-add" class="psd-change-add">
 <p>Fix <span class="math inline">\(h&gt;0\)</span>, <span
 class="math inline">\(\sigma\geq0\)</span>, and a finite real <span
 class="math inline">\(a\neq0\)</span>. Assume <span
-class="math inline">\(\alpha(x)=-\frac{1}{a(x+c)}\)</span> on the domain
-specified above. For the M-GP defined by <span
+class="math inline">\(\alpha(x)=-\frac{1}{a(x+c)}\)</span> on <span
+class="math inline">\([x_0,\infty)\)</span>, where <span
+class="math inline">\(x_0+c&gt;0\)</span>. For the M-GP defined by <span
 class="math inline">\(\alpha(x)\)</span>, <span
 class="math display">\[\sigma^2(h)=\lim_{x\to\infty}\sigma_x^2(h)=\frac{\sigma^2h^3}{3}.\]</span></p>
-</div>
 </blockquote>
 <p>The proof of corollary 1 is given in the appendix. The corollary
 shows that although the PSD of M-GP <span
@@ -947,80 +911,23 @@ to the PSD of IWP2 as <span class="math inline">\(x\to \infty\)</span>.
 However, the following corollary shows that this is not the case.</p>
 <blockquote>
 <p><strong>Corollary 2 (Limiting PSD of t-IWP2):</strong></p>
-</blockquote>
-<blockquote>
-<div id="tiwp2-limit-conditions-delete" class="psd-change-delete">
-<p>Assume <span class="math inline">\(\alpha(x) =
--\frac{1}{a(x+c)}\)</span> where <span class="math inline">\(a \geq
-0\)</span>. For the t-IWP2 defined by a monotone transformation <span
-class="math inline">\(m(x)\)</span> such that <span
-class="math inline">\(m&#39;&#39;(x)/m&#39;(x) = \alpha(x)\)</span>, the
-limiting PSD is <span class="math display">\[\sigma^2(h) = \lim_{x \to
-\infty}\sigma_x^2(h) = 0.\]</span></p>
-</div>
-</blockquote>
-<blockquote>
-<div id="tiwp2-limit-conditions-add" class="psd-change-add">
 <p>Fix <span class="math inline">\(h&gt;0\)</span>, <span
 class="math inline">\(\sigma\geq0\)</span>, and a finite real <span
 class="math inline">\(a&gt;0\)</span>. Assume <span
-class="math inline">\(\alpha(x)=-\frac{1}{a(x+c)}\)</span> on the domain
-specified above. For t-IWP2 defined by a fixed increasing transformation
-<span class="math inline">\(m\)</span> with <span
-class="math inline">\(m&#39;(x)&gt;0\)</span> and <span
+class="math inline">\(\alpha(x)=-\frac{1}{a(x+c)}\)</span> on <span
+class="math inline">\([x_0,\infty)\)</span>, where <span
+class="math inline">\(x_0+c&gt;0\)</span>. For t-IWP2 defined by a fixed
+increasing transformation <span class="math inline">\(m\)</span> with
+<span class="math inline">\(m&#39;(x)&gt;0\)</span> and <span
 class="math inline">\(m&#39;&#39;(x)/m&#39;(x)=\alpha(x)\)</span>, <span
 class="math display">\[\sigma^2(h)=\lim_{x\to\infty}\sigma_x^2(h)=0.\]</span></p>
-</div>
 </blockquote>
 <p>The proof of corollary 2 is also given in the appendix.</p>
-<div id="local-versus-global-delete" class="psd-change-delete">
-<p>This corollary implies as the starting time increases, the PSD of
-t-IWP2 converges to zero, which means there is no uncertainty in the
-functional form of the <span class="math inline">\(f\)</span> as <span
-class="math inline">\(x\to \infty\)</span>.</p>
-<p>In other words, the seemingly naive approach of transforming the
-coordinate of an IWP2 through a monotone function actually puts a
-<strong>very strong prior</strong> on the unknown function <span
-class="math inline">\(f\)</span>. Basically it assumes there will be
-(almost) <strong>no deviation from the base model</strong> <span
-class="math inline">\(\text{span}\{1,m(x)\}\)</span> at the right end of
-the domain when <span class="math inline">\(x\)</span> is large.</p>
-</div>
-<div id="local-versus-global-add" class="psd-change-add">
-<p>For every fixed <span class="math inline">\(h&gt;0\)</span>, this
-corollary shows that the conditional uncertainty from innovations over
-<span class="math inline">\([x,x+h]\)</span> decreases to zero as the
-starting location <span class="math inline">\(x\)</span> increases.
-Relative to M-GP at fixed process SD, t-IWP2 therefore has vanishing
-local innovation variability on intervals of a fixed length on the
-original scale.</p>
-<p>This conclusion does not imply that the marginal uncertainty of <span
-class="math inline">\(f(x)\)</span>, its posterior uncertainty given
-noisy data, or its accumulated deviation from a fixed base function
-vanishes. Randomness accumulated before <span
-class="math inline">\(x\)</span> and uncertainty in the current state
-can still contribute to these quantities. It also does not establish a
-limit for extrapolation from a fixed observation endpoint, where the
-prediction horizon increases with the target location.</p>
-<p>For example, take <span class="math inline">\(a=2\)</span>, <span
-class="math inline">\(c=1\)</span>, <span
-class="math inline">\(\sigma&gt;0\)</span>, and <span
-class="math inline">\(m(x)=2(\sqrt{x+1}-1)\)</span>, with <span
-class="math inline">\(m(0)=0\)</span> and <span
-class="math inline">\(m&#39;(0)=1\)</span>. With a fixed initial
-function value and derivative, write <span
-class="math inline">\(f(x)=\beta_0+\beta_1m(x)+r(x)\)</span>, where
-<span class="math inline">\(r\)</span> is an IWP-2 on the transformed
-scale with zero initial value and derivative. Then <span
-class="math display">\[
-\operatorname{Var}[f(x)\mid\beta_0,\beta_1]
-=\operatorname{Var}[r(x)]=\frac{\sigma^2m(x)^3}{3}\longrightarrow\infty,
-\]</span> while <span class="math display">\[
-\sigma_x^2(h)=\frac{\sigma^2[m(x+h)-m(x)]^3}{3}\longrightarrow0.
-\]</span> Thus, shrinking local innovations can coexist with increasing
-accumulated uncertainty and deviation from the boundary-implied base
-function.</p>
-</div>
+<p>Conditional on the current function value and slope, t-IWP2 allows
+progressively less deviation from the implied base-model continuation
+over a fixed interval of length <span class="math inline">\(h\)</span>,
+with the predictive variance tending to zero as <span
+class="math inline">\(x\to\infty\)</span>.</p>
 </div>
 </div>
 <div id="psd-computation" class="section level2">
@@ -1083,227 +990,78 @@ near-monotone term specification, for example:</p>
 </div>
 <div id="appendix" class="section level2">
 <h2><strong>Appendix</strong></h2>
+<p>At an interior starting location, the past trajectory determines the
+current function value and slope. Thus the PSD variance can be computed
+by conditioning on the state <span
+class="math inline">\((f(x),f&#39;(x))\)</span>.</p>
 <div id="proof-of-corollary-1" class="section level3">
 <h3><em>Proof of Corollary 1</em></h3>
-<p>To prove the corollary, we will utilize the following two lemmas.</p>
-<blockquote>
-<div id="lemma-one-domain-delete" class="psd-change-delete">
-<p><strong>Lemma 1:</strong> Assume <span
-class="math inline">\(h\geq\tau&gt;0\)</span>, then for any <span
-class="math inline">\(x\)</span>:</p>
-</div>
-</blockquote>
-<blockquote>
-<div id="lemma-one-domain-add" class="psd-change-add">
-<p><strong>Lemma 1:</strong> Under the assumptions of Corollary 1, for
-fixed <span class="math inline">\(h&gt;0\)</span> and <span
-class="math inline">\(0\leq\tau\leq h\)</span>:</p>
-</div>
-</blockquote>
-<blockquote>
-<p><span class="math display">\[\lim_{x\to \infty}
-\frac{g(x+h)-g(x+\tau)}{g&#39;(x+\tau)} = h-\tau.\]</span></p>
-</blockquote>
-<p><em>Proof of Lemma 1:</em></p>
-<div id="lemma-one-endpoint-add" class="psd-change-add">
-<p>When <span class="math inline">\(\tau=h\)</span>, the numerator is
-zero and the claim is immediate. We now consider <span
-class="math inline">\(\tau&lt;h\)</span>.</p>
-</div>
-<p>Since <span class="math inline">\(g\)</span> is a continuously
-differentiable, by mean value theorem we know <span
-class="math display">\[g(x+h) - g(x+\tau)=g&#39;(x+\nu)
-(h-\tau),\]</span></p>
-<div id="mean-value-point-delete" class="psd-change-delete">
-<p>where <span class="math inline">\(\nu \in (x+\tau, x+h)\)</span>.</p>
-</div>
-<div id="mean-value-point-add" class="psd-change-add">
-<p>where <span class="math inline">\(\nu \in (\tau,h)\)</span>.</p>
-</div>
-<div id="lemma-one-both-signs-delete" class="psd-change-delete">
-<p>Assume without the loss of generality that <span
-class="math inline">\(a &gt;0\)</span> so <span
-class="math inline">\(g\)</span> is concave function that is
-monotonically increasing. Then we have <span
-class="math display">\[g&#39;(x+h) (h-\tau) \leq g&#39;(x+\nu) (h-\tau)
-\leq g&#39;(x+\tau) (h-\tau).\]</span></p>
-<p>Since by definition <span class="math inline">\(h = g&#39;\)</span>,
-it is clear for the right hand side we have <span
-class="math display">\[\lim_{x\to \infty} \frac{g&#39;(x+\tau)
-(h-\tau)}{g&#39;(x+\tau)} = h-\tau.\]</span></p>
-</div>
-<div id="lemma-one-both-signs-add" class="psd-change-add">
-<p>Both signs of <span class="math inline">\(a\)</span> can be handled
-by monotonicity of <span class="math inline">\(g&#39;\)</span>. For
-<span class="math inline">\(a&gt;0\)</span>, <span
-class="math inline">\(g&#39;\)</span> is decreasing, so <span
-class="math display">\[
-\frac{g&#39;(x+h)}{g&#39;(x+\tau)}
-\leq\frac{g&#39;(x+\nu)}{g&#39;(x+\tau)}\leq1.
-\]</span> For <span class="math inline">\(a&lt;0\)</span>, <span
-class="math inline">\(g&#39;\)</span> is increasing, so <span
-class="math display">\[
-1\leq\frac{g&#39;(x+\nu)}{g&#39;(x+\tau)}
-\leq\frac{g&#39;(x+h)}{g&#39;(x+\tau)}.
-\]</span> In either case, the mean-value ratio is bounded by 1 and the
-endpoint ratio.</p>
-</div>
-<div id="lemma-one-ratio-delete" class="psd-change-delete">
-<p>For the left hand side, note that:</p>
-</div>
-<div id="lemma-one-ratio-add" class="psd-change-add">
-<p>For either sign of <span class="math inline">\(a\)</span>, the
-endpoint ratio satisfies:</p>
-</div>
-<p><span class="math display">\[\begin{equation}
+<p>Since <span class="math inline">\(m&#39;&#39;/m&#39;=\alpha\)</span>,
+<span class="math display">\[
+m&#39;(x)=K(x+c)^{-1/a},\qquad K&gt;0.
+\]</span> For <span class="math inline">\(0\leq\tau\leq h\)</span>, the
+Green function therefore satisfies <span class="math display">\[
 \begin{aligned}
-\lim_{x \to \infty}\frac{g&#39;(x+h)}{g&#39;(x+\tau)} &amp;= \lim_{x \to
-\infty}\exp \bigg(\int_{x+\tau}^{x+h} \alpha(t) dt\bigg) \\
-&amp;= \lim_{x \to \infty}\exp \bigg(\int_{x+\tau}^{x+h}
-\frac{-1}{a(t+c)} dt\bigg) \\
-&amp;= \lim_{x \to \infty}\exp \bigg(\frac{1}{a} \ln
-\bigg(\frac{x+\tau+c}{x+h+c}\bigg)\bigg) \\
-&amp;=  \lim_{x \to \infty} \bigg(\frac{x+\tau+c}{x+h+c}\bigg)^{1/a} =
-1.
+G_{x+h}(x+\tau)
+&amp;=\frac{m(x+h)-m(x+\tau)}{m&#39;(x+\tau)}\\
+&amp;=\int_\tau^h\frac{m&#39;(x+s)}{m&#39;(x+\tau)}\,ds\\
+&amp;=\int_\tau^h\left(\frac{x+s+c}{x+\tau+c}\right)^{-1/a}\,ds.
 \end{aligned}
-\end{equation}\]</span></p>
-<p>So by squeezing theorem, we have <span
-class="math display">\[\lim_{x\to \infty}
-\frac{g(x+h)-g(x+\tau)}{g&#39;(x+\tau)} = h-\tau.\]</span> This lemma is
-hence proved. </p>
-<blockquote>
-<p><strong>Lemma 2:</strong> Assume <span
-class="math inline">\(h&gt;0\)</span>, then for any <span
-class="math inline">\(x\)</span>: <span
-class="math display">\[\lim_{x\to \infty} \int_{x}^{x+h} G^2_{x+h}(t)dt
-= \int_{0}^{h} \lim_{x\to \infty} G^2_{x+h}(x + t)dt.\]</span></p>
-</blockquote>
-<p><em>Proof of Lemma 2:</em> The proof of this lemma is a simple
-application of the dominated convergence theorem.</p>
-<p>First it is clear through a simple change of variable that <span
-class="math display">\[\int_{x}^{x+h} G^2_{x+h}(t)dt = \int_{0}^{h}
-G^2_{x+h}(x + t)dt.\]</span></p>
-<div id="lemma-two-dominator-delete" class="psd-change-delete">
-<p>Again, assume without the loss of generality that <span
-class="math inline">\(a &gt;0\)</span> so <span
-class="math inline">\(g\)</span> is concave. We have <span
-class="math display">\[\begin{equation}
-\begin{aligned}
-\left|G_{x+h}(x + t)\right| &amp;= \left|\frac{g(x+h) - g(x +
-t)}{g&#39;(x+t)}\right| \\
-&amp;\leq \left|\frac{g&#39;(x+t)(h-t)}{g&#39;(x+t)}\right| \\
-&amp;= |h - t|.
-\end{aligned}
-\end{equation}\]</span></p>
-<p>Since <span class="math inline">\(|h - t|\)</span> is integrable over
-<span class="math inline">\([0,h]\)</span>, this lemma follows from the
-dominated convergence theorem.</p>
-</div>
-<div id="lemma-two-dominator-add" class="psd-change-add">
-<p>For either sign of <span class="math inline">\(a\neq0\)</span>, we
-have <span class="math display">\[
-G_{x+h}(x+t)=\int_t^h\frac{g&#39;(x+s)}{g&#39;(x+t)}\,ds,
-\qquad
-\frac{g&#39;(x+s)}{g&#39;(x+t)}
-=\left(\frac{x+s+c}{x+t+c}\right)^{-1/a}.
-\]</span> Choose a fixed <span class="math inline">\(X\geq x_0\)</span>
-with <span class="math inline">\(X+c\geq h\)</span>. For <span
-class="math inline">\(x\geq X\)</span> and <span
-class="math inline">\(0\leq t\leq s\leq h\)</span>, the ratio inside the
-power lies in <span class="math inline">\([1,2]\)</span>. Consequently,
-with <span class="math inline">\(K_a=2^{|1/a|}\)</span>, <span
+\]</span> On the triangle <span class="math inline">\(0\leq\tau\leq
+s\leq h\)</span>, <span class="math display">\[
+\sup_{0\leq\tau\leq s\leq h}
+\left|\frac{x+s+c}{x+\tau+c}-1\right|
+\leq\frac{h}{x+c}\longrightarrow0.
+\]</span> For any fixed finite <span
+class="math inline">\(a\neq0\)</span>, continuity of <span
+class="math inline">\(z\mapsto z^{-1/a}\)</span> at <span
+class="math inline">\(z=1\)</span> implies that the integrand converges
+uniformly to 1. Hence <span class="math inline">\(G_{x+h}(x+\tau)\to
+h-\tau\)</span> uniformly on <span class="math inline">\([0,h]\)</span>.
+The same holds for the squared Green function, so <span
 class="math display">\[
-0\leq G_{x+h}(x+t)\leq K_a(h-t),
-\qquad
-G_{x+h}^2(x+t)\leq K_a^2(h-t)^2.
-\]</span> This squared bound is independent of <span
-class="math inline">\(x\)</span> and integrable over <span
-class="math inline">\([0,h]\)</span>. The dominated convergence theorem
-therefore applies for both positive and negative <span
-class="math inline">\(a\)</span>.</p>
-</div>
-<p>With the above two lemmas, we can show that: <span
-class="math display">\[\begin{equation}
 \begin{aligned}
-\lim_{x\to \infty} \int_{x}^{x+h} G^2_{x+h}(t)dt &amp;= \int_{0}^{h}
-\lim_{x\to \infty} G^2_{x+h}(x + t)dt \\
-&amp;= \int_{0}^{h} \bigg\{\lim_{x\to \infty}
-\frac{1}{g&#39;(x+t)}[g(x+h)-g(x+t)]\bigg\}^2dt \\
-&amp;= \int_{0}^{h} (h-t)^2dt \\
-&amp;= \frac{h^3}{3}.
+\lim_{x\to\infty}\sigma_x^2(h)
+&amp;=\lim_{x\to\infty}\operatorname{Var}\bigl[f(x+h)\mid
+f(x),f&#39;(x)\bigr]\\
+&amp;=\lim_{x\to\infty}\sigma^2\int_0^h G_{x+h}^2(x+\tau)\,d\tau\\
+&amp;=\sigma^2\int_0^h(h-\tau)^2\,d\tau
+=\frac{\sigma^2h^3}{3}.
 \end{aligned}
-\end{equation}\]</span></p>
-<p>The proof of corollary 1 is hence completed.</p>
-<div id="mgp-proof-scale-add" class="psd-change-add">
-<p>The integral above is the unit-noise variance factor. Multiplying its
-limit by <span class="math inline">\(\sigma^2\)</span> gives the PSD
-variance asserted in Corollary 1.</p>
-</div>
+\]</span> This proves Corollary 1. <span
+class="math inline">\(\square\)</span></p>
 </div>
 <div id="proof-of-corollary-2" class="section level3">
 <h3><em>Proof of Corollary 2</em></h3>
-<p>To prove this corollary, we first note that the Green function of
-t-IWP2 is given by: <span class="math display">\[\tilde{G}_t(\tau) =
-g&#39;(\tau)^{1/2}[g(t)-g(\tau)].\]</span></p>
-<div id="tiwp2-proof-delete" class="psd-change-delete">
-<p>When <span class="math inline">\(a &gt; 0\)</span>, we know <span
-class="math inline">\(|g(x+h) - g(x+\tau)| \leq
-g&#39;(x+\tau)(h-\tau)\)</span> if <span class="math inline">\(h\geq
-\tau\)</span>. So we have: <span class="math display">\[\begin{equation}
-\begin{aligned}
-g&#39;(x + \tau)^{1/2}[g(x + h)-g(x + \tau)] &amp;\leq g&#39;(x +
-\tau)^{3/2}(h-\tau)\\
-&amp;= (h-\tau) \exp \bigg[ - \int_{0}^{x+\tau} \frac{1}{a(t+c)}dt
-\bigg]^{3/2} \\
-&amp;= (h-\tau) \exp \bigg[ - \frac{1}{a} \ln
-\bigg(\frac{x+\tau+c}{c}\bigg) \bigg]^{3/2} \\
-&amp;= (h-\tau) \bigg(\frac{c}{x+\tau+c}\bigg)^{\frac{3}{2a}}. \\
-\end{aligned}
-\end{equation}\]</span></p>
-<p>Therefore, we know <span
-class="math display">\[0\leq\lim_{x\to\infty} \tilde{G}^2_{x+h}(x+\tau)
-\leq (h-\tau)^2\lim_{x\to\infty}  \bigg(\frac{c}{x+\tau+c}\bigg)^{3/a} =
-0.\]</span></p>
-<p>Finally, since <span class="math inline">\(\tilde{G}^2_{x+h}(x+\tau)
-\leq (h-\tau)^2\)</span> which is integrable over <span
-class="math inline">\([0,h]\)</span>, we can apply the dominated
-convergence theorem. Therefore <span
-class="math display">\[\lim_{x\to\infty}
-\int_{x}^{x+h}\tilde{G}^2_{x+h}(t)dt =
-\lim_{x\to\infty}\int_{0}^{h}\tilde{G}^2_{x+h}(x + \tau)d\tau =
-\int_{0}^{h} \left[\lim_{x\to\infty} \tilde{G}^2_{x+h}(x+\tau)
-\right]d\tau = 0. \]</span></p>
-</div>
-<div id="tiwp2-proof-add" class="psd-change-add">
-<p>Writing <span class="math inline">\(m=g\)</span>, the Green-function
-variance and the substitution <span
-class="math inline">\(v=m(t)\)</span> give <span
-class="math display">\[\begin{equation}
-\begin{aligned}
+<p>Write <span class="math inline">\(f(x)=\tilde f(m(x))\)</span>, where
+<span class="math inline">\(D^2\tilde f(s)=\sigma\xi(s)\)</span>. Since
+<span class="math display">\[
+f&#39;(x)=\tilde f&#39;(m(x))m&#39;(x),\qquad m&#39;(x)&gt;0,
+\]</span> conditioning on <span
+class="math inline">\((f(x),f&#39;(x))\)</span> is equivalent to
+conditioning on the IWP2 state <span class="math inline">\((\tilde
+f(m(x)),\tilde f&#39;(m(x)))\)</span>. The transformed prediction
+interval has length <span
+class="math inline">\(\Delta_x=m(x+h)-m(x)\)</span>. Using the IWP2
+predictive variance gives <span class="math display">\[
 \sigma_x^2(h)
-&amp;=\sigma^2\int_x^{x+h}m&#39;(t)[m(x+h)-m(t)]^2\,dt\\
-&amp;=\sigma^2\int_{m(x)}^{m(x+h)}[m(x+h)-v]^2\,dv\\
-&amp;=\frac{\sigma^2}{3}[m(x+h)-m(x)]^3.
-\end{aligned}
-\end{equation}\]</span> Since <span
-class="math inline">\(m&#39;&#39;/m&#39;=-1/[a(x+c)]\)</span>,
-integration gives <span class="math display">\[
-m&#39;(x)=K(x+c)^{-1/a},\qquad K&gt;0,
-\]</span> where <span class="math inline">\(K\)</span> is fixed by the
-chosen transformation normalization. For finite <span
-class="math inline">\(a&gt;0\)</span>, <span
-class="math inline">\(m&#39;(x)\to0\)</span>. By the mean value theorem,
-for each fixed <span class="math inline">\(h&gt;0\)</span> there is
-<span class="math inline">\(\theta_x\in(0,h)\)</span> such that <span
-class="math display">\[
-0&lt;m(x+h)-m(x)=h\,m&#39;(x+\theta_x)
-\leq h\,m&#39;(x)\longrightarrow0.
-\]</span> Substituting this into the exact PSD formula proves the stated
-zero limit, without requiring a particular value of <span
-class="math inline">\(m&#39;(0)\)</span> or assuming that <span
-class="math inline">\(0\)</span> lies in the domain.</p>
-</div>
-<p>This completes the proof of corollary 2.</p>
+=\operatorname{Var}\bigl[f(x+h)\mid f(x),f&#39;(x)\bigr]
+=\frac{\sigma^2}{3}[m(x+h)-m(x)]^3.
+\]</span> Moreover, <span
+class="math inline">\(m&#39;&#39;/m&#39;=-1/[a(x+c)]\)</span> implies
+<span class="math display">\[
+m&#39;(x)=K(x+c)^{-1/a},\qquad K&gt;0.
+\]</span> For <span class="math inline">\(0&lt;a&lt;\infty\)</span>,
+<span class="math inline">\(m&#39;(x)\to0\)</span>. By the mean value
+theorem, some <span class="math inline">\(\theta_x\in(0,1)\)</span>
+satisfies <span class="math display">\[
+m(x+h)-m(x)=h\,m&#39;(x+\theta_x h)\longrightarrow0,
+\]</span> since <span class="math inline">\(x+\theta_x
+h\to\infty\)</span>. Consequently, <span class="math display">\[
+\lim_{x\to\infty}\sigma_x^2(h)
+=\lim_{x\to\infty}\frac{\sigma^2}{3}[m(x+h)-m(x)]^3=0.
+\]</span> This proves Corollary 2. <span
+class="math inline">\(\square\)</span></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1313,67 +1071,62 @@ Session information
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 4.6.1 (2026-06-24)
-Platform: x86_64-pc-linux-gnu
-Running under: Ubuntu 26.04 LTS
+<pre><code>R version 4.5.1 (2025-06-13)
+Platform: aarch64-apple-darwin20
+Running under: macOS Sequoia 15.6.1
 
 Matrix products: default
-BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.32.so;  LAPACK version 3.12.0
+BLAS:   /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
 
 locale:
- [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8
- [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8
- [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C
-[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C
+[1] C.UTF-8/C.UTF-8/C.UTF-8/C/C.UTF-8/C.UTF-8
 
-time zone: America/Toronto
-tzcode source: system (glibc)
+time zone: America/Chicago
+tzcode source: internal
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] BayesGP_0.1.3   testthat_3.3.2  knitr_1.52      Matrix_1.7-6   
- [5] lubridate_1.9.3 forcats_1.0.1   stringr_1.6.0   dplyr_1.2.1    
- [9] purrr_1.2.2     readr_2.2.0     tidyr_1.3.2     tibble_3.3.1   
+ [1] BayesGP_0.1.3   testthat_3.3.1  knitr_1.50      Matrix_1.7-4   
+ [5] lubridate_1.9.4 forcats_1.0.1   stringr_1.6.0   dplyr_1.1.4    
+ [9] purrr_1.2.0     readr_2.1.6     tidyr_1.3.1     tibble_3.3.0   
 [13] ggplot2_4.0.3   tidyverse_2.0.0
 
 loaded via a namespace (and not attached):
-  [1] bitops_1.1-0         gridExtra_2.3.1      remotes_2.5.0       
-  [4] inline_0.3.21        rlang_1.3.0          magrittr_2.0.5      
-  [7] git2r_0.36.2         otel_0.2.0           LaplacesDemon_16.1.6
- [10] matrixStats_1.5.0    compiler_4.6.1       loo_2.10.1          
- [13] vctrs_0.7.3          profvis_0.4.0        pkgconfig_2.0.3     
- [16] fastmap_1.2.0        ellipsis_0.3.3       promises_1.5.0      
- [19] deSolve_1.42         rmarkdown_2.32       sessioninfo_1.2.4   
- [22] tzdb_0.5.0           pracma_2.4.6         xfun_0.61           
- [25] cachem_1.1.0         jsonlite_2.0.0       later_1.4.8         
- [28] parallel_4.6.1       cluster_2.1.8.3      R6_2.6.1            
- [31] bslib_0.12.0         stringi_1.8.9        RColorBrewer_1.1-3  
- [34] StanHeaders_2.39.1   pkgload_1.5.3        rainbow_3.7         
- [37] brio_1.1.5           numDeriv_2016.8-1.1  jquerylib_0.1.4     
- [40] Rcpp_1.1.2           rstan_2.32.7         usethis_3.2.2       
- [43] hdrcde_3.5.0         httpuv_1.6.17        splines_4.6.1       
- [46] timechange_0.4.0     tidyselect_1.2.1     rstudioapi_0.19.0   
- [49] dichromat_2.0-0.1    yaml_2.3.12          codetools_0.2-20    
- [52] TMB_1.9.25           miniUI_0.1.2         curl_8.0.0          
- [55] pkgbuild_1.4.8       lattice_0.23-1       shiny_1.14.0        
- [58] ks_1.15.3            withr_3.0.3          S7_0.2.2            
- [61] evaluate_1.0.5       desc_1.4.3           RcppParallel_6.2.1  
- [64] urlchecker_2.0.0     mclust_6.1.3         pillar_1.11.1       
- [67] fda_6.3.0            whisker_0.4.1        KernSmooth_2.23-27  
- [70] stats4_4.6.1         pcaPP_2.0-5          generics_0.1.4      
- [73] rprojroot_2.1.1      RCurl_1.98-1.20      hms_1.1.4           
- [76] scales_1.4.0         xtable_1.8-4         glue_1.8.1          
- [79] tools_4.6.1          fds_1.9              fs_2.1.0            
- [82] mvtnorm_1.4-2        grid_4.6.1           QuickJSR_1.11.0     
- [85] devtools_2.4.5       colorspace_2.1-3     sfsmisc_1.1-26      
- [88] tmbstan_1.2.1        cli_3.6.6            workflowr_1.7.2     
- [91] V8_8.2.0             gtable_0.3.6         sass_0.4.10         
- [94] digest_0.6.39        aghq_0.4.1           htmlwidgets_1.6.4   
- [97] farver_2.1.2         memoise_2.0.1        htmltools_0.5.9     
-[100] lifecycle_1.0.5      mime_0.13            MASS_7.3-66         </code></pre>
+ [1] bitops_1.0-9          gridExtra_2.3         remotes_2.5.0        
+ [4] inline_0.3.21         rlang_1.2.0           magrittr_2.0.5       
+ [7] git2r_0.36.2          otel_0.2.0            matrixStats_1.5.0    
+[10] LaplacesDemon_16.1.8  compiler_4.5.1        loo_2.8.0            
+[13] vctrs_0.7.3           pkgconfig_2.0.3       fastmap_1.2.0        
+[16] ellipsis_0.3.2        promises_1.5.0        deSolve_1.40         
+[19] rmarkdown_2.30        sessioninfo_1.2.3     tzdb_0.5.0           
+[22] pracma_2.4.6          xfun_0.55             cachem_1.1.0         
+[25] jsonlite_2.0.0        later_1.4.4           parallel_4.5.1       
+[28] cluster_2.1.8.1       R6_2.6.1              bslib_0.9.0          
+[31] stringi_1.8.9         RColorBrewer_1.1-3    StanHeaders_2.32.10  
+[34] pkgload_1.4.1         rainbow_3.8           brio_1.1.5           
+[37] jquerylib_0.1.4       numDeriv_2016.8-1.1   Rcpp_1.1.1-1.1       
+[40] rstan_2.32.7          usethis_3.2.1         hdrcde_3.4           
+[43] httpuv_1.6.16         splines_4.5.1         timechange_0.3.0     
+[46] tidyselect_1.2.1      rstudioapi_0.17.1     dichromat_2.0-0.1    
+[49] yaml_2.3.12           TMB_1.9.23            codetools_0.2-20     
+[52] curl_7.0.0            pkgbuild_1.4.8        lattice_0.22-7       
+[55] ks_1.15.1             withr_3.0.3           S7_0.2.2             
+[58] evaluate_1.0.5        desc_1.4.3            RcppParallel_5.1.11-1
+[61] mclust_6.1.2          pillar_1.11.1         fda_6.3.0            
+[64] whisker_0.4.1         KernSmooth_2.23-26    stats4_4.5.1         
+[67] pcaPP_2.0-5           generics_0.1.4        rprojroot_2.1.1      
+[70] RCurl_1.98-1.17       hms_1.1.4             scales_1.4.0         
+[73] glue_1.8.1            tools_4.5.1           fds_1.8              
+[76] fs_1.6.6              mvtnorm_1.3-3         grid_4.5.1           
+[79] QuickJSR_1.8.1        devtools_2.4.6        colorspace_2.1-2     
+[82] sfsmisc_1.1-23        tmbstan_1.0.91        cli_3.6.6            
+[85] workflowr_1.7.2       V8_8.0.1              gtable_0.3.6         
+[88] sass_0.4.10           digest_0.6.39         aghq_0.4.1           
+[91] farver_2.1.2          memoise_2.0.1         htmltools_0.5.9      
+[94] lifecycle_1.0.5       MASS_7.3-65          </code></pre>
 </div>
 </div>
 </div>
