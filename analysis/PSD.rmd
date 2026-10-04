@@ -10,20 +10,101 @@ editor_options:
   chunk_output_type: console
 ---
 
+<!-- PSD tracked-revision display: start -->
+<style>
+.psd-change-delete, .psd-change-add {
+  padding: 0.6em 0.8em;
+  margin: 0.6em 0;
+  border-left: 3px solid;
+}
+.psd-change-delete {
+  color: #8a3341;
+  background: #fff1f2;
+  border-color: #b94a48;
+  text-decoration: line-through;
+}
+.psd-change-delete p, .psd-change-delete .math {
+  text-decoration: line-through;
+}
+.psd-change-delete .math.display {
+  display: block;
+  position: relative;
+}
+.psd-change-delete .math.display::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: 1px solid #b94a48;
+  pointer-events: none;
+}
+.psd-change-add {
+  background: #fff3a3;
+  border-color: #b8860b;
+}
+</style>
+
+::: {#psd-review-legend .psd-change-add}
+**Tracked revision (2026-10-04):** Struck-through text records removed original
+wording or formulas. Yellow highlights mark rewritten or added content.
+Unmarked content is retained from the original page.
+:::
+<!-- PSD tracked-revision display: end -->
+
 ## **Introduction**
 
 Recall that the M-GP is defined by:
 \[L_af(x) = \sigma \xi(x),\]
+
+::: {#operator-curvature-delete .psd-change-delete}
+
 where $L_a = D^2 - \alpha(x)D$ and $\alpha(x) = -1/a(x+c)$. 
+
+:::
+
+::: {#operator-curvature-add .psd-change-add}
+
+where $L_a = D^2 - \alpha(x)D$ and $\alpha(x) = -\frac{1}{a(x+c)}$.
+
+:::
+
 The monotone function implied by $\alpha(x)$ is $g = D^{-1}[\exp(D^{-1}\alpha)]$.
 
 The t-IWP2 can be defined by a similar SDE:
 \[\tilde{L}_af(x) = \sigma \xi(x),\]
+
+::: {#operator-name-delete .psd-change-delete}
+
 where $\tilde{L}_a = g'(x)^{-3/2}L_\alpha$.
+
+:::
+
+::: {#operator-name-add .psd-change-add}
+
+where $\tilde{L}_a = g'(x)^{-3/2}L_a$.
+
+:::
+
 
 We want to put prior on the standard deviation parameter $\sigma$ hence on the function $f$ in an interpretable way. 
 One way to do this is through the notion of $h$-step predictive standard deviation (PSD) which is defined as:
 \[\sigma_x(h) = \text{SD}[f(x+h)|f(u):u\leq x].\]
+
+::: {#psd-conditions-add .psd-change-add}
+
+We consider a right-unbounded domain $[x_0,\infty)$ with $x_0+c>0$,
+and fix $\sigma\geq0$, $h>0$, and an increasing transformation $g$ with
+$g'(x)>0$. We also write $m=g$ below. The transformation's scale and
+normalization are held fixed when taking the limit in $x$.
+For interior starting locations, the exact past trajectory determines the
+current function value and derivative. At the initial boundary, the innovation
+PSD also conditions on the initial derivative (or uses a fixed initial state).
+It measures uncertainty from future
+innovations, rather than the full posterior uncertainty given noisy data.
+
+:::
+
 For process defined by time invariant differential operator, the PSD is invariant to the choice of $x$. 
 For example, the h-step PSD for an IWP-2 can be shown as $\sigma\sqrt{h^3/3}$ ([Zhang et.al, 2024](https://www.tandfonline.com/doi/full/10.1080/10618600.2023.2289532)).
 However for the M-GP and t-IWP2, since the differential operator involves $\alpha(x)$, the PSD is dependent on $x$.
@@ -32,11 +113,48 @@ However for the M-GP and t-IWP2, since the differential operator involves $\alph
 
 In this section, we study the behavior of PSD for M-GP and t-IWP2. 
 Let $G_t(\tau)$ denotes the Green function of the operator $L_a$, the PSD $\sigma_x(h)$ can be written as:
+
+::: {#variance-scale-delete .psd-change-delete}
+
 \[\sigma^2_x(h) = \int_{x}^{x + h}G^2_{x+h}(t)dt.\]
+
+:::
+
+::: {#variance-scale-add .psd-change-add}
+
+\[\sigma^2_x(h) = \sigma^2\int_{x}^{x + h}G^2_{x+h}(t)dt.\]
+
+:::
+
 Recall for the M-GP, the Green function is given by:
 \[G_t(\tau) = \frac{1}{g'(\tau)}[g(t)-g(\tau)].\]
+
+::: {#green-reference-delete .psd-change-delete}
+
 Using property of the Green function (see [textbook](https://people.uncw.edu/hermanr/mat463/odebook/) Equation 8.36), we can show that the Green function of t-IWP2 is given by:
+
+:::
+
+::: {#green-reference-add .psd-change-add}
+
+Using the initial-value Green function formula in the [textbook](https://people.uncw.edu/hermanr/mat463/ODEBook/Book/ODE2.pdf#page=280), Equation 8.38, we can show that the Green function of t-IWP2 is given by:
+
+:::
+
 \[\tilde{G}_t(\tau) = g'(\tau)^{1/2}[g(t)-g(\tau)].\]
+
+::: {#tiwp2-exact-psd-add .psd-change-add}
+
+For t-IWP2, the corresponding variance is
+\[
+\sigma_x^2(h)
+=\sigma^2\int_x^{x+h}\tilde{G}_{x+h}^2(t)\,dt
+=\frac{\sigma^2}{3}\bigl[m(x+h)-m(x)\bigr]^3.
+\]
+The last equality follows by substituting $v=m(t)$, using $m'(t)>0$.
+
+:::
+
 
 ### *PSD of M-GP has a nice limit*
 
@@ -46,7 +164,22 @@ Fortunately, we can show that the PSD of M-GP has a nice limit as $x\to \infty$,
 
 > **Corollary 1 (Limiting PSD of M-GP):**
 >
+
+> ::: {#mgp-limit-conditions-delete .psd-change-delete}
+>
 > Assume $\alpha(x) = -\frac{1}{a(x+c)}$ where $a \neq 0$. For the M-GP defined by $\alpha(x)$ \[\sigma^2(h) = \lim_{x \to \infty}\sigma_x^2(h) = \frac{\sigma^2 h^3}{3}.\]
+>
+> :::
+
+> ::: {#mgp-limit-conditions-add .psd-change-add}
+>
+> Fix $h>0$, $\sigma\geq0$, and a finite real $a\neq0$.
+> Assume $\alpha(x)=-\frac{1}{a(x+c)}$ on the domain specified above.
+> For the M-GP defined by $\alpha(x)$,
+> \[\sigma^2(h)=\lim_{x\to\infty}\sigma_x^2(h)=\frac{\sigma^2h^3}{3}.\]
+>
+> :::
+
 
 The proof of corollary 1 is given in the appendix. 
 The corollary shows that although the PSD of M-GP $\sigma_x(h)$ depends on the location $x$, the limiting PSD $\sigma(h) = \lim_{x \to \infty} \sigma_x(h)$ is **exactly the same as the PSD of IWP-2**, which does not depend on the location $x$.
@@ -58,13 +191,68 @@ However, the following corollary shows that this is not the case.
 
 > **Corollary 2 (Limiting PSD of t-IWP2):**
 >
+
+> ::: {#tiwp2-limit-conditions-delete .psd-change-delete}
+>
 > Assume $\alpha(x) = -\frac{1}{a(x+c)}$ where $a \geq 0$. For the t-IWP2 defined by a monotone transformation $m(x)$ such that $m''(x)/m'(x) = \alpha(x)$, the limiting PSD is \[\sigma^2(h) = \lim_{x \to \infty}\sigma_x^2(h) = 0.\]
+>
+> :::
+
+> ::: {#tiwp2-limit-conditions-add .psd-change-add}
+>
+> Fix $h>0$, $\sigma\geq0$, and a finite real $a>0$.
+> Assume $\alpha(x)=-\frac{1}{a(x+c)}$ on the domain specified above.
+> For t-IWP2 defined by a fixed increasing transformation $m$ with
+> $m'(x)>0$ and $m''(x)/m'(x)=\alpha(x)$,
+> \[\sigma^2(h)=\lim_{x\to\infty}\sigma_x^2(h)=0.\]
+>
+> :::
+
 
 The proof of corollary 2 is also given in the appendix.
+
+::: {#local-versus-global-delete .psd-change-delete}
+
 This corollary implies as the starting time increases, the PSD of t-IWP2 converges to zero, which means there is no uncertainty in the functional form of the $f$ as $x\to \infty$.
 
 In other words, the seemingly naive approach of transforming the coordinate of an IWP2 through a monotone function actually puts a **very strong prior** on the unknown function $f$.
 Basically it assumes there will be (almost) **no deviation from the base model** $\text{span}\{1,m(x)\}$ at the right end of the domain when $x$ is large.
+
+:::
+
+::: {#local-versus-global-add .psd-change-add}
+
+For every fixed $h>0$, this corollary shows that the conditional
+uncertainty from innovations over $[x,x+h]$ decreases to zero as the
+starting location $x$ increases. Relative to M-GP at fixed process SD,
+t-IWP2 therefore has vanishing local innovation variability on intervals
+of a fixed length on the original scale.
+
+This conclusion does not imply that the marginal uncertainty of $f(x)$,
+its posterior uncertainty given noisy data, or its accumulated deviation
+from a fixed base function vanishes. Randomness accumulated before $x$
+and uncertainty in the current state can still contribute to these quantities.
+It also does not establish a limit for extrapolation from a fixed observation
+endpoint, where the prediction horizon increases with the target location.
+
+For example, take $a=2$, $c=1$, $\sigma>0$, and
+$m(x)=2(\sqrt{x+1}-1)$, with $m(0)=0$ and $m'(0)=1$.
+With a fixed initial function value and derivative, write
+$f(x)=\beta_0+\beta_1m(x)+r(x)$, where $r$ is an IWP-2 on the transformed
+scale with zero initial value and derivative. Then
+\[
+\operatorname{Var}[f(x)\mid\beta_0,\beta_1]
+=\operatorname{Var}[r(x)]=\frac{\sigma^2m(x)^3}{3}\longrightarrow\infty,
+\]
+while
+\[
+\sigma_x^2(h)=\frac{\sigma^2[m(x+h)-m(x)]^3}{3}\longrightarrow0.
+\]
+Thus, shrinking local innovations can coexist with increasing accumulated
+uncertainty and deviation from the boundary-implied base function.
+
+:::
+
 
 
 
@@ -130,20 +318,86 @@ model_fit(
 
 To prove the corollary, we will utilize the following two lemmas.
 
+
+> ::: {#lemma-one-domain-delete .psd-change-delete}
+>
 > **Lemma 1:** Assume $h\geq\tau>0$, then for any $x$:
+>
+> :::
+
+> ::: {#lemma-one-domain-add .psd-change-add}
+>
+> **Lemma 1:** Under the assumptions of Corollary 1, for fixed $h>0$ and $0\leq\tau\leq h$:
+>
+> :::
+
 > \[\lim_{x\to \infty} \frac{g(x+h)-g(x+\tau)}{g'(x+\tau)} = h-\tau.\]
 
 *Proof of Lemma 1:*
+
+::: {#lemma-one-endpoint-add .psd-change-add}
+
+When $\tau=h$, the numerator is zero and the claim is immediate. We now consider $\tau<h$.
+
+:::
+
 Since $g$ is a continuously differentiable, by mean value theorem we know 
 \[g(x+h) - g(x+\tau)=g'(x+\nu) (h-\tau),\]
+
+::: {#mean-value-point-delete .psd-change-delete}
+
 where $\nu \in (x+\tau, x+h)$.
+
+:::
+
+::: {#mean-value-point-add .psd-change-add}
+
+where $\nu \in (\tau,h)$.
+
+:::
+
+
+
+::: {#lemma-one-both-signs-delete .psd-change-delete}
 
 Assume without the loss of generality that $a >0$ so $g$ is concave function that is monotonically increasing. 
 Then we have \[g'(x+h) (h-\tau) \leq g'(x+\nu) (h-\tau) \leq g'(x+\tau) (h-\tau).\]
 
 Since by definition $h = g'$, it is clear for the right hand side we have \[\lim_{x\to \infty} \frac{g'(x+\tau) (h-\tau)}{g'(x+\tau)} = h-\tau.\]
 
+:::
+
+::: {#lemma-one-both-signs-add .psd-change-add}
+
+Both signs of $a$ can be handled by monotonicity of $g'$.
+For $a>0$, $g'$ is decreasing, so
+\[
+\frac{g'(x+h)}{g'(x+\tau)}
+\leq\frac{g'(x+\nu)}{g'(x+\tau)}\leq1.
+\]
+For $a<0$, $g'$ is increasing, so
+\[
+1\leq\frac{g'(x+\nu)}{g'(x+\tau)}
+\leq\frac{g'(x+h)}{g'(x+\tau)}.
+\]
+In either case, the mean-value ratio is bounded by 1 and the endpoint ratio.
+
+:::
+
+
+
+::: {#lemma-one-ratio-delete .psd-change-delete}
+
 For the left hand side, note that:
+
+:::
+
+::: {#lemma-one-ratio-add .psd-change-add}
+
+For either sign of $a$, the endpoint ratio satisfies:
+
+:::
+
 
 \begin{equation}
 \begin{aligned}
@@ -165,6 +419,9 @@ The proof of this lemma is a simple application of the dominated convergence the
 
 First it is clear through a simple change of variable that \[\int_{x}^{x+h} G^2_{x+h}(t)dt = \int_{0}^{h} G^2_{x+h}(x + t)dt.\]
 
+
+::: {#lemma-two-dominator-delete .psd-change-delete}
+
 Again, assume without the loss of generality that $a >0$ so $g$ is concave.
 We have
 \begin{equation}
@@ -176,6 +433,32 @@ We have
 \end{equation}
 
 Since $|h - t|$ is integrable over $[0,h]$, this lemma follows from the dominated convergence theorem.
+
+:::
+
+::: {#lemma-two-dominator-add .psd-change-add}
+
+For either sign of $a\neq0$, we have
+\[
+G_{x+h}(x+t)=\int_t^h\frac{g'(x+s)}{g'(x+t)}\,ds,
+\qquad
+\frac{g'(x+s)}{g'(x+t)}
+=\left(\frac{x+s+c}{x+t+c}\right)^{-1/a}.
+\]
+Choose a fixed $X\geq x_0$ with $X+c\geq h$. For $x\geq X$ and
+$0\leq t\leq s\leq h$, the ratio inside the power lies in $[1,2]$.
+Consequently, with $K_a=2^{|1/a|}$,
+\[
+0\leq G_{x+h}(x+t)\leq K_a(h-t),
+\qquad
+G_{x+h}^2(x+t)\leq K_a^2(h-t)^2.
+\]
+This squared bound is independent of $x$ and integrable over $[0,h]$.
+The dominated convergence theorem therefore applies for both positive and
+negative $a$.
+
+:::
+
 
 With the above two lemmas, we can show that:
 \begin{equation}
@@ -189,11 +472,21 @@ With the above two lemmas, we can show that:
 
 The proof of corollary 1 is hence completed.
 
+::: {#mgp-proof-scale-add .psd-change-add}
+
+The integral above is the unit-noise variance factor. Multiplying its limit by $\sigma^2$ gives the PSD variance asserted in Corollary 1.
+
+:::
+
+
 
 ### *Proof of Corollary 2*
 
 To prove this corollary, we first note that the Green function of t-IWP2 is given by:
 \[\tilde{G}_t(\tau) = g'(\tau)^{1/2}[g(t)-g(\tau)].\]
+
+
+::: {#tiwp2-proof-delete .psd-change-delete}
 
 When $a > 0$, we know $|g(x+h) - g(x+\tau)| \leq g'(x+\tau)(h-\tau)$ if $h\geq \tau$.
 So we have:
@@ -210,5 +503,36 @@ Therefore, we know \[0\leq\lim_{x\to\infty} \tilde{G}^2_{x+h}(x+\tau) \leq (h-\t
 
 Finally, since $\tilde{G}^2_{x+h}(x+\tau) \leq (h-\tau)^2$ which is integrable over $[0,h]$, we can apply the dominated convergence theorem.
 Therefore \[\lim_{x\to\infty} \int_{x}^{x+h}\tilde{G}^2_{x+h}(t)dt = \lim_{x\to\infty}\int_{0}^{h}\tilde{G}^2_{x+h}(x + \tau)d\tau = \int_{0}^{h} \left[\lim_{x\to\infty} \tilde{G}^2_{x+h}(x+\tau) \right]d\tau = 0. \]
+
+:::
+
+::: {#tiwp2-proof-add .psd-change-add}
+
+Writing $m=g$, the Green-function variance and the substitution $v=m(t)$ give
+\begin{equation}
+\begin{aligned}
+\sigma_x^2(h)
+&=\sigma^2\int_x^{x+h}m'(t)[m(x+h)-m(t)]^2\,dt\\
+&=\sigma^2\int_{m(x)}^{m(x+h)}[m(x+h)-v]^2\,dv\\
+&=\frac{\sigma^2}{3}[m(x+h)-m(x)]^3.
+\end{aligned}
+\end{equation}
+Since $m''/m'=-1/[a(x+c)]$, integration gives
+\[
+m'(x)=K(x+c)^{-1/a},\qquad K>0,
+\]
+where $K$ is fixed by the chosen transformation normalization.
+For finite $a>0$, $m'(x)\to0$. By the mean value theorem, for each fixed
+$h>0$ there is $\theta_x\in(0,h)$ such that
+\[
+0<m(x+h)-m(x)=h\,m'(x+\theta_x)
+\leq h\,m'(x)\longrightarrow0.
+\]
+Substituting this into the exact PSD formula proves the stated zero limit,
+without requiring a particular value of $m'(0)$ or assuming that $0$ lies
+in the domain.
+
+:::
+
 
 This completes the proof of corollary 2. 

@@ -25,6 +25,11 @@ set.seed(123)
 
 In this simulation study, we study the robustness of the tIWP2 and the mGP priors.
 
+> **Cached results:** The code below specifies a true PSD and an exponential
+> PSD prior median of 2. The figures and tables currently use historical caches
+> that contain summary metrics but no parameter records. We cannot verify that
+> those caches used the stated settings; a full rerun is needed to establish this.
+
 
 ## **Simulation A: True model is mGP**
 
@@ -32,7 +37,7 @@ The simulation A is designed as follows, for each of the $B = 1000$ replications
 
 - $f$ is simulated from a mGP process with $a = 2$, with a true PSD $\sigma_0(5) = 2$.
 - For $x_i$ equally spaced between $[0,20]$, $n = 200$ observations are simulated from $y_i = f(x_i) + \epsilon_i$ with $\epsilon_i \sim N(0, 2)$. 
-- The posterior $\pi(f|\boldsymbol{y})$ is obtained using both the tIWP2 and the mGP priors, only using data with $x \in [0,10]$. The prior for the smoothing parameter is chosen as an Exponential prior centered at the true PSD $\sigma_0(5)$.
+- The posterior $\pi(f|\boldsymbol{y})$ is obtained using both the tIWP2 and the mGP priors, only using data with $x \in [0,10]$. The prior on $\sigma_0(5)$ is Exponential with median equal to the true PSD, $\sigma_0(5) = 2$.
 - The pointwise coverage probabilities of the 50\%, 80\%, and 95\% credible interval for $f$, as well as the mean squared error and the mean relative error of the posterior mean of $f$ are all recorded for each replication.
 
 ```{r, echo=FALSE}
@@ -53,7 +58,7 @@ evaluate_model_once <- function(data_train, data_sim, model_fit, M = 3000){
   )
 }
 
-fit_nearmonotone_model <- function(data_train, data_sim, model_name, prior_u,
+fit_nearmonotone_model <- function(data_train, data_sim, model_name, prior_psd,
                                    computation_method = "state-space",
                                    normalized_boundary = TRUE){
   model_fit(
@@ -65,7 +70,10 @@ fit_nearmonotone_model <- function(data_train, data_sim, model_name, prior_u,
       c = c,
       grid = data_sim$x,
       normalized_boundary = normalized_boundary,
-      sd.prior = list(prior = "exp", param = list(u = prior_u, alpha = 0.5))
+      sd.prior = list(
+        prior = "exp", param = list(u = prior_psd, alpha = 0.5),
+        h = 5, x = 0
+      )
     ),
     data = data_train,
     family = "gaussian",
@@ -93,7 +101,7 @@ replicate_comparison_B_times <- function(B, n, sd_noise = 2, psd_fun = 2,
       data_train = data_train,
       data_sim = data_sim,
       model_name = "mgp",
-      prior_u = u_mgp,
+      prior_psd = u_mgp,
       computation_method = "state-space",
       normalized_boundary = TRUE
     )
@@ -101,7 +109,7 @@ replicate_comparison_B_times <- function(B, n, sd_noise = 2, psd_fun = 2,
       data_train = data_train,
       data_sim = data_sim,
       model_name = "tiwp2",
-      prior_u = u_tiwp2,
+      prior_psd = u_tiwp2,
       computation_method = "state-space"
     )
 
@@ -146,7 +154,7 @@ replicate_comparison_B_times <- function(B, n, sd_noise = 2, psd_fun = 2,
     clusterExport(
       cl,
       varlist = c("sim_data_once", "evaluate_model_once", "run_one_iteration",
-                  "n", "c", "psd_factor_mgp", "psd_factor_tiwp2", "true_psd",
+                  "n", "c",
                   "sd_noise", "observed_max", "u_mgp", "u_tiwp2", "psd_fun",
                   "fit_nearmonotone_model"),
       envir = environment()
@@ -179,9 +187,7 @@ replicate_comparison_B_times <- function(B, n, sd_noise = 2, psd_fun = 2,
 ```
 
 ```{r eval=FALSE, message=FALSE, warning=FALSE, echo=FALSE}
-psd_factor_tiwp2 <- true_psd / PSD_compute(model = "tiwp2", h = 5, x = 0, a = 2, c = 1)
-psd_factor_mgp <- true_psd / PSD_compute(model = "mgp", h = 5, x = 0, a = 2, c = c)
-all_result <- replicate_comparison_B_times(B = B, n = n, parallel = T, u_mgp = psd_factor_mgp, u_tiwp2 = psd_factor_tiwp2, sd_noise = 2, psd_fun = true_psd)
+all_result <- replicate_comparison_B_times(B = B, n = n, parallel = T, u_mgp = true_psd, u_tiwp2 = true_psd, sd_noise = sd_noise, psd_fun = true_psd)
 save(all_result, file = "output/sim1_all_resultA.rda")
 ```
 
@@ -247,19 +253,21 @@ rmle_results %>% ggplot(aes(x = type, y = rmle_value, fill = model)) +
 
 ```
 
-A table of the summary statistics:
+The tables report means, with Monte Carlo standard errors (MCSEs) in
+parentheses for coverage and standard deviations across replications for
+RMSE and mean relative error.
 ```{r, echo=FALSE}
-# Aggregating mean and standard deviation for inter results
+# Aggregate means, coverage MCSEs, and error-metric SDs for interpolation
 inter_summary <- bind_rows(
   all_result$mGP_inter %>%
     summarise(
       model = "mGP",
       mean_coverage_50 = mean(coverage_50),
-      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/n()),
+      mcse_coverage_50 = sd(coverage_50) / sqrt(n()),
       mean_coverage_80 = mean(coverage_80),
-      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/n()),
+      mcse_coverage_80 = sd(coverage_80) / sqrt(n()),
       mean_coverage_95 = mean(coverage_95),
-      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/n()),
+      mcse_coverage_95 = sd(coverage_95) / sqrt(n()),
       mean_rmse = mean(rmse),
       sd_rmse = sd(rmse),
       mean_rmle = mean(rmle),
@@ -269,11 +277,11 @@ inter_summary <- bind_rows(
     summarise(
       model = "tIWP2",
       mean_coverage_50 = mean(coverage_50),
-      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/n()),
+      mcse_coverage_50 = sd(coverage_50) / sqrt(n()),
       mean_coverage_80 = mean(coverage_80),
-      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/n()),
+      mcse_coverage_80 = sd(coverage_80) / sqrt(n()),
       mean_coverage_95 = mean(coverage_95),
-      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/n()),
+      mcse_coverage_95 = sd(coverage_95) / sqrt(n()),
       mean_rmse = mean(rmse),
       sd_rmse = sd(rmse),
       mean_rmle = mean(rmle),
@@ -282,17 +290,17 @@ inter_summary <- bind_rows(
 ) %>%
   mutate(case = "Inter")
 
-# Aggregating mean and standard deviation for pred results
+# Aggregate means, coverage MCSEs, and error-metric SDs for prediction
 pred_summary <- bind_rows(
   all_result$mGP_pred %>%
     summarise(
       model = "mGP",
       mean_coverage_50 = mean(coverage_50),
-      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/n()),
+      mcse_coverage_50 = sd(coverage_50) / sqrt(n()),
       mean_coverage_80 = mean(coverage_80),
-      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/n()),
+      mcse_coverage_80 = sd(coverage_80) / sqrt(n()),
       mean_coverage_95 = mean(coverage_95),
-      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/n()),
+      mcse_coverage_95 = sd(coverage_95) / sqrt(n()),
       mean_rmse = mean(rmse),
       sd_rmse = sd(rmse),
       mean_rmle = mean(rmle),
@@ -302,11 +310,11 @@ pred_summary <- bind_rows(
     summarise(
       model = "tIWP2",
       mean_coverage_50 = mean(coverage_50),
-      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/n()),
+      mcse_coverage_50 = sd(coverage_50) / sqrt(n()),
       mean_coverage_80 = mean(coverage_80),
-      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/n()),
+      mcse_coverage_80 = sd(coverage_80) / sqrt(n()),
       mean_coverage_95 = mean(coverage_95),
-      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/n()),
+      mcse_coverage_95 = sd(coverage_95) / sqrt(n()),
       mean_rmse = mean(rmse),
       sd_rmse = sd(rmse),
       mean_rmle = mean(rmle),
@@ -315,30 +323,30 @@ pred_summary <- bind_rows(
 ) %>%
   mutate(case = "Pred")
 
-# Combine mean and standard deviation into a single column
-format_with_sd <- function(mean_val, sd_val) {
-  paste0(round(mean_val, 3), " (", round(sd_val, 3), ")")
+# Format a mean with its MCSE (coverage) or SD (error metrics)
+format_with_error <- function(mean_val, error_val) {
+  paste0(round(mean_val, 3), " (", round(error_val, 3), ")")
 }
 
 # Create summary table for the "Inter" scenario
 inter_summary_table <- inter_summary %>%
   mutate(
-    Coverage_50 = format_with_sd(mean_coverage_50, sd_coverage_50),
-    Coverage_80 = format_with_sd(mean_coverage_80, sd_coverage_80),
-    Coverage_95 = format_with_sd(mean_coverage_95, sd_coverage_95),
-    RMSE = format_with_sd(mean_rmse, sd_rmse),
-    MLE = format_with_sd(mean_rmle, sd_rmle)
+    Coverage_50 = format_with_error(mean_coverage_50, mcse_coverage_50),
+    Coverage_80 = format_with_error(mean_coverage_80, mcse_coverage_80),
+    Coverage_95 = format_with_error(mean_coverage_95, mcse_coverage_95),
+    RMSE = format_with_error(mean_rmse, sd_rmse),
+    MLE = format_with_error(mean_rmle, sd_rmle)
   ) %>%
   select(Model = model, `Coverage 50%` = Coverage_50, `Coverage 80%` = Coverage_80, `Coverage 95%` = Coverage_95, RMSE, MLE)
 
 # Create summary table for the "Pred" scenario
 pred_summary_table <- pred_summary %>%
   mutate(
-    Coverage_50 = format_with_sd(mean_coverage_50, sd_coverage_50),
-    Coverage_80 = format_with_sd(mean_coverage_80, sd_coverage_80),
-    Coverage_95 = format_with_sd(mean_coverage_95, sd_coverage_95),
-    RMSE = format_with_sd(mean_rmse, sd_rmse),
-    MLE = format_with_sd(mean_rmle, sd_rmle)
+    Coverage_50 = format_with_error(mean_coverage_50, mcse_coverage_50),
+    Coverage_80 = format_with_error(mean_coverage_80, mcse_coverage_80),
+    Coverage_95 = format_with_error(mean_coverage_95, mcse_coverage_95),
+    RMSE = format_with_error(mean_rmse, sd_rmse),
+    MLE = format_with_error(mean_rmle, sd_rmle)
   ) %>%
   select(Model = model, `Coverage 50%` = Coverage_50, `Coverage 80%` = Coverage_80, `Coverage 95%` = Coverage_95, RMSE, MLE)
 
@@ -357,14 +365,14 @@ inter_coverage_plot_data <- inter_summary %>%
   pivot_longer(cols = starts_with("mean_coverage"),
                names_to = "Coverage_Level",
                values_to = "Coverage") %>%
-  mutate(SD = case_when(
-    Coverage_Level == "mean_coverage_50" ~ sd_coverage_50,
-    Coverage_Level == "mean_coverage_80" ~ sd_coverage_80,
-    Coverage_Level == "mean_coverage_95" ~ sd_coverage_95
+  mutate(MCSE = case_when(
+    Coverage_Level == "mean_coverage_50" ~ mcse_coverage_50,
+    Coverage_Level == "mean_coverage_80" ~ mcse_coverage_80,
+    Coverage_Level == "mean_coverage_95" ~ mcse_coverage_95
   )) %>%
   mutate(
-    lower = Coverage - 3 * SD,
-    upper = Coverage + 3 * SD,
+    lower = Coverage - 3 * MCSE,
+    upper = Coverage + 3 * MCSE,
     Coverage_Level = recode(Coverage_Level, 
                             "mean_coverage_50" = "50%", 
                             "mean_coverage_80" = "80%", 
@@ -379,6 +387,7 @@ ggplot(inter_coverage_plot_data, aes(x = Coverage_Level, y = Coverage, fill = mo
   coord_cartesian(ylim = c(0, 1)) +
   scale_y_continuous(breaks = c(0.5, 0.8, 0.95)) +
   labs(title = "Interval Plot of Coverage Rates (Inter Scenario)",
+       subtitle = "Error bars show mean ± 3 MCSE",
        x = "Coverage Level",
        y = "Coverage Rate",
        fill = "Model") +
@@ -390,14 +399,14 @@ pred_coverage_plot_data <- pred_summary %>%
   pivot_longer(cols = starts_with("mean_coverage"),
                names_to = "Coverage_Level",
                values_to = "Coverage") %>%
-  mutate(SD = case_when(
-    Coverage_Level == "mean_coverage_50" ~ sd_coverage_50,
-    Coverage_Level == "mean_coverage_80" ~ sd_coverage_80,
-    Coverage_Level == "mean_coverage_95" ~ sd_coverage_95
+  mutate(MCSE = case_when(
+    Coverage_Level == "mean_coverage_50" ~ mcse_coverage_50,
+    Coverage_Level == "mean_coverage_80" ~ mcse_coverage_80,
+    Coverage_Level == "mean_coverage_95" ~ mcse_coverage_95
   )) %>%
   mutate(
-    lower = Coverage - 3 * SD,
-    upper = Coverage + 3 * SD,
+    lower = Coverage - 3 * MCSE,
+    upper = Coverage + 3 * MCSE,
     Coverage_Level = recode(Coverage_Level, 
                             "mean_coverage_50" = "50%", 
                             "mean_coverage_80" = "80%", 
@@ -412,6 +421,7 @@ ggplot(pred_coverage_plot_data, aes(x = Coverage_Level, y = Coverage, fill = mod
   coord_cartesian(ylim = c(0, 1)) +
   scale_y_continuous(breaks = c(0.5, 0.8, 0.95)) +
   labs(title = "Interval Plot of Coverage Rates (Pred Scenario)",
+       subtitle = "Error bars show mean ± 3 MCSE",
        x = "Coverage Level",
        y = "Coverage Rate",
        fill = "Model") +
@@ -445,8 +455,6 @@ sim_data_once_B <- function(n = 199, sd_noise = 2, psd_fun = 2){
   )[-1]
   data.frame(x = x[-1], y = f_vec + rnorm(n, 0, sd_noise), f = f_vec)
 }
-true_psd <- PSD_compute(model = "tiwp2", h = 5, x = 0, sd = 1, a = 2, c = 1)
-psd_factor_mgp <- true_psd / PSD_compute(model = "mgp", h = 5, x = 0, a = 2, c = c)
 # data_sim <- sim_data_once_B(n)
 # plot(data_sim$x, data_sim$f, type = "l", col = "blue", lwd = 2, xlab = "x", ylab = "f(x)")
 # points(data_sim$x, data_sim$y, col = "black")
@@ -469,7 +477,7 @@ replicate_comparison_B_times_B <- function(B, n, sd_noise = 2, psd_fun = 2,
       data_train = data_train,
       data_sim = data_sim,
       model_name = "mgp",
-      prior_u = u_mgp,
+      prior_psd = u_mgp,
       computation_method = "state-space",
       normalized_boundary = TRUE
     )
@@ -477,7 +485,7 @@ replicate_comparison_B_times_B <- function(B, n, sd_noise = 2, psd_fun = 2,
       data_train = data_train,
       data_sim = data_sim,
       model_name = "tiwp2",
-      prior_u = u_tiwp2,
+      prior_psd = u_tiwp2,
       computation_method = "state-space"
     )
 
@@ -522,7 +530,7 @@ replicate_comparison_B_times_B <- function(B, n, sd_noise = 2, psd_fun = 2,
     clusterExport(
       cl,
       varlist = c("sim_data_once_B", "evaluate_model_once", "run_one_iteration",
-                  "n", "c", "psd_factor_mgp", "psd_factor_tiwp2", "true_psd",
+                  "n", "c",
                   "sd_noise", "observed_max", "u_mgp", "u_tiwp2", "psd_fun",
                   "fit_nearmonotone_model"),
       envir = environment()
@@ -556,9 +564,7 @@ replicate_comparison_B_times_B <- function(B, n, sd_noise = 2, psd_fun = 2,
 ```
 
 ```{r eval=FALSE, message=FALSE, warning=FALSE, echo=FALSE}
-psd_factor_tiwp2 <- true_psd / PSD_compute(model = "tiwp2", h = 5, x = 0, a = 2, c = 1)
-psd_factor_mgp <- true_psd / PSD_compute(model = "mgp", h = 5, x = 0, a = 2, c = c)
-all_result <- replicate_comparison_B_times_B(B = B, n = n, parallel = T, u_mgp = psd_factor_mgp, u_tiwp2 = psd_factor_tiwp2, sd_noise = sd_noise, psd_fun = true_psd)
+all_result <- replicate_comparison_B_times_B(B = B, n = n, parallel = T, u_mgp = true_psd, u_tiwp2 = true_psd, sd_noise = sd_noise, psd_fun = true_psd)
 save(all_result, file = "output/sim1_all_resultB.rda")
 ```
 
@@ -624,19 +630,21 @@ rmle_results %>% ggplot(aes(x = type, y = rmle_value, fill = model)) +
 
 ```
 
-A table of the summary statistics:
+The tables report means, with Monte Carlo standard errors (MCSEs) in
+parentheses for coverage and standard deviations across replications for
+RMSE and mean relative error.
 ```{r, echo=FALSE}
-# Aggregating mean and standard deviation for inter results
+# Aggregate means, coverage MCSEs, and error-metric SDs for interpolation
 inter_summary <- bind_rows(
   all_result$mGP_inter %>%
     summarise(
       model = "mGP",
       mean_coverage_50 = mean(coverage_50),
-      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/n()),
+      mcse_coverage_50 = sd(coverage_50) / sqrt(n()),
       mean_coverage_80 = mean(coverage_80),
-      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/n()),
+      mcse_coverage_80 = sd(coverage_80) / sqrt(n()),
       mean_coverage_95 = mean(coverage_95),
-      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/n()),
+      mcse_coverage_95 = sd(coverage_95) / sqrt(n()),
       mean_rmse = mean(rmse),
       sd_rmse = sd(rmse),
       mean_rmle = mean(rmle),
@@ -646,11 +654,11 @@ inter_summary <- bind_rows(
     summarise(
       model = "tIWP2",
       mean_coverage_50 = mean(coverage_50),
-      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/n()),
+      mcse_coverage_50 = sd(coverage_50) / sqrt(n()),
       mean_coverage_80 = mean(coverage_80),
-      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/n()),
+      mcse_coverage_80 = sd(coverage_80) / sqrt(n()),
       mean_coverage_95 = mean(coverage_95),
-      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/n()),
+      mcse_coverage_95 = sd(coverage_95) / sqrt(n()),
       mean_rmse = mean(rmse),
       sd_rmse = sd(rmse),
       mean_rmle = mean(rmle),
@@ -659,17 +667,17 @@ inter_summary <- bind_rows(
 ) %>%
   mutate(case = "Inter")
 
-# Aggregating mean and standard deviation for pred results
+# Aggregate means, coverage MCSEs, and error-metric SDs for prediction
 pred_summary <- bind_rows(
   all_result$mGP_pred %>%
     summarise(
       model = "mGP",
       mean_coverage_50 = mean(coverage_50),
-      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/n()),
+      mcse_coverage_50 = sd(coverage_50) / sqrt(n()),
       mean_coverage_80 = mean(coverage_80),
-      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/n()),
+      mcse_coverage_80 = sd(coverage_80) / sqrt(n()),
       mean_coverage_95 = mean(coverage_95),
-      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/n()),
+      mcse_coverage_95 = sd(coverage_95) / sqrt(n()),
       mean_rmse = mean(rmse),
       sd_rmse = sd(rmse),
       mean_rmle = mean(rmle),
@@ -679,11 +687,11 @@ pred_summary <- bind_rows(
     summarise(
       model = "tIWP2",
       mean_coverage_50 = mean(coverage_50),
-      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/n()),
+      mcse_coverage_50 = sd(coverage_50) / sqrt(n()),
       mean_coverage_80 = mean(coverage_80),
-      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/n()),
+      mcse_coverage_80 = sd(coverage_80) / sqrt(n()),
       mean_coverage_95 = mean(coverage_95),
-      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/n()),
+      mcse_coverage_95 = sd(coverage_95) / sqrt(n()),
       mean_rmse = mean(rmse),
       sd_rmse = sd(rmse),
       mean_rmle = mean(rmle),
@@ -692,30 +700,30 @@ pred_summary <- bind_rows(
 ) %>%
   mutate(case = "Pred")
 
-# Combine mean and standard deviation into a single column
-format_with_sd <- function(mean_val, sd_val) {
-  paste0(round(mean_val, 3), " (", round(sd_val, 3), ")")
+# Format a mean with its MCSE (coverage) or SD (error metrics)
+format_with_error <- function(mean_val, error_val) {
+  paste0(round(mean_val, 3), " (", round(error_val, 3), ")")
 }
 
 # Create summary table for the "Inter" scenario
 inter_summary_table <- inter_summary %>%
   mutate(
-    Coverage_50 = format_with_sd(mean_coverage_50, sd_coverage_50),
-    Coverage_80 = format_with_sd(mean_coverage_80, sd_coverage_80),
-    Coverage_95 = format_with_sd(mean_coverage_95, sd_coverage_95),
-    RMSE = format_with_sd(mean_rmse, sd_rmse),
-    MLE = format_with_sd(mean_rmle, sd_rmle)
+    Coverage_50 = format_with_error(mean_coverage_50, mcse_coverage_50),
+    Coverage_80 = format_with_error(mean_coverage_80, mcse_coverage_80),
+    Coverage_95 = format_with_error(mean_coverage_95, mcse_coverage_95),
+    RMSE = format_with_error(mean_rmse, sd_rmse),
+    MLE = format_with_error(mean_rmle, sd_rmle)
   ) %>%
   select(Model = model, `Coverage 50%` = Coverage_50, `Coverage 80%` = Coverage_80, `Coverage 95%` = Coverage_95, RMSE, MLE)
 
 # Create summary table for the "Pred" scenario
 pred_summary_table <- pred_summary %>%
   mutate(
-    Coverage_50 = format_with_sd(mean_coverage_50, sd_coverage_50),
-    Coverage_80 = format_with_sd(mean_coverage_80, sd_coverage_80),
-    Coverage_95 = format_with_sd(mean_coverage_95, sd_coverage_95),
-    RMSE = format_with_sd(mean_rmse, sd_rmse),
-    MLE = format_with_sd(mean_rmle, sd_rmle)
+    Coverage_50 = format_with_error(mean_coverage_50, mcse_coverage_50),
+    Coverage_80 = format_with_error(mean_coverage_80, mcse_coverage_80),
+    Coverage_95 = format_with_error(mean_coverage_95, mcse_coverage_95),
+    RMSE = format_with_error(mean_rmse, sd_rmse),
+    MLE = format_with_error(mean_rmle, sd_rmle)
   ) %>%
   select(Model = model, `Coverage 50%` = Coverage_50, `Coverage 80%` = Coverage_80, `Coverage 95%` = Coverage_95, RMSE, MLE)
 
@@ -734,14 +742,14 @@ inter_coverage_plot_data <- inter_summary %>%
   pivot_longer(cols = starts_with("mean_coverage"),
                names_to = "Coverage_Level",
                values_to = "Coverage") %>%
-  mutate(SD = case_when(
-    Coverage_Level == "mean_coverage_50" ~ sd_coverage_50,
-    Coverage_Level == "mean_coverage_80" ~ sd_coverage_80,
-    Coverage_Level == "mean_coverage_95" ~ sd_coverage_95
+  mutate(MCSE = case_when(
+    Coverage_Level == "mean_coverage_50" ~ mcse_coverage_50,
+    Coverage_Level == "mean_coverage_80" ~ mcse_coverage_80,
+    Coverage_Level == "mean_coverage_95" ~ mcse_coverage_95
   )) %>%
   mutate(
-    lower = Coverage - 3 * SD,
-    upper = Coverage + 3 * SD,
+    lower = Coverage - 3 * MCSE,
+    upper = Coverage + 3 * MCSE,
     Coverage_Level = recode(Coverage_Level, 
                             "mean_coverage_50" = "50%", 
                             "mean_coverage_80" = "80%", 
@@ -756,6 +764,7 @@ ggplot(inter_coverage_plot_data, aes(x = Coverage_Level, y = Coverage, fill = mo
   coord_cartesian(ylim = c(0, 1)) +
   scale_y_continuous(breaks = c(0.5, 0.8, 0.95)) +
   labs(title = "Interval Plot of Coverage Rates (Inter Scenario)",
+       subtitle = "Error bars show mean ± 3 MCSE",
        x = "Coverage Level",
        y = "Coverage Rate",
        fill = "Model") +
@@ -767,14 +776,14 @@ pred_coverage_plot_data <- pred_summary %>%
   pivot_longer(cols = starts_with("mean_coverage"),
                names_to = "Coverage_Level",
                values_to = "Coverage") %>%
-  mutate(SD = case_when(
-    Coverage_Level == "mean_coverage_50" ~ sd_coverage_50,
-    Coverage_Level == "mean_coverage_80" ~ sd_coverage_80,
-    Coverage_Level == "mean_coverage_95" ~ sd_coverage_95
+  mutate(MCSE = case_when(
+    Coverage_Level == "mean_coverage_50" ~ mcse_coverage_50,
+    Coverage_Level == "mean_coverage_80" ~ mcse_coverage_80,
+    Coverage_Level == "mean_coverage_95" ~ mcse_coverage_95
   )) %>%
   mutate(
-    lower = Coverage - 3 * SD,
-    upper = Coverage + 3 * SD,
+    lower = Coverage - 3 * MCSE,
+    upper = Coverage + 3 * MCSE,
     Coverage_Level = recode(Coverage_Level, 
                             "mean_coverage_50" = "50%", 
                             "mean_coverage_80" = "80%", 
@@ -789,13 +798,12 @@ ggplot(pred_coverage_plot_data, aes(x = Coverage_Level, y = Coverage, fill = mod
   coord_cartesian(ylim = c(0, 1)) +
   scale_y_continuous(breaks = c(0.5, 0.8, 0.95)) +
   labs(title = "Interval Plot of Coverage Rates (Pred Scenario)",
+       subtitle = "Error bars show mean ± 3 MCSE",
        x = "Coverage Level",
        y = "Coverage Rate",
        fill = "Model") +
   theme_minimal()
 ```
-
-
 
 
 
