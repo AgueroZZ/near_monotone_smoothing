@@ -24,7 +24,8 @@ This page is the local entry point for the mGP / t-IWP project website.
 - [Illustration](illustration.html): end-to-end fitting examples
 - [Simulation 1](simulation1.html): supporting simulation study for interpolation and prediction
 - [Simulation 2](simulation2.html): additional robustness simulation study
-- [Case-Crossover](casecross.html): application page using the mGP FEM machinery
+- [Case-Crossover](casecross.html): PM2.5 case-crossover application comparing mGP and t-IWP2 under FEM and state-space computation
+- [Case-Crossover Simulation Demo](casecross_simulation_demo.html): simulated case-crossover data and BayesGP fits with known effects
 - [About](about.html): repository scope and implementation status
 
 ### **View Locally**

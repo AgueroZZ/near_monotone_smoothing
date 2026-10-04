@@ -21,6 +21,8 @@ navbar:
       href: simulation2.html
     - text: Case-Crossover
       href: casecross.html
+    - text: Case-Crossover Simulation Demo
+      href: casecross_simulation_demo.html
   - text: Project
     menu:
     - text: About
