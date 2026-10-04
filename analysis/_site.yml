@@ -1,0 +1,35 @@
+name: "Smoothing with M-GP"
+output_dir: ../docs
+navbar:
+  title: "Smoothing with M-GP"
+  left:
+  - text: Home
+    href: index.html
+  - text: Methods
+    menu:
+    - text: mGP vs tIWP2
+      href: mGP_vs_tIWP2.html
+    - text: PSD
+      href: PSD.html
+    - text: Illustration
+      href: illustration.html
+  - text: Supporting
+    menu:
+    - text: Simulation 1
+      href: simulation1.html
+    - text: Simulation 2
+      href: simulation2.html
+    - text: Case-Crossover
+      href: casecross.html
+  - text: Project
+    menu:
+    - text: About
+      href: about.html
+    - text: License
+      href: license.html
+output:
+  workflowr::wflow_html:
+    toc: yes
+    toc_float: yes
+    theme: cosmo
+    highlight: textmate

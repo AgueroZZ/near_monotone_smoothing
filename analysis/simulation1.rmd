@@ -1,0 +1,803 @@
+---
+title: "Simulation 1"
+author: "Ziang Zhang"
+date: "2024-06-19"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+library(tidyverse)
+library(Matrix)
+library(knitr)
+devtools::load_all("BayesGP", quiet = TRUE)
+c <- 1
+B <- 1000
+n <- 200
+true_psd <- 2
+sd_noise <- 2
+set.seed(123)
+```
+
+## **Introduction**
+
+In this simulation study, we study the robustness of the tIWP2 and the mGP priors.
+
+
+## **Simulation A: True model is mGP**
+
+The simulation A is designed as follows, for each of the $B = 1000$ replications:
+
+- $f$ is simulated from a mGP process with $a = 2$, with a true PSD $\sigma_0(5) = 2$.
+- For $x_i$ equally spaced between $[0,20]$, $n = 200$ observations are simulated from $y_i = f(x_i) + \epsilon_i$ with $\epsilon_i \sim N(0, 2)$. 
+- The posterior $\pi(f|\boldsymbol{y})$ is obtained using both the tIWP2 and the mGP priors, only using data with $x \in [0,10]$. The prior for the smoothing parameter is chosen as an Exponential prior centered at the true PSD $\sigma_0(5)$.
+- The pointwise coverage probabilities of the 50\%, 80\%, and 95\% credible interval for $f$, as well as the mean squared error and the mean relative error of the posterior mean of $f$ are all recorded for each replication.
+
+```{r, echo=FALSE}
+sim_data_once <- function(n = 199, sd_noise = 2, psd_fun = 2){
+  x <- seq(0, 20, length.out = n + 1)
+  sd_fun <- psd_fun / PSD_compute(model = "mgp", h = 5, x = 0, a = 2, c = c)
+  f_vec <- mGP_sim(t = x, alpha = 2, c = c, initial_vec = c(0, 5), sd = sd_fun)[-1, 2]
+  data.frame(x = x[-1], y = f_vec + rnorm(n, 0, sd_noise), f = f_vec)
+}
+
+evaluate_model_once <- function(data_train, data_sim, model_fit, M = 3000){
+  evaluate_train_prediction_draws(
+    samples = as.matrix(
+      predict(model_fit, newdata = data_sim, variable = "x", only.samples = TRUE)[, -1, drop = FALSE]
+    ),
+    truth = data_sim$f,
+    n_train = nrow(data_train)
+  )
+}
+
+fit_nearmonotone_model <- function(data_train, data_sim, model_name, prior_u,
+                                   computation_method = "state-space",
+                                   normalized_boundary = TRUE){
+  model_fit(
+    formula = y ~ f(
+      x,
+      model = model_name,
+      computation = computation_method,
+      a = 2,
+      c = c,
+      grid = data_sim$x,
+      normalized_boundary = normalized_boundary,
+      sd.prior = list(prior = "exp", param = list(u = prior_u, alpha = 0.5))
+    ),
+    data = data_train,
+    family = "gaussian",
+    control.family = list(sd = sd_noise),
+    M = 3000
+  )
+}
+
+replicate_comparison_B_times <- function(B, n, sd_noise = 2, psd_fun = 2,
+                                         observed_max = 10, parallel = FALSE,
+                                         u_mgp, u_tiwp2) {
+  empty_metrics <- data.frame(
+    coverage_50 = numeric(0),
+    coverage_80 = numeric(0),
+    coverage_95 = numeric(0),
+    rmse = numeric(0),
+    rmle = numeric(0)
+  )
+
+  run_one_iteration <- function(){
+    data_sim <- sim_data_once(n = n, sd_noise = sd_noise, psd_fun = psd_fun)
+    data_train <- data_sim %>% filter(x <= observed_max)
+
+    mGP_fit <- fit_nearmonotone_model(
+      data_train = data_train,
+      data_sim = data_sim,
+      model_name = "mgp",
+      prior_u = u_mgp,
+      computation_method = "state-space",
+      normalized_boundary = TRUE
+    )
+    tiwp2_fit <- fit_nearmonotone_model(
+      data_train = data_train,
+      data_sim = data_sim,
+      model_name = "tiwp2",
+      prior_u = u_tiwp2,
+      computation_method = "state-space"
+    )
+
+    mGP_result <- evaluate_model_once(data_train = data_train, data_sim = data_sim, model_fit = mGP_fit)
+    tIWP2_result <- evaluate_model_once(data_train = data_train, data_sim = data_sim, model_fit = tiwp2_fit)
+
+    list(
+      mGP_inter = mGP_result$data_inter,
+      mGP_pred = mGP_result$data_pred,
+      tIWP2_inter = tIWP2_result$data_inter,
+      tIWP2_pred = tIWP2_result$data_pred
+    )
+  }
+
+  bind_metric_rows <- function(results, field){
+    valid_results <- Filter(Negate(is.null), results)
+    if(length(valid_results) == 0){
+      return(empty_metrics)
+    }
+    bind_rows(lapply(valid_results, `[[`, field))
+  }
+
+  if(!parallel) {
+    results <- vector("list", B)
+    for(i in seq_len(B)) {
+      results[[i]] <- tryCatch(
+        run_one_iteration(),
+        error = function(e) {
+          cat("Error at iteration", i, ":", e$message, "\n")
+          NULL
+        }
+      )
+      if(i %% 10 == 0){
+        cat("Completed iteration", i, "out of", B, "\n")
+      }
+    }
+  } else {
+    library(parallel)
+    cl <- makeCluster(detectCores() - 12)
+    on.exit(stopCluster(cl))
+
+    clusterExport(
+      cl,
+      varlist = c("sim_data_once", "evaluate_model_once", "run_one_iteration",
+                  "n", "c", "psd_factor_mgp", "psd_factor_tiwp2", "true_psd",
+                  "sd_noise", "observed_max", "u_mgp", "u_tiwp2", "psd_fun",
+                  "fit_nearmonotone_model"),
+      envir = environment()
+    )
+
+    clusterEvalQ(cl, {
+      library(tidyverse)
+      devtools::load_all("BayesGP", quiet = TRUE)
+      TRUE
+    })
+
+    results <- parLapply(cl, seq_len(B), function(i){
+      tryCatch(
+        run_one_iteration(),
+        error = function(e) {
+          cat("Error in iteration", i, ":", e$message, "\n")
+          NULL
+        }
+      )
+    })
+  }
+
+  list(
+    mGP_inter = bind_metric_rows(results, "mGP_inter"),
+    mGP_pred = bind_metric_rows(results, "mGP_pred"),
+    tIWP2_inter = bind_metric_rows(results, "tIWP2_inter"),
+    tIWP2_pred = bind_metric_rows(results, "tIWP2_pred")
+  )
+}
+```
+
+```{r eval=FALSE, message=FALSE, warning=FALSE, echo=FALSE}
+psd_factor_tiwp2 <- true_psd / PSD_compute(model = "tiwp2", h = 5, x = 0, a = 2, c = 1)
+psd_factor_mgp <- true_psd / PSD_compute(model = "mgp", h = 5, x = 0, a = 2, c = c)
+all_result <- replicate_comparison_B_times(B = B, n = n, parallel = T, u_mgp = psd_factor_mgp, u_tiwp2 = psd_factor_tiwp2, sd_noise = 2, psd_fun = true_psd)
+save(all_result, file = "output/sim1_all_resultA.rda")
+```
+
+```{r, echo=FALSE}
+load("output/sim1_all_resultA.rda")
+```
+
+Visualize the RMSE result for interpolation and prediction:
+```{r, echo=FALSE}
+rmse_results <- bind_rows(
+  all_result$mGP_inter %>%
+    mutate(model = "mGP", type = "inter"),
+  all_result$tIWP2_inter %>%
+    mutate(model = "tIWP2", type = "inter"),
+  all_result$mGP_pred %>%
+    mutate(model = "mGP", type = "pred"),
+  all_result$tIWP2_pred %>%
+    mutate(model = "tIWP2", type = "pred")
+) %>%
+  select(rmse, model, type) %>%
+  pivot_longer(cols = starts_with("rmse"),
+               names_to = "rmse_level",
+               values_to = "rmse_value") %>%
+  mutate(rmse_level = gsub("rmse_", "", rmse_level))
+
+rmse_results %>% ggplot(aes(x = type, y = (rmse_value), fill = model)) +
+  geom_boxplot(outliers = F) +
+  scale_fill_manual(values = c("mGP" = "skyblue", "tIWP2" = "salmon")) +
+  labs(title = "Comparison of RMSE",
+       x = "Setting",
+       y = "RMSE",
+       fill = "Model") +
+  scale_y_log10() +
+  theme_minimal()
+```
+
+Visualize the MLE result for interpolation and prediction:
+```{r, echo=FALSE}
+rmle_results <- bind_rows(
+  all_result$mGP_inter %>%
+    mutate(model = "mGP", type = "inter"),
+  all_result$tIWP2_inter %>%
+    mutate(model = "tIWP2", type = "inter"),
+  all_result$mGP_pred %>%
+    mutate(model = "mGP", type = "pred"),
+  all_result$tIWP2_pred %>%
+    mutate(model = "tIWP2", type = "pred")
+) %>%
+  select(rmle, model, type) %>%
+  pivot_longer(cols = starts_with("rmle"),
+               names_to = "rmle_level",
+               values_to = "rmle_value") %>%
+  mutate(rmle_level = gsub("rmle_", "", rmle_level))
+
+rmle_results %>% ggplot(aes(x = type, y = rmle_value, fill = model)) +
+  geom_boxplot(outliers = F) +
+  scale_fill_manual(values = c("mGP" = "skyblue", "tIWP2" = "salmon")) +
+  labs(title = "Comparison of mean relative error",
+       x = "Setting",
+       y = "relative error",
+       fill = "Model") +
+  theme_minimal()
+
+```
+
+A table of the summary statistics:
+```{r, echo=FALSE}
+# Aggregating mean and standard deviation for inter results
+inter_summary <- bind_rows(
+  all_result$mGP_inter %>%
+    summarise(
+      model = "mGP",
+      mean_coverage_50 = mean(coverage_50),
+      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/n()),
+      mean_coverage_80 = mean(coverage_80),
+      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/n()),
+      mean_coverage_95 = mean(coverage_95),
+      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/n()),
+      mean_rmse = mean(rmse),
+      sd_rmse = sd(rmse),
+      mean_rmle = mean(rmle),
+      sd_rmle = sd(rmle)
+    ),
+  all_result$tIWP2_inter %>%
+    summarise(
+      model = "tIWP2",
+      mean_coverage_50 = mean(coverage_50),
+      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/n()),
+      mean_coverage_80 = mean(coverage_80),
+      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/n()),
+      mean_coverage_95 = mean(coverage_95),
+      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/n()),
+      mean_rmse = mean(rmse),
+      sd_rmse = sd(rmse),
+      mean_rmle = mean(rmle),
+      sd_rmle = sd(rmle)
+    )
+) %>%
+  mutate(case = "Inter")
+
+# Aggregating mean and standard deviation for pred results
+pred_summary <- bind_rows(
+  all_result$mGP_pred %>%
+    summarise(
+      model = "mGP",
+      mean_coverage_50 = mean(coverage_50),
+      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/n()),
+      mean_coverage_80 = mean(coverage_80),
+      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/n()),
+      mean_coverage_95 = mean(coverage_95),
+      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/n()),
+      mean_rmse = mean(rmse),
+      sd_rmse = sd(rmse),
+      mean_rmle = mean(rmle),
+      sd_rmle = sd(rmle)
+    ),
+  all_result$tIWP2_pred %>%
+    summarise(
+      model = "tIWP2",
+      mean_coverage_50 = mean(coverage_50),
+      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/n()),
+      mean_coverage_80 = mean(coverage_80),
+      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/n()),
+      mean_coverage_95 = mean(coverage_95),
+      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/n()),
+      mean_rmse = mean(rmse),
+      sd_rmse = sd(rmse),
+      mean_rmle = mean(rmle),
+      sd_rmle = sd(rmle)
+    )
+) %>%
+  mutate(case = "Pred")
+
+# Combine mean and standard deviation into a single column
+format_with_sd <- function(mean_val, sd_val) {
+  paste0(round(mean_val, 3), " (", round(sd_val, 3), ")")
+}
+
+# Create summary table for the "Inter" scenario
+inter_summary_table <- inter_summary %>%
+  mutate(
+    Coverage_50 = format_with_sd(mean_coverage_50, sd_coverage_50),
+    Coverage_80 = format_with_sd(mean_coverage_80, sd_coverage_80),
+    Coverage_95 = format_with_sd(mean_coverage_95, sd_coverage_95),
+    RMSE = format_with_sd(mean_rmse, sd_rmse),
+    MLE = format_with_sd(mean_rmle, sd_rmle)
+  ) %>%
+  select(Model = model, `Coverage 50%` = Coverage_50, `Coverage 80%` = Coverage_80, `Coverage 95%` = Coverage_95, RMSE, MLE)
+
+# Create summary table for the "Pred" scenario
+pred_summary_table <- pred_summary %>%
+  mutate(
+    Coverage_50 = format_with_sd(mean_coverage_50, sd_coverage_50),
+    Coverage_80 = format_with_sd(mean_coverage_80, sd_coverage_80),
+    Coverage_95 = format_with_sd(mean_coverage_95, sd_coverage_95),
+    RMSE = format_with_sd(mean_rmse, sd_rmse),
+    MLE = format_with_sd(mean_rmle, sd_rmle)
+  ) %>%
+  select(Model = model, `Coverage 50%` = Coverage_50, `Coverage 80%` = Coverage_80, `Coverage 95%` = Coverage_95, RMSE, MLE)
+
+# Display the tables using kable
+inter_summary_table %>%
+  kable(format = "markdown", caption = "Summary for Inter Scenario")
+
+pred_summary_table %>%
+  kable(format = "markdown", caption = "Summary for Pred Scenario")
+```
+
+Visualize the coverage probabilities for interpolation and prediction:
+```{r, echo=FALSE}
+# Prepare the data for the Inter scenario
+inter_coverage_plot_data <- inter_summary %>%
+  pivot_longer(cols = starts_with("mean_coverage"),
+               names_to = "Coverage_Level",
+               values_to = "Coverage") %>%
+  mutate(SD = case_when(
+    Coverage_Level == "mean_coverage_50" ~ sd_coverage_50,
+    Coverage_Level == "mean_coverage_80" ~ sd_coverage_80,
+    Coverage_Level == "mean_coverage_95" ~ sd_coverage_95
+  )) %>%
+  mutate(
+    lower = Coverage - 3 * SD,
+    upper = Coverage + 3 * SD,
+    Coverage_Level = recode(Coverage_Level, 
+                            "mean_coverage_50" = "50%", 
+                            "mean_coverage_80" = "80%", 
+                            "mean_coverage_95" = "95%")
+  )
+
+ggplot(inter_coverage_plot_data, aes(x = Coverage_Level, y = Coverage, fill = model)) +
+  geom_point(position = position_dodge(width = 0.5), size = 3, shape = 21, color = "black") +
+  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2, position = position_dodge(width = 0.5)) +
+  geom_hline(aes(yintercept = as.numeric(sub("%", "", Coverage_Level)) / 100), linetype = "dashed", color = "gray50") +
+  scale_fill_manual(values = c("mGP" = "skyblue", "tIWP2" = "salmon")) +
+  coord_cartesian(ylim = c(0, 1)) +
+  scale_y_continuous(breaks = c(0.5, 0.8, 0.95)) +
+  labs(title = "Interval Plot of Coverage Rates (Inter Scenario)",
+       x = "Coverage Level",
+       y = "Coverage Rate",
+       fill = "Model") +
+  theme_minimal()
+
+
+# Prepare the data for the Pred scenario
+pred_coverage_plot_data <- pred_summary %>%
+  pivot_longer(cols = starts_with("mean_coverage"),
+               names_to = "Coverage_Level",
+               values_to = "Coverage") %>%
+  mutate(SD = case_when(
+    Coverage_Level == "mean_coverage_50" ~ sd_coverage_50,
+    Coverage_Level == "mean_coverage_80" ~ sd_coverage_80,
+    Coverage_Level == "mean_coverage_95" ~ sd_coverage_95
+  )) %>%
+  mutate(
+    lower = Coverage - 3 * SD,
+    upper = Coverage + 3 * SD,
+    Coverage_Level = recode(Coverage_Level, 
+                            "mean_coverage_50" = "50%", 
+                            "mean_coverage_80" = "80%", 
+                            "mean_coverage_95" = "95%")
+  )
+
+ggplot(pred_coverage_plot_data, aes(x = Coverage_Level, y = Coverage, fill = model)) +
+  geom_point(position = position_dodge(width = 0.5), size = 3, shape = 21, color = "black") +
+  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2, position = position_dodge(width = 0.5)) +
+  geom_hline(aes(yintercept = as.numeric(sub("%", "", Coverage_Level)) / 100), linetype = "dashed", color = "gray50") +
+  scale_fill_manual(values = c("mGP" = "skyblue", "tIWP2" = "salmon")) +
+  coord_cartesian(ylim = c(0, 1)) +
+  scale_y_continuous(breaks = c(0.5, 0.8, 0.95)) +
+  labs(title = "Interval Plot of Coverage Rates (Pred Scenario)",
+       x = "Coverage Level",
+       y = "Coverage Rate",
+       fill = "Model") +
+  theme_minimal()
+```
+
+
+
+
+
+
+## **Simulation B: True model is tIWP2**
+
+The simulation B is designed similarly as the simulation A, except now:
+
+- $f$ is simulated from a tIWP2 process generated by $\sqrt{x+c}$, with a true PSD $\sigma_0(5) = 2$.
+
+```{r, echo=FALSE}
+set.seed(123)
+sim_data_once_B <- function(n = 199, sd_noise = 2, psd_fun = 2){
+  x <- seq(0, 20, length.out = n + 1)
+  sd_fun <- psd_fun / PSD_compute(model = "tiwp2", h = 5, x = 0, a = 2, c = c)
+  f_vec <- simulate_tiwp_boxcox(
+    x = x,
+    a = 2,
+    c = c,
+    sd = sd_fun,
+    initial_level = 0,
+    initial_slope = 5,
+    normalized_transform = TRUE
+  )[-1]
+  data.frame(x = x[-1], y = f_vec + rnorm(n, 0, sd_noise), f = f_vec)
+}
+true_psd <- PSD_compute(model = "tiwp2", h = 5, x = 0, sd = 1, a = 2, c = 1)
+psd_factor_mgp <- true_psd / PSD_compute(model = "mgp", h = 5, x = 0, a = 2, c = c)
+# data_sim <- sim_data_once_B(n)
+# plot(data_sim$x, data_sim$f, type = "l", col = "blue", lwd = 2, xlab = "x", ylab = "f(x)")
+# points(data_sim$x, data_sim$y, col = "black")
+replicate_comparison_B_times_B <- function(B, n, sd_noise = 2, psd_fun = 2,
+                                           observed_max = 10, parallel = FALSE,
+                                           u_mgp, u_tiwp2) {
+  empty_metrics <- data.frame(
+    coverage_50 = numeric(0),
+    coverage_80 = numeric(0),
+    coverage_95 = numeric(0),
+    rmse = numeric(0),
+    rmle = numeric(0)
+  )
+
+  run_one_iteration <- function(){
+    data_sim <- sim_data_once_B(n = n, sd_noise = sd_noise, psd_fun = psd_fun)
+    data_train <- data_sim %>% filter(x <= observed_max)
+
+    mGP_fit <- fit_nearmonotone_model(
+      data_train = data_train,
+      data_sim = data_sim,
+      model_name = "mgp",
+      prior_u = u_mgp,
+      computation_method = "state-space",
+      normalized_boundary = TRUE
+    )
+    tiwp2_fit <- fit_nearmonotone_model(
+      data_train = data_train,
+      data_sim = data_sim,
+      model_name = "tiwp2",
+      prior_u = u_tiwp2,
+      computation_method = "state-space"
+    )
+
+    mGP_result <- evaluate_model_once(data_train = data_train, data_sim = data_sim, model_fit = mGP_fit)
+    tIWP2_result <- evaluate_model_once(data_train = data_train, data_sim = data_sim, model_fit = tiwp2_fit)
+
+    list(
+      mGP_inter = mGP_result$data_inter,
+      mGP_pred = mGP_result$data_pred,
+      tIWP2_inter = tIWP2_result$data_inter,
+      tIWP2_pred = tIWP2_result$data_pred
+    )
+  }
+
+  bind_metric_rows <- function(results, field){
+    valid_results <- Filter(Negate(is.null), results)
+    if(length(valid_results) == 0){
+      return(empty_metrics)
+    }
+    bind_rows(lapply(valid_results, `[[`, field))
+  }
+
+  if(!parallel) {
+    results <- vector("list", B)
+    for(i in seq_len(B)) {
+      results[[i]] <- tryCatch(
+        run_one_iteration(),
+        error = function(e) {
+          cat("Error at iteration", i, ":", e$message, "\n")
+          NULL
+        }
+      )
+      if(i %% 10 == 0){
+        cat("Completed iteration", i, "out of", B, "\n")
+      }
+    }
+  } else {
+    library(parallel)
+    cl <- makeCluster(detectCores() - 12)
+    on.exit(stopCluster(cl))
+
+    clusterExport(
+      cl,
+      varlist = c("sim_data_once_B", "evaluate_model_once", "run_one_iteration",
+                  "n", "c", "psd_factor_mgp", "psd_factor_tiwp2", "true_psd",
+                  "sd_noise", "observed_max", "u_mgp", "u_tiwp2", "psd_fun",
+                  "fit_nearmonotone_model"),
+      envir = environment()
+    )
+
+    clusterEvalQ(cl, {
+      library(tidyverse)
+      devtools::load_all("BayesGP", quiet = TRUE)
+      TRUE
+    })
+
+    results <- parLapply(cl, seq_len(B), function(i){
+      tryCatch(
+        run_one_iteration(),
+        error = function(e) {
+          cat("Error in iteration", i, ":", e$message, "\n")
+          NULL
+        }
+      )
+    })
+  }
+
+  list(
+    mGP_inter = bind_metric_rows(results, "mGP_inter"),
+    mGP_pred = bind_metric_rows(results, "mGP_pred"),
+    tIWP2_inter = bind_metric_rows(results, "tIWP2_inter"),
+    tIWP2_pred = bind_metric_rows(results, "tIWP2_pred")
+  )
+}
+
+```
+
+```{r eval=FALSE, message=FALSE, warning=FALSE, echo=FALSE}
+psd_factor_tiwp2 <- true_psd / PSD_compute(model = "tiwp2", h = 5, x = 0, a = 2, c = 1)
+psd_factor_mgp <- true_psd / PSD_compute(model = "mgp", h = 5, x = 0, a = 2, c = c)
+all_result <- replicate_comparison_B_times_B(B = B, n = n, parallel = T, u_mgp = psd_factor_mgp, u_tiwp2 = psd_factor_tiwp2, sd_noise = sd_noise, psd_fun = true_psd)
+save(all_result, file = "output/sim1_all_resultB.rda")
+```
+
+```{r, echo=FALSE}
+load("output/sim1_all_resultB.rda")
+```
+
+Visualize the RMSE result for interpolation and prediction:
+```{r, echo=FALSE}
+rmse_results <- bind_rows(
+  all_result$mGP_inter %>%
+    mutate(model = "mGP", type = "inter"),
+  all_result$tIWP2_inter %>%
+    mutate(model = "tIWP2", type = "inter"),
+  all_result$mGP_pred %>%
+    mutate(model = "mGP", type = "pred"),
+  all_result$tIWP2_pred %>%
+    mutate(model = "tIWP2", type = "pred")
+) %>%
+  select(rmse, model, type) %>%
+  pivot_longer(cols = starts_with("rmse"),
+               names_to = "rmse_level",
+               values_to = "rmse_value") %>%
+  mutate(rmse_level = gsub("rmse_", "", rmse_level))
+
+rmse_results %>% ggplot(aes(x = type, y = (rmse_value), fill = model)) +
+  geom_boxplot(outliers = F) +
+  scale_fill_manual(values = c("mGP" = "skyblue", "tIWP2" = "salmon")) +
+  labs(title = "Comparison of RMSE",
+       x = "Setting",
+       y = "RMSE",
+       fill = "Model") +
+  scale_y_log10() +
+  theme_minimal()
+```
+
+Visualize the MLE result for interpolation and prediction:
+```{r, echo=FALSE}
+rmle_results <- bind_rows(
+  all_result$mGP_inter %>%
+    mutate(model = "mGP", type = "inter"),
+  all_result$tIWP2_inter %>%
+    mutate(model = "tIWP2", type = "inter"),
+  all_result$mGP_pred %>%
+    mutate(model = "mGP", type = "pred"),
+  all_result$tIWP2_pred %>%
+    mutate(model = "tIWP2", type = "pred")
+) %>%
+  select(rmle, model, type) %>%
+  pivot_longer(cols = starts_with("rmle"),
+               names_to = "rmle_level",
+               values_to = "rmle_value") %>%
+  mutate(rmle_level = gsub("rmle_", "", rmle_level))
+
+rmle_results %>% ggplot(aes(x = type, y = rmle_value, fill = model)) +
+  geom_boxplot(outliers = F) +
+  scale_fill_manual(values = c("mGP" = "skyblue", "tIWP2" = "salmon")) +
+  labs(title = "Comparison of mean relative error",
+       x = "Setting",
+       y = "relative error",
+       fill = "Model") +
+  theme_minimal()
+
+```
+
+A table of the summary statistics:
+```{r, echo=FALSE}
+# Aggregating mean and standard deviation for inter results
+inter_summary <- bind_rows(
+  all_result$mGP_inter %>%
+    summarise(
+      model = "mGP",
+      mean_coverage_50 = mean(coverage_50),
+      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/n()),
+      mean_coverage_80 = mean(coverage_80),
+      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/n()),
+      mean_coverage_95 = mean(coverage_95),
+      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/n()),
+      mean_rmse = mean(rmse),
+      sd_rmse = sd(rmse),
+      mean_rmle = mean(rmle),
+      sd_rmle = sd(rmle)
+    ),
+  all_result$tIWP2_inter %>%
+    summarise(
+      model = "tIWP2",
+      mean_coverage_50 = mean(coverage_50),
+      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/n()),
+      mean_coverage_80 = mean(coverage_80),
+      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/n()),
+      mean_coverage_95 = mean(coverage_95),
+      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/n()),
+      mean_rmse = mean(rmse),
+      sd_rmse = sd(rmse),
+      mean_rmle = mean(rmle),
+      sd_rmle = sd(rmle)
+    )
+) %>%
+  mutate(case = "Inter")
+
+# Aggregating mean and standard deviation for pred results
+pred_summary <- bind_rows(
+  all_result$mGP_pred %>%
+    summarise(
+      model = "mGP",
+      mean_coverage_50 = mean(coverage_50),
+      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/n()),
+      mean_coverage_80 = mean(coverage_80),
+      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/n()),
+      mean_coverage_95 = mean(coverage_95),
+      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/n()),
+      mean_rmse = mean(rmse),
+      sd_rmse = sd(rmse),
+      mean_rmle = mean(rmle),
+      sd_rmle = sd(rmle)
+    ),
+  all_result$tIWP2_pred %>%
+    summarise(
+      model = "tIWP2",
+      mean_coverage_50 = mean(coverage_50),
+      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/n()),
+      mean_coverage_80 = mean(coverage_80),
+      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/n()),
+      mean_coverage_95 = mean(coverage_95),
+      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/n()),
+      mean_rmse = mean(rmse),
+      sd_rmse = sd(rmse),
+      mean_rmle = mean(rmle),
+      sd_rmle = sd(rmle)
+    )
+) %>%
+  mutate(case = "Pred")
+
+# Combine mean and standard deviation into a single column
+format_with_sd <- function(mean_val, sd_val) {
+  paste0(round(mean_val, 3), " (", round(sd_val, 3), ")")
+}
+
+# Create summary table for the "Inter" scenario
+inter_summary_table <- inter_summary %>%
+  mutate(
+    Coverage_50 = format_with_sd(mean_coverage_50, sd_coverage_50),
+    Coverage_80 = format_with_sd(mean_coverage_80, sd_coverage_80),
+    Coverage_95 = format_with_sd(mean_coverage_95, sd_coverage_95),
+    RMSE = format_with_sd(mean_rmse, sd_rmse),
+    MLE = format_with_sd(mean_rmle, sd_rmle)
+  ) %>%
+  select(Model = model, `Coverage 50%` = Coverage_50, `Coverage 80%` = Coverage_80, `Coverage 95%` = Coverage_95, RMSE, MLE)
+
+# Create summary table for the "Pred" scenario
+pred_summary_table <- pred_summary %>%
+  mutate(
+    Coverage_50 = format_with_sd(mean_coverage_50, sd_coverage_50),
+    Coverage_80 = format_with_sd(mean_coverage_80, sd_coverage_80),
+    Coverage_95 = format_with_sd(mean_coverage_95, sd_coverage_95),
+    RMSE = format_with_sd(mean_rmse, sd_rmse),
+    MLE = format_with_sd(mean_rmle, sd_rmle)
+  ) %>%
+  select(Model = model, `Coverage 50%` = Coverage_50, `Coverage 80%` = Coverage_80, `Coverage 95%` = Coverage_95, RMSE, MLE)
+
+# Display the tables using kable
+inter_summary_table %>%
+  kable(format = "markdown", caption = "Summary for Inter Scenario")
+
+pred_summary_table %>%
+  kable(format = "markdown", caption = "Summary for Pred Scenario")
+```
+
+Visualize the coverage probabilities for interpolation and prediction:
+```{r, echo=FALSE}
+# Prepare the data for the Inter scenario
+inter_coverage_plot_data <- inter_summary %>%
+  pivot_longer(cols = starts_with("mean_coverage"),
+               names_to = "Coverage_Level",
+               values_to = "Coverage") %>%
+  mutate(SD = case_when(
+    Coverage_Level == "mean_coverage_50" ~ sd_coverage_50,
+    Coverage_Level == "mean_coverage_80" ~ sd_coverage_80,
+    Coverage_Level == "mean_coverage_95" ~ sd_coverage_95
+  )) %>%
+  mutate(
+    lower = Coverage - 3 * SD,
+    upper = Coverage + 3 * SD,
+    Coverage_Level = recode(Coverage_Level, 
+                            "mean_coverage_50" = "50%", 
+                            "mean_coverage_80" = "80%", 
+                            "mean_coverage_95" = "95%")
+  )
+
+ggplot(inter_coverage_plot_data, aes(x = Coverage_Level, y = Coverage, fill = model)) +
+  geom_point(position = position_dodge(width = 0.5), size = 3, shape = 21, color = "black") +
+  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2, position = position_dodge(width = 0.5)) +
+  geom_hline(aes(yintercept = as.numeric(sub("%", "", Coverage_Level)) / 100), linetype = "dashed", color = "gray50") +
+  scale_fill_manual(values = c("mGP" = "skyblue", "tIWP2" = "salmon")) +
+  coord_cartesian(ylim = c(0, 1)) +
+  scale_y_continuous(breaks = c(0.5, 0.8, 0.95)) +
+  labs(title = "Interval Plot of Coverage Rates (Inter Scenario)",
+       x = "Coverage Level",
+       y = "Coverage Rate",
+       fill = "Model") +
+  theme_minimal()
+
+
+# Prepare the data for the Pred scenario
+pred_coverage_plot_data <- pred_summary %>%
+  pivot_longer(cols = starts_with("mean_coverage"),
+               names_to = "Coverage_Level",
+               values_to = "Coverage") %>%
+  mutate(SD = case_when(
+    Coverage_Level == "mean_coverage_50" ~ sd_coverage_50,
+    Coverage_Level == "mean_coverage_80" ~ sd_coverage_80,
+    Coverage_Level == "mean_coverage_95" ~ sd_coverage_95
+  )) %>%
+  mutate(
+    lower = Coverage - 3 * SD,
+    upper = Coverage + 3 * SD,
+    Coverage_Level = recode(Coverage_Level, 
+                            "mean_coverage_50" = "50%", 
+                            "mean_coverage_80" = "80%", 
+                            "mean_coverage_95" = "95%")
+  )
+
+ggplot(pred_coverage_plot_data, aes(x = Coverage_Level, y = Coverage, fill = model)) +
+  geom_point(position = position_dodge(width = 0.5), size = 3, shape = 21, color = "black") +
+  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2, position = position_dodge(width = 0.5)) +
+  geom_hline(aes(yintercept = as.numeric(sub("%", "", Coverage_Level)) / 100), linetype = "dashed", color = "gray50") +
+  scale_fill_manual(values = c("mGP" = "skyblue", "tIWP2" = "salmon")) +
+  coord_cartesian(ylim = c(0, 1)) +
+  scale_y_continuous(breaks = c(0.5, 0.8, 0.95)) +
+  labs(title = "Interval Plot of Coverage Rates (Pred Scenario)",
+       x = "Coverage Level",
+       y = "Coverage Rate",
+       fill = "Model") +
+  theme_minimal()
+```
+
+
+
+
+
+
+

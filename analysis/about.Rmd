@@ -1,0 +1,33 @@
+---
+title: "About"
+output:
+  workflowr::wflow_html:
+    toc: false
+editor_options:
+  chunk_output_type: console
+---
+
+This project studies Bayesian smoothing for functions that are close to a monotone base model but may deviate from it locally.
+
+The central object is the M-GP prior
+\[
+L_\alpha f(x) = \sigma \xi(x),
+\]
+where the differential operator is chosen so that its null space matches a monotone Box-Cox family. This allows the prior to favor shapes such as square-root, logarithmic, or power-law growth instead of defaulting to the linear base model of an IWP2.
+
+The repository currently contains three canonical method components:
+
+- Exact mGP inference through the augmented state-space representation
+- Exact transformed-IWP2 (`t-IWP2`) inference as a comparison construction
+- A finite-element approximation for mGP based on cubic B-splines
+
+The repository does **not** currently contain a first-class FEM implementation for `t-IWP2`.
+
+The retained workflowr pages focus on:
+
+- the high-level method overview
+- predictive standard deviation calibration
+- an end-to-end illustration
+- a conceptual and numerical comparison between mGP and t-IWP2
+
+Additional simulation and application pages are kept as supporting analyses, while older debug/prototype materials are archived under `archive/` outside the active workflowr tree.

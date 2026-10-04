@@ -1,0 +1,216 @@
+---
+title: "Case-Crossover Simulation Demo"
+author: "Ziang Zhang"
+date: "2026-04-24"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Goal
+
+This file shows a minimal workflow for:
+
+1. simulating `dailymort_pulm_nonsenior` with `simulate_casecrossover_data()`;
+2. fitting a case-crossover model with four simple smooth effects using `BayesGP`;
+3. extracting the posterior for each effect function with `predict()`;
+4. simulating and fitting a simpler PM2.5-only data-generating process.
+
+The simulation below uses deliberately high-contrast effects and sets the total
+case count in each stratum explicitly before the multinomial redistribution.
+The fit uses all strata under the grouped multinomial case-crossover likelihood.
+
+```{r setup}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.align = "center"
+)
+
+source("analysis/simulate_casecrossover_data.R")
+
+library(BayesGP)
+```
+
+
+Define small helpers for extracting and plotting posterior effects. Because the
+model uses `initial_location = pm25_reference` and `family = "cc"` has no
+intercept, `predict()` should already return an effect that is anchored at the
+reference value.
+
+```{r posterior-helpers}
+posterior_effect <- function(fit, data, variable, true_fun, n_grid = 50,
+                             reference = NULL) {
+  variable_range <- range(data[[variable]], na.rm = TRUE)
+  grid_values <- seq(
+    variable_range[1],
+    variable_range[2],
+    length.out = n_grid
+  )
+
+  if (!is.null(reference)) {
+    if (!is.numeric(reference) || length(reference) != 1 || !is.finite(reference)) {
+      stop("`reference` must be NULL or a finite numeric scalar.", call. = FALSE)
+    }
+    if (reference < variable_range[1] || reference > variable_range[2]) {
+      stop("`reference` must lie inside the observed range of `variable`.", call. = FALSE)
+    }
+    grid_values <- sort(unique(c(grid_values, reference)))
+  }
+
+  newdata <- data.frame(grid_values)
+  names(newdata) <- variable
+
+  summary_df <- predict(
+    fit,
+    newdata = newdata,
+    variable = variable,
+    only.samples = FALSE
+  )
+
+  summary_df$true <- true_fun(summary_df[[variable]])
+  summary_df
+}
+
+plot_effect <- function(effect_df, variable, x_label) {
+  x <- effect_df[[variable]]
+  y_range <- range(
+    effect_df$q0.025,
+    effect_df$q0.975,
+    effect_df$true,
+    finite = TRUE
+  )
+
+  plot(
+    x,
+    effect_df$mean,
+    type = "n",
+    ylim = y_range,
+    xlab = x_label,
+  ylab = "Centered effect",
+    main = x_label
+  )
+
+  polygon(
+    c(x, rev(x)),
+    c(effect_df$q0.025, rev(effect_df$q0.975)),
+    col = grDevices::adjustcolor("grey70", alpha.f = 0.45),
+    border = NA
+  )
+  lines(x, effect_df$mean, lwd = 2)
+  lines(x, effect_df$true, col = "red", lwd = 2, lty = 2)
+  legend(
+    "topleft",
+    legend = c("Posterior mean", "True function"),
+    lty = c(1, 2),
+    lwd = 2,
+    col = c("black", "red"),
+    bty = "n"
+  )
+}
+```
+
+
+## Simulate A Toy Case-Crossover Dataset
+
+```{r simulate-data}
+data_env <- new.env(parent = emptyenv())
+load("data/data_CD3518_sample_2.RData", envir = data_env)
+base_data <- data_env$data_CD3518_sample_2
+
+simulation_base_data <- base_data
+simulation_base_data$strata <- format(simulation_base_data$Date, "%Y%b%A")
+cases_per_stratum <- 50L
+pm25_reference <- 5
+f_pm25_true <- function(x) {
+  0.75 * (log1p(x) - log1p(pm25_reference))
+}
+
+true_deriv <- 0.75 * 1/(pm25_reference + 1)
+```
+
+
+## PM2.5-Only Diagnostic
+
+The simulation helper also accepts `NULL` effects. Any omitted effect is treated
+as zero in the true linear predictor. This makes it easy to create a one-function
+data-generating process and fit the matching one-function model.
+
+```{r pm25-only-simulation}
+pm25_only_data <- simulate_casecrossover_data(
+  f_pm25 = f_pm25_true,
+  data = simulation_base_data,
+  seed = 20260425,
+  stratum_total_cases = cases_per_stratum
+)
+
+pm25_only_totals <- tapply(
+  pm25_only_data$dailymort_pulm_nonsenior,
+  pm25_only_data$strata,
+  sum
+)
+
+stopifnot(all(pm25_only_totals == cases_per_stratum))
+
+pm25_only_fit_data <- as.data.frame(
+  pm25_only_data[order(pm25_only_data$strata, pm25_only_data$Date), ]
+)
+
+data.frame(
+  rows = nrow(pm25_only_fit_data),
+  strata = length(unique(pm25_only_fit_data$strata)),
+  total_cases = sum(pm25_only_fit_data$dailymort_pulm_nonsenior),
+  min_cases_per_stratum = min(pm25_only_totals),
+  max_cases_per_stratum = max(pm25_only_totals)
+)
+```
+
+Fit only the PM2.5 smooth term:
+
+```{r pm25-only-fit}
+pm25_shift <- pm25_reference
+
+fit_pm25_only <- model_fit(
+  formula = dailymort_pulm_nonsenior ~
+    f(
+      pm25Sample,
+      model = "tiwp2",
+      computation = "fem",
+      initial_location = pm25_reference,
+      a = 2, # parameter for mgp or tiwp2 only, not for other models
+      # boundary.prior = list(mean = true_deriv, prec = 1e10),
+      normalized_boundary = TRUE
+    ),
+  family = "cc",
+  strata = "strata",
+  weight = NULL,
+  data = pm25_only_fit_data,
+  method = "aghq",
+  aghq_k = 3
+)
+
+plot(fit_pm25_only)
+est_derivative <- mean(extract_boundary_samples(fit_pm25_only, "pm25Sample"))
+
+print(
+  data.frame(
+    true_derivative = true_deriv,
+    estimated_derivative = est_derivative
+  )
+)
+```
+
+Extract and plot the PM2.5 posterior curve from the simpler model:
+
+```{r pm25-only-posterior, fig.width=6, fig.height=4}
+pm25_only_posterior <- posterior_effect(
+  fit = fit_pm25_only,
+  data = pm25_only_fit_data,
+  variable = "pm25Sample",
+  true_fun = f_pm25_true,
+  reference = pm25_reference
+)
+
+plot_effect(pm25_only_posterior, "pm25Sample", "PM2.5 only")
+```

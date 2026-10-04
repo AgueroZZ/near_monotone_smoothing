@@ -1,0 +1,267 @@
+---
+title: "Prior Covariance Convergence for exact and O-spline IWP2"
+author: "Ziang Zhang"
+date: "2026-04-21"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Goal
+
+This notebook checks whether the newly added exact order-2 `iwp`
+`computation = "state-space"` path in the local `BayesGP` fork agrees with the
+package's native O-spline approximation at the prior covariance level.
+
+The comparison is done on the stochastic process part only. The boundary/global
+polynomial term is fixed at zero so that both constructions are compared on the
+same latent object.
+
+Because both paths scale linearly in `sd^2`, the convergence check is done at
+unit scale without loss of generality.
+
+## Setup
+
+```{r}
+library(tidyverse)
+library(Matrix)
+devtools::load_all("BayesGP", quiet = TRUE)
+```
+
+The exact state-space `iwp` implementation currently requires left-boundary
+anchoring, so the evaluation grids are shifted to start at zero before the
+covariance is constructed.
+
+For the native O-spline approximation, `k` denotes the knot count used in the
+underlying `iwp` object. This produces `k - 1` local O-spline coefficients.
+
+```{r}
+evaluation_grids <- tibble(
+  grid_case = c("balanced irregular", "boundary clustered"),
+  x = list(
+    c(0.10, 0.35, 0.75, 1.30, 2.05, 2.95, 4.00, 5.20, 6.60, 8.15),
+    c(0.20, 0.24, 0.31, 0.52, 1.00, 1.80, 3.00, 4.70, 7.00, 8.50)
+  )
+)
+
+k_values <- c(10, 20, 40, 80, 160, 320)
+```
+
+## Helper Functions
+
+The exact covariance is built from the same exact observation operator used by
+the new state-space pathway:
+
+$$
+\Sigma_{\mathrm{exact}} = B_{\mathrm{exact}} Q_{\mathrm{exact}}^{-1} B_{\mathrm{exact}}^\top.
+$$
+
+The native O-spline covariance is built from the original BayesGP machinery:
+
+$$
+\Sigma_{\mathrm{ospline}} = B_{\mathrm{ospline}} Q_{\mathrm{ospline}}^{-1} B_{\mathrm{ospline}}^\top.
+$$
+
+```{r}
+build_exact_iwp_covariance <- function(x){
+  shifted_x <- sort(x - min(x))
+  support_x <- shifted_x[shifted_x > 0]
+
+  if(length(support_x) == 0){
+    return(matrix(0, nrow = length(shifted_x), ncol = length(shifted_x)))
+  }
+
+  exact_B <- build_exact_observation_matrix(
+    observed_x = shifted_x,
+    support_x = support_x
+  )
+  exact_P <- as.matrix(IWP_joint_prec(t_vec = support_x, p = 2))
+
+  as.matrix(exact_B %*% solve(exact_P, t(exact_B)))
+}
+
+build_ospline_iwp_covariance <- function(x, k){
+  shifted_x <- sort(x - min(x))
+  knot_sequence <- seq(0, max(shifted_x), length.out = k)
+  temp_data <- data.frame(z = shifted_x)
+
+  temp_instance <- methods::new(
+    "iwp",
+    response_var = as.name("y"),
+    smoothing_var = as.name("z"),
+    order = 2,
+    knots = knot_sequence,
+    k = k,
+    observed_x = shifted_x,
+    sd.prior = list(),
+    psd.prior = list(),
+    boundary.prior = list(),
+    data = temp_data,
+    X = matrix(0, nrow = 0, ncol = 0),
+    B = matrix(0, nrow = 0, ncol = 0),
+    P = matrix(0, nrow = 0, ncol = 0),
+    initial_location = 0,
+    region = range(c(0, shifted_x))
+  )
+
+  ospline_B <- as.matrix(local_poly(temp_instance))
+  ospline_P <- as.matrix(compute_weights_precision(temp_instance))
+
+  as.matrix(ospline_B %*% solve(ospline_P, t(ospline_B)))
+}
+
+frobenius_relative_error <- function(approximate_cov, exact_cov){
+  sqrt(sum((approximate_cov - exact_cov)^2) / sum(exact_cov^2))
+}
+
+max_relative_error <- function(approximate_cov, exact_cov){
+  max(abs(approximate_cov - exact_cov)) / max(abs(exact_cov))
+}
+
+variance_relative_error <- function(approximate_cov, exact_cov){
+  max(abs(diag(approximate_cov) - diag(exact_cov))) / max(abs(diag(exact_cov)))
+}
+
+format_results_table <- function(table_df){
+  table_df %>%
+    mutate(
+      k = as.integer(k),
+      `Basis coefficients` = k - 1L,
+      `Relative Frobenius error` = signif(frobenius_rel_error, 6),
+      `Max relative error` = signif(max_rel_error, 6),
+      `Variance relative error` = signif(variance_rel_error, 6)
+    ) %>%
+    select(
+      `Grid case` = grid_case,
+      k,
+      `Basis coefficients`,
+      `Relative Frobenius error`,
+      `Max relative error`,
+      `Variance relative error`
+    )
+}
+```
+
+## Run the Comparison
+
+```{r}
+comparison_results <- evaluation_grids %>%
+  tidyr::crossing(k = k_values) %>%
+  mutate(
+    exact_covariance = map(x, build_exact_iwp_covariance),
+    ospline_covariance = map2(x, k, build_ospline_iwp_covariance),
+    frobenius_rel_error = map2_dbl(
+      ospline_covariance,
+      exact_covariance,
+      frobenius_relative_error
+    ),
+    max_rel_error = map2_dbl(
+      ospline_covariance,
+      exact_covariance,
+      max_relative_error
+    ),
+    variance_rel_error = map2_dbl(
+      ospline_covariance,
+      exact_covariance,
+      variance_relative_error
+    )
+  ) %>%
+  select(grid_case, k, frobenius_rel_error, max_rel_error, variance_rel_error)
+
+knitr::kable(
+  format_results_table(comparison_results),
+  caption = "Exact order-2 IWP state-space covariance versus native O-spline covariance.",
+  align = c("l", "r", "r", "r", "r", "r")
+)
+```
+
+```{r}
+dir.create("output", showWarnings = FALSE)
+write.csv(
+  comparison_results,
+  file = "output/iwp_prior_covariance_convergence_metrics.csv",
+  row.names = FALSE
+)
+```
+
+## Error Trends
+
+```{r}
+comparison_results %>%
+  ggplot(aes(
+    x = k,
+    y = frobenius_rel_error,
+    color = grid_case,
+    group = grid_case,
+    linetype = grid_case,
+    shape = grid_case
+  )) +
+  geom_line(linewidth = 0.9) +
+  geom_point(size = 2.2) +
+  scale_x_log10(breaks = k_values) +
+  scale_y_log10() +
+  labs(
+    x = "Number of O-spline knots (k)",
+    y = "Relative Frobenius error",
+    color = "Grid",
+    linetype = "Grid",
+    shape = "Grid",
+    title = "Native O-spline IWP covariance approaches the exact state-space covariance"
+  ) +
+  theme_bw()
+```
+
+```{r}
+comparison_results %>%
+  ggplot(aes(
+    x = k,
+    y = max_rel_error,
+    color = grid_case,
+    group = grid_case,
+    linetype = grid_case,
+    shape = grid_case
+  )) +
+  geom_line(linewidth = 0.9) +
+  geom_point(size = 2.2) +
+  scale_x_log10(breaks = k_values) +
+  scale_y_log10() +
+  labs(
+    x = "Number of O-spline knots (k)",
+    y = "Maximum relative entrywise error",
+    color = "Grid",
+    linetype = "Grid",
+    shape = "Grid",
+    title = "Entrywise covariance error also shrinks under O-spline refinement"
+  ) +
+  theme_bw()
+```
+
+## Largest-k Summary
+
+```{r}
+largest_k_summary <- comparison_results %>%
+  group_by(grid_case) %>%
+  filter(k == max(k)) %>%
+  ungroup()
+
+knitr::kable(
+  format_results_table(largest_k_summary),
+  caption = "Largest-k summary for the IWP covariance comparison.",
+  align = c("l", "r", "r", "r", "r", "r")
+)
+```
+
+## Takeaway
+
+For the exact order-2 `iwp` state-space path added in this local fork, the
+native BayesGP O-spline approximation is numerically consistent at the prior
+covariance level:
+
+- the covariance error decreases rapidly as `k` grows,
+- the decrease is stable across two irregular evaluation grids,
+- and the refined O-spline covariance is extremely close to the exact
+  state-space covariance.
+
+So this check supports the claim that the new exact state-space implementation
+is coherent with the package's original O-spline approximation for `iwp`
+when the two are compared under matched left-boundary anchoring.

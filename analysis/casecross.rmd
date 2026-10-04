@@ -1,0 +1,151 @@
+---
+title: "casecross"
+author: "Ziang Zhang"
+date: "2024-08-22"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+```{r}
+load("data/data_CD3518_sample_2.RData")
+head(data_CD3518_sample_2)
+data_CD3518_sample_2$strata = format(data_CD3518_sample_2$Date, '%Y%b%A')
+
+NperStrata = tapply(data_CD3518_sample_2$dailymort_pulm_nonsenior, data_CD3518_sample_2$strata, sum)
+haveData = which(NperStrata > 0)
+
+datSub = as.data.frame(data_CD3518_sample_2[data_CD3518_sample_2$strata %in% names(haveData), ])
+datSub$sqrtPm = sqrt(datSub$pm25Sample)
+datSub$sqrtNo2 = sqrt(datSub$no2Sample)
+datSub$sqrtO3 = sqrt(datSub$o3Sample)
+
+datSub$dateFac = factor(as.character(datSub$Date))
+datSub$dateInt = as.integer(datSub$dateFac)
+
+Spm = seq(0, 60, len=101)
+```
+
+
+## Fitting the data using mGP:
+
+```{r}
+library(tidyverse)
+library(Matrix)
+library(knitr)
+devtools::load_all("BayesGP", quiet = TRUE)
+```
+
+
+The fastest way to fit the model is to use the FEM approximation:
+
+```{r}
+datSub <- datSub %>% arrange(no2Sample)
+c <- min(datSub$no2Sample)
+mod_mgp <- model_fit(
+  formula = dailymort_pulm_nonsenior ~
+    f(
+      no2Sample,
+      model = "mgp",
+      computation = "fem",
+      a = 2,
+      c = c,
+      normalized_boundary = TRUE,
+      boundary.prior = list(mean = 0, prec = 0.001),
+      sd.prior = list(prior = "exp", param = list(u = 1e-5, alpha = 0.5), h = 5, x = 0)
+    ),
+  family = "cc",
+  strata = "strata",
+  weight = NULL,
+  data = datSub,
+  M = 3000,
+  method = "aghq"
+)
+
+plot(mod_mgp)
+```
+
+
+Alternatively, one can also use the state-space representation, which is exact but computationally less stable:
+
+```{r}
+# round the x values to 1 decimal place to make the computation more stable
+datSub$pm25Sample_rounded <- round(datSub$pm25Sample, 1)
+mod_mgp2 <- model_fit(
+  formula = dailymort_pulm_nonsenior ~
+    f(
+      pm25Sample_rounded,
+      model = "mgp",
+      computation = "state-space",
+      a = 2,
+      c = c,
+      normalized_boundary = TRUE,
+      boundary.prior = list(mean = 0, prec = 0.001),
+      sd.prior = list(prior = "exp", param = list(u = 0.01, alpha = 0.5), h = 5, x = 0)
+    ),
+  family = "cc",
+  strata = "strata",
+  weight = NULL,
+  data = datSub,
+  M = 3000,
+  method = "aghq"
+)
+
+plot(mod_mgp2)
+```
+
+## Fitting the data using tIWP2:
+
+Using the FEM approximation:
+
+```{r}
+mod_tiwp2 <- model_fit(
+  formula = dailymort_pulm_nonsenior ~
+    f(
+      pm25Sample,
+      model = "tiwp2",
+      computation = "fem",
+      a = 2,
+      c = c,
+      normalized_boundary = TRUE,
+      boundary.prior = list(mean = 0, prec = 0.001),
+      sd.prior = list(prior = "exp", param = list(u = 0.01, alpha = 0.5), h = 5, x = 0)
+    ),
+  family = "cc",
+  strata = "strata",
+  weight = NULL,
+  data = datSub,
+  M = 3000,
+  method = "aghq"
+)
+
+plot(mod_tiwp2)
+```
+
+Using the state-space representation:
+
+```{r}
+mod_tiwp2_ss <- model_fit(
+  formula = dailymort_pulm_nonsenior ~
+    f(
+      pm25Sample,
+      model = "tiwp2",
+      computation = "state-space",
+      a = 2,
+      c = c,
+      normalized_boundary = TRUE,
+      boundary.prior = list(mean = 0, prec = 0.001),
+      sd.prior = list(prior = "exp", param = list(u = 0.01, alpha = 0.5), h = 5, x = 0)
+    ),
+  family = "cc",
+  strata = "strata",
+  weight = NULL,
+  data = datSub,
+  M = 3000,
+  method = "aghq"
+)
+
+plot(mod_tiwp2_ss)
+```

@@ -1,0 +1,5 @@
+"model","computation","c","fit_succeeded","message"
+"mgp","state-space",0,FALSE,"The chosen `c` and input domain imply non-positive transformed arguments on the original scale."
+"mgp","fem",0,FALSE,"The chosen `c` and input domain imply non-positive transformed arguments on the original scale."
+"tiwp2","state-space",0,FALSE,"The chosen `c` and input domain imply non-positive transformed arguments on the original scale."
+"tiwp2","fem",0,FALSE,"The chosen `c` and input domain imply non-positive transformed arguments on the original scale."

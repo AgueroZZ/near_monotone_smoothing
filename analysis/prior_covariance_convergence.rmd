@@ -1,0 +1,346 @@
+---
+title: "Prior Covariance Convergence for mGP and tIWP2"
+author: "Ziang Zhang"
+date: "2026-04-21"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Goal
+
+This notebook checks whether the FEM approximations for `mGP` and `tIWP2`
+converge to the exact prior covariance implied by the exact state-space
+construction.
+
+The comparison focuses on the stochastic process covariance only. In other
+words, the boundary/global polynomial term is held fixed at zero so that the
+exact and FEM paths are compared on the same latent process object.
+
+## Setup
+
+```{r}
+library(tidyverse)
+library(Matrix)
+devtools::load_all("BayesGP", quiet = TRUE)
+```
+
+We use an irregular evaluation grid and vary both the curvature parameter `a`
+and the shift parameter `c`.
+
+For `mGP`, increasing the FEM basis size alone is not the full refinement path,
+because `Compute_Prec()` itself is built through numerical integration. So the
+`mGP` experiment refines both:
+
+- the FEM basis size `k`,
+- and the integration step size `accuracy`.
+
+For `tIWP2`, the FEM path is an O-spline construction on the transformed scale,
+so `k` alone is the relevant refinement parameter here.
+
+```{r}
+evaluation_grid <- c(0.25, 0.45, 0.70, 1.05, 1.40, 1.80, 2.30, 2.90, 3.50, 4.20)
+k_values <- c(20, 40, 80, 160)
+parameter_grid <- expand.grid(
+  model = c("mgp", "tiwp2"),
+  a = c(0.5, 1, 2, -1),
+  c_shift = c(0.5, 1.5),
+  stringsAsFactors = FALSE
+) %>%
+  as_tibble()
+```
+
+## Helper Functions
+
+The exact covariance is built by inverting the exact state-space precision and
+extracting the function-value block.
+
+The FEM covariance is built directly from the FEM design matrix and precision
+matrix:
+
+$$
+\Sigma_{\mathrm{FEM}} = B Q^{-1} B^\top.
+$$
+
+```{r}
+extract_function_block <- function(covariance_matrix){
+  covariance_matrix[
+    seq(1, nrow(covariance_matrix), by = 2),
+    seq(1, ncol(covariance_matrix), by = 2),
+    drop = FALSE
+  ]
+}
+
+build_exact_prior_covariance <- function(model_name, x, a, c_shift){
+  if(model_name == "mgp"){
+    precision <- as.matrix(mGP_joint_prec(t_vec = x, a = a, c = c_shift))
+    return(extract_function_block(solve(precision)))
+  }
+
+  if(model_name == "tiwp2"){
+    transform <- make_boxcox_transform(a = a, c = c_shift, normalized = TRUE, ref_location = 0)
+    transformed_x <- transform(x)
+    precision <- as.matrix(IWP_joint_prec(t_vec = transformed_x, p = 2))
+    return(extract_function_block(solve(precision)))
+  }
+
+  stop("Unsupported model.")
+}
+
+build_fem_prior_covariance <- function(model_name, x, a, c_shift, k,
+                                       mgp_accuracy = 0.002){
+  if(model_name == "mgp"){
+    region <- range(c(0, x))
+    design <- as.matrix(
+      Compute_Design(x = x, k = k, region = region, boundary = TRUE)
+    )
+    precision <- as.matrix(
+      Compute_Prec(
+        a = a,
+        c = c_shift,
+        k = k,
+        region = region,
+        accuracy = mgp_accuracy,
+        boundary = TRUE
+      )
+    )
+    return(design %*% solve(precision, t(design)))
+  }
+
+  if(model_name == "tiwp2"){
+    transform <- make_boxcox_transform(a = a, c = c_shift, normalized = TRUE, ref_location = 0)
+    transformed_x <- transform(x)
+    transformed_knots <- seq(0, max(transformed_x), length.out = k)
+    transformed_data <- data.frame(z = transformed_x)
+
+    temp_instance <- methods::new(
+      "iwp",
+      response_var = as.name("y"),
+      smoothing_var = as.name("z"),
+      order = 2,
+      knots = transformed_knots,
+      k = k,
+      observed_x = sort(transformed_x),
+      sd.prior = list(),
+      psd.prior = list(),
+      boundary.prior = list(),
+      data = transformed_data,
+      X = matrix(0, nrow = 0, ncol = 0),
+      B = matrix(0, nrow = 0, ncol = 0),
+      P = matrix(0, nrow = 0, ncol = 0),
+      initial_location = 0,
+      region = range(c(0, transformed_x))
+    )
+
+    design <- as.matrix(local_poly(temp_instance))
+    precision <- as.matrix(compute_weights_precision(temp_instance))
+    return(design %*% solve(precision, t(design)))
+  }
+
+  stop("Unsupported model.")
+}
+
+frobenius_relative_error <- function(approximate_cov, exact_cov){
+  sqrt(sum((approximate_cov - exact_cov)^2) / sum(exact_cov^2))
+}
+
+max_relative_error <- function(approximate_cov, exact_cov){
+  max(abs(approximate_cov - exact_cov)) / max(abs(exact_cov))
+}
+
+variance_relative_error <- function(approximate_cov, exact_cov){
+  max(abs(diag(approximate_cov) - diag(exact_cov))) / max(abs(diag(exact_cov)))
+}
+
+format_covariance_table <- function(table_df){
+  table_df %>%
+    mutate(
+      fem_accuracy = if_else(
+        model == "mgp",
+        formatC(fem_accuracy, format = "fg", digits = 4),
+        "not used"
+      ),
+      a = formatC(a, format = "fg", digits = 4),
+      c_shift = formatC(c_shift, format = "fg", digits = 4),
+      frobenius_rel_error = signif(frobenius_rel_error, 6),
+      max_rel_error = signif(max_rel_error, 6),
+      variance_rel_error = signif(variance_rel_error, 6)
+    ) %>%
+    rename(
+      model = model,
+      a = a,
+      c = c_shift,
+      k = k,
+      `FEM accuracy` = fem_accuracy,
+      `Relative Frobenius error` = frobenius_rel_error,
+      `Max relative error` = max_rel_error,
+      `Variance relative error` = variance_rel_error
+    )
+}
+```
+
+## Run the Comparison
+
+For `tiwp2`, the column labelled `FEM accuracy` is shown as `not used` rather
+than `NA`, because that FEM construction does not rely on the separate
+numerical integration step used by `Compute_Prec()` for `mGP`.
+
+```{r}
+comparison_results <- parameter_grid %>%
+  mutate(
+    exact_covariance = pmap(
+      list(model, a, c_shift),
+      ~ build_exact_prior_covariance(..1, x = evaluation_grid, a = ..2, c_shift = ..3)
+    )
+  ) %>%
+  select(-exact_covariance) %>%
+  tidyr::crossing(k = k_values) %>%
+  mutate(
+    fem_accuracy = if_else(model == "mgp", 0.4 / k, NA_real_)
+  ) %>%
+  mutate(
+    exact_covariance = pmap(
+      list(model, a, c_shift),
+      ~ build_exact_prior_covariance(..1, x = evaluation_grid, a = ..2, c_shift = ..3)
+    ),
+    fem_covariance = pmap(
+      list(model, a, c_shift, k, fem_accuracy),
+      ~ build_fem_prior_covariance(
+        ..1,
+        x = evaluation_grid,
+        a = ..2,
+        c_shift = ..3,
+        k = ..4,
+        mgp_accuracy = ifelse(is.na(..5), 0.002, ..5)
+      )
+    ),
+    frobenius_rel_error = map2_dbl(fem_covariance, exact_covariance, frobenius_relative_error),
+    max_rel_error = map2_dbl(fem_covariance, exact_covariance, max_relative_error),
+    variance_rel_error = map2_dbl(fem_covariance, exact_covariance, variance_relative_error)
+  ) %>%
+  select(model, a, c_shift, k, fem_accuracy, frobenius_rel_error, max_rel_error, variance_rel_error)
+
+knitr::kable(
+  format_covariance_table(comparison_results),
+  caption = "Prior covariance comparison across model, prior setting, and FEM refinement level.",
+  align = c("l", "r", "r", "r", "l", "r", "r", "r")
+)
+```
+
+```{r}
+dir.create("output", showWarnings = FALSE)
+write.csv(
+  comparison_results,
+  file = "output/prior_covariance_convergence_metrics.csv",
+  row.names = FALSE
+)
+```
+
+## Error Trends
+
+The main quantity of interest is the relative covariance error as the FEM
+resolution grows. For `mGP`, that means increasing `k` while decreasing the
+integration step size at the same time.
+
+```{r}
+comparison_results %>%
+  mutate(
+    display_k = case_when(
+      c_shift == 0.5 ~ k - 4,
+      c_shift == 1.5 ~ k + 4
+    )
+  ) %>%
+  ggplot(aes(
+    x = display_k,
+    y = frobenius_rel_error,
+    color = factor(c_shift),
+    group = c_shift,
+    linetype = factor(c_shift),
+    shape = factor(c_shift)
+  )) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2.1) +
+  facet_grid(model ~ a, scales = "free_y") +
+  scale_x_continuous(breaks = k_values, labels = k_values) +
+  scale_y_log10() +
+  scale_linetype_manual(values = c("solid", "22")) +
+  scale_shape_manual(values = c(16, 17)) +
+  labs(
+    x = "Number of FEM basis functions (k)",
+    y = "Relative Frobenius error",
+    color = "c",
+    linetype = "c",
+    shape = "c",
+    title = "FEM prior covariance approaches the exact state-space covariance"
+  ) +
+  theme_bw()
+```
+
+For `tiwp2`, the two `c` curves are almost identical under the maximum
+entrywise relative error metric. To keep both visible in the plot below, the
+displayed `k` positions are given a very small horizontal offset by `c`, and
+the two cases are also drawn with different line types. The reported numerical
+values themselves are unchanged.
+
+```{r}
+comparison_results %>%
+  mutate(
+    display_k = case_when(
+      c_shift == 0.5 ~ k - 4,
+      c_shift == 1.5 ~ k + 4
+    )
+  ) %>%
+  ggplot(aes(
+    x = display_k,
+    y = max_rel_error,
+    color = factor(c_shift),
+    group = c_shift,
+    linetype = factor(c_shift),
+    shape = factor(c_shift)
+  )) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2.1) +
+  facet_grid(model ~ a, scales = "free_y") +
+  scale_x_continuous(breaks = k_values, labels = k_values) +
+  scale_y_log10() +
+  scale_linetype_manual(values = c("solid", "22")) +
+  scale_shape_manual(values = c(16, 17)) +
+  labs(
+    x = "Number of FEM basis functions (k)",
+    y = "Maximum relative entrywise error",
+    color = "c",
+    linetype = "c",
+    shape = "c",
+    title = "Entrywise covariance errors shrink with finer FEM representations"
+  ) +
+  theme_bw()
+```
+
+## Largest-k Summary
+
+```{r}
+largest_k_summary <- comparison_results %>%
+  group_by(model, a, c_shift) %>%
+  filter(k == max(k)) %>%
+  ungroup() %>%
+  arrange(model, a, c_shift)
+
+knitr::kable(
+  format_covariance_table(largest_k_summary),
+  caption = "Largest-refinement summary for each combination of model, a, and c.",
+  align = c("l", "r", "r", "r", "l", "r", "r", "r")
+)
+```
+
+## Takeaway
+
+Across the tested combinations of `a` and `c`, the FEM covariance gets close to
+the exact state-space covariance for both `mGP` and `tIWP2`.
+
+The overall pattern is stable:
+
+- finer FEM resolutions reduce the covariance error,
+- for `mGP`, the refinement needs to include both larger `k` and a smaller
+  `accuracy` step in `Compute_Prec()`,
+- the variance profiles line up with the exact prior,
+- and both `mGP` and `tIWP2` behave coherently under the same comparison rule.

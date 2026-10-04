@@ -1,0 +1,36 @@
+# R / RStudio
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.Rapp.history
+Rplots.pdf
+
+# OS / editor
+.DS_Store
+.claude/
+.vscode/
+
+# workflowr: rendered files live in docs/, not analysis/
+analysis/figure
+analysis/*.html
+analysis/*_cache
+analysis/site_libs
+
+# Compiled TMB objects (rebuilt from code/*.cpp)
+*.o
+*.so
+*.dll
+
+# BayesGP fork is its own git repo (github.com/Bayes-GP/BayesGP)
+BayesGP/
+BayesGP.Rcheck/
+*.tar.gz
+
+# Presentation binaries and scratch outputs
+talk/*.key
+talk/*.key.*
+talk/*.pptx
+outputs/
+talk/**/*.key
+talk/**/*.pptx

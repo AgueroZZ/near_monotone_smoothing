@@ -1,0 +1,239 @@
+---
+title: "Illustration"
+author: "Ziang Zhang"
+date: "2024-08-09"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+In this example, I will illustrate how to fit the tIWP2 or mGP method, induced by different monotone transformations.
+
+Let's load the relevant functions and libraries that we will be using in this example:
+```{r}
+library(tidyverse)
+library(Matrix)
+devtools::load_all("BayesGP", quiet = TRUE)
+```
+
+First, let's simulate the following dataset
+
+Simulate some random points:
+```{r}
+obs_max <- 8
+samp_max <- 10
+c <- 1
+sd_noise <- 4
+n <- 100
+set.seed(123)
+f <- function(x) (3+4*log(x + c))^1.5
+x <- seq(0, samp_max, length.out = (n+1))[-1]
+y <- f(x) + rnorm(n, sd = sd_noise)
+plot(x, y, ylab = "y", xlab = "x")
+lines(x, f(x), col = "red")
+```
+
+To make the experiment a bit more interesting, let's consider some training and testing separation:
+```{r}
+data_sim <- data.frame(x = x, y = y) %>% arrange(x)
+data_train <- data_sim %>% filter(x < obs_max)
+```
+
+
+The true function $f$ is close (but not exactly equal) to some logarithm function.
+
+
+## Fitting the Exact Process
+
+First, we consider fitting the exact process through the augmented state-space representation. The retained notebooks now load the in-repo `BayesGP` fork directly and use a unified formula interface for `iwp`, `tiwp2`, and `mgp`, instead of sourcing helper scripts and compiling a separate TMB template by hand.
+
+For now, let's assume the mGP and tIWP are both induced by the monotone function $m(x) = \sqrt{x+c}$.
+
+
+For comparison purpose, let's assume the prior on the PSD $\sigma_8(2)$ is always an Exponential with median at $5$.
+
+### IWP2
+
+Fitting the IWP2:
+
+```{r}
+prior_median <- 5
+iwp2 <- model_fit(
+  formula = y ~ f(
+    x,
+    model = "iwp",
+    computation = "state-space",
+    order = 2,
+    initial_location = "left",
+    grid = data_sim$x,
+    sd.prior = list(prior = "exp", param = list(u = prior_median, alpha = 0.5), h = 2)
+  ),
+  data = data_train,
+  family = "gaussian",
+  control.family = list(sd = sd_noise),
+  M = 3000
+)
+samples_iwp2 <- as.matrix(
+  predict(iwp2, newdata = data_sim, variable = "x", only.samples = TRUE)[, -1, drop = FALSE]
+)
+
+iwp_summary <- data.frame(x = data_sim$x, mean = rowMeans(samples_iwp2),
+                          lower = apply(samples_iwp2, 1, quantile, probs = 0.025),
+                          upper = apply(samples_iwp2, 1, quantile, probs = 0.975))
+```
+
+Visualize the IWP2:
+
+```{r}
+plot(data_sim$x, data_sim$y, type = "p", col = "black", 
+     lwd = 1, pch = 1, cex = 0.2,
+     ylim = c(0,100), ylab = "y", xlab = "x",
+     )
+lines(iwp_summary$x, iwp_summary$mean, col = "red", lwd = 2)
+lines(iwp_summary$x, f(iwp_summary$x), col = "blue", lwd = 2, lty = 2)
+matlines(x = iwp_summary$x, y = samples_iwp2[,2:5], lty = 1, col = "blue", lwd = 0.5)
+polygon(c(iwp_summary$x, rev(iwp_summary$x)), c(iwp_summary$lower, rev(iwp_summary$upper)), col = rgb(1, 0, 0, 0.2), border = NA)
+abline(v = obs_max, col = "purple", lty = 2)
+```
+
+
+### tIWP2
+
+Fitting the tIWP2:
+
+```{r}
+tiwp2 <- model_fit(
+  formula = y ~ f(
+    x,
+    model = "tiwp2",
+    computation = "state-space",
+    a = 2,
+    c = c,
+    grid = data_sim$x,
+    sd.prior = list(prior = "exp", param = list(u = prior_median, alpha = 0.5), h = 2, x = 8)
+  ),
+  data = data_train,
+  family = "gaussian",
+  control.family = list(sd = sd_noise),
+  M = 3000
+)
+samples_tiwp2 <- as.matrix(
+  predict(tiwp2, newdata = data_sim, variable = "x", only.samples = TRUE)[, -1, drop = FALSE]
+)
+```
+
+Visualize the tIWP2:
+
+```{r}
+tiwp_summary <- data.frame(x = data_sim$x, mean = rowMeans(samples_tiwp2),
+                          lower = apply(samples_tiwp2, 1, quantile, probs = 0.025),
+                          upper = apply(samples_tiwp2, 1, quantile, probs = 0.975))
+
+plot(data_sim$x, data_sim$y, type = "p", col = "black", 
+     lwd = 1, pch = 1, cex = 0.2,
+     ylim = c(0,100), ylab = "y", xlab = "x")
+lines(tiwp_summary$x, tiwp_summary$mean, col = "red", lwd = 2)
+lines(tiwp_summary$x, f(tiwp_summary$x), col = "blue", lwd = 2, lty = 2)
+matlines(x = tiwp_summary$x, y = samples_tiwp2[,2:5], lty = 1, col = "blue", lwd = 0.5)
+polygon(c(tiwp_summary$x, rev(tiwp_summary$x)), c(tiwp_summary$lower, rev(tiwp_summary$upper)), col = rgb(1, 0, 0, 0.2), border = NA)
+abline(v = obs_max, col = "purple", lty = 2)
+```
+
+
+### mGP
+
+Fitting the mGP:
+
+```{r}
+mGP <- model_fit(
+  formula = y ~ f(
+    x,
+    model = "mgp",
+    computation = "state-space",
+    a = 2,
+    c = c,
+    grid = data_sim$x,
+    normalized_boundary = TRUE,
+    sd.prior = list(prior = "exp", param = list(u = prior_median, alpha = 0.5), h = 2, x = 8)
+  ),
+  data = data_train,
+  family = "gaussian",
+  control.family = list(sd = sd_noise),
+  M = 3000
+)
+samples_mGP <- as.matrix(
+  predict(mGP, newdata = data_sim, variable = "x", only.samples = TRUE)[, -1, drop = FALSE]
+)
+```
+
+```{r}
+mGP_summary <- data.frame(x = data_sim$x, mean = rowMeans(samples_mGP),
+                          lower = apply(samples_mGP, 1, quantile, probs = 0.025),
+                          upper = apply(samples_mGP, 1, quantile, probs = 0.975))
+
+plot(data_sim$x, data_sim$y, type = "p", col = "black", 
+     lwd = 1, pch = 1, cex = 0.2,
+     ylim = c(0,100), ylab = "y", xlab = "x")
+lines(mGP_summary$x, mGP_summary$mean, col = "red", lwd = 2)
+lines(mGP_summary$x, f(mGP_summary$x), col = "blue", lwd = 2, lty = 2)
+matlines(x = mGP_summary$x, y = samples_mGP[,2:5], lty = 1, col = "blue", lwd = 0.5)
+polygon(c(mGP_summary$x, rev(mGP_summary$x)), c(mGP_summary$lower, rev(mGP_summary$upper)), col = rgb(1, 0, 0, 0.2), border = NA)
+abline(v = obs_max, col = "purple", lty = 2)
+```
+
+
+## Fitting the FEM Approximation
+
+When the locations are densely irregularly placed over the region, the exact computation tends to become challenging, even with the state-space representation that simplifies the precision matrix.
+In such scenario, it might be preferable to use a basis representation constructed from the FEM approximation.
+
+Here we will take the mGP as an example, mirroring the published illustration page. The original workflow used `k = 30`, so we keep that setting here in order to reproduce the same approximation experiment with the compact package interface.
+
+```{r}
+k_fem <- 30
+```
+
+```{r}
+mGP_FEM <- model_fit(
+  formula = y ~ f(
+    x,
+    model = "mgp",
+    computation = "fem",
+    a = 2,
+    c = c,
+    k = k_fem,
+    grid = data_sim$x,
+    normalized_boundary = TRUE,
+    sd.prior = list(prior = "exp", param = list(u = prior_median, alpha = 0.5), h = 2, x = 8)
+  ),
+  data = data_train,
+  family = "gaussian",
+  control.family = list(sd = sd_noise),
+  M = 3000
+)
+```
+
+Once the model is fitted, we can compute the posterior sample of the function values at the test locations.
+
+```{r}
+samples_mGP_FEM <- as.matrix(
+  predict(mGP_FEM, newdata = data_sim, variable = "x", only.samples = TRUE)[, -1, drop = FALSE]
+)
+```
+
+```{r}
+mGP_FEM_summary <- data.frame(x = data_sim$x, mean = rowMeans(samples_mGP_FEM),
+                          lower = apply(samples_mGP_FEM, 1, quantile, probs = 0.025),
+                          upper = apply(samples_mGP_FEM, 1, quantile, probs = 0.975))
+
+plot(data_sim$x, data_sim$y, type = "p", col = "black", 
+     lwd = 1, pch = 1, cex = 0.2,
+     ylim = c(0,100), ylab = "y", xlab = "x")
+lines(mGP_FEM_summary$x, mGP_FEM_summary$mean, col = "red", lwd = 2)
+lines(mGP_FEM_summary$x, f(mGP_FEM_summary$x), col = "blue", lwd = 2, lty = 2)
+matlines(x = mGP_FEM_summary$x, y = samples_mGP_FEM[,2:5], lty = 1, col = "blue", lwd = 0.5)
+polygon(c(mGP_FEM_summary$x, rev(mGP_FEM_summary$x)), c(mGP_FEM_summary$lower, rev(mGP_FEM_summary$upper)), col = rgb(1, 0, 0, 0.2), border = NA)
+abline(v = obs_max, col = "purple", lty = 2)
+```

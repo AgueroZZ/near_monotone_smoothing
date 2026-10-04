@@ -1,0 +1,3377 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Ziang Zhang" />
+
+<meta name="date" content="2024-06-19" />
+
+<title>Simulation 2</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Smoothing with M-GP</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Methods
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="mGP_vs_tIWP2.html">mGP vs tIWP2</a>
+    </li>
+    <li>
+      <a href="PSD.html">PSD</a>
+    </li>
+    <li>
+      <a href="illustration.html">Illustration</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Supporting
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="simulation1.html">Simulation 1</a>
+    </li>
+    <li>
+      <a href="simulation2.html">Simulation 2</a>
+    </li>
+    <li>
+      <a href="casecross.html">Case-Crossover</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Project
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="about.html">About</a>
+    </li>
+    <li>
+      <a href="license.html">License</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Simulation 2</h1>
+<h4 class="author">Ziang Zhang</h4>
+<h4 class="date">2024-06-19</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2026-04-20
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 4
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 2
+</p>
+<p>
+<strong>Knit directory:</strong> <code>near_monotone_smoothing/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.2). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongobjectspresent">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>Environment:</strong> objects present
+</a>
+</p>
+</div>
+<div id="strongEnvironmentstrongobjectspresent"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+The global environment had objects present when the code in the R
+Markdown file was run. These objects can affect the analysis in your R
+Markdown file in unknown ways. For reproduciblity it’s best to always
+run the code in an empty environment. Use <code>wflow_publish</code> or
+<code>wflow_build</code> to ensure that the code is always run in an
+empty environment.
+</p>
+<p>
+The following objects were defined in the global environment when these
+results were created:
+</p>
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:left;">
+Class
+</th>
+<th style="text-align:left;">
+Size
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+A
+</td>
+<td style="text-align:left;">
+matrix;array
+</td>
+<td style="text-align:left;">
+248 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_mGP_sim
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+108.8 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_R_trans_matrix
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+57.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_R_trans_matrix_c1
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+99.2 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_R_trans_matrix_c2
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+9.6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_R_trans_matrix_c3
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+18.3 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_R_trans_matrix_c4
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+9.6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cov
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+13.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cov_c1
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+80.7 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cov_c2
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+10.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cov_c3
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+82.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cov_c4
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+10.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cov_c5
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+133.7 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cov_c6
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+784 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cov_mat
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+97.5 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cov_mat_c1
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+6.6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cov_mat_c2
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+5.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cov_mat_c3
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+7.3 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cov_mat_c4
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+5.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cov_mat_c5
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+35.7 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cov_mat_c6
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+5.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cross_cov
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+13.1 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cross_cov_c1
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+41.1 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cross_cov_c2
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+6.3 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cross_cov_c3
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+41.7 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cross_cov_c4
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+6.3 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cross_cov_c5
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+88.8 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_cross_cov_c6
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+784 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_deriv_cov
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+13.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_deriv_cov_c1
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+13 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_deriv_cov_c2
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+3.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_deriv_cov_c3
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+15 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_deriv_cov_c4
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+3.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_deriv_cov_c5
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+21.8 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+adj_SS_deriv_cov_c6
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+784 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+all_result
+</td>
+<td style="text-align:left;">
+list
+</td>
+<td style="text-align:left;">
+160.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b
+</td>
+<td style="text-align:left;">
+matrix;array
+</td>
+<td style="text-align:left;">
+232 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+B
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+basis_samps
+</td>
+<td style="text-align:left;">
+matrix;array
+</td>
+<td style="text-align:left;">
+1.1 Mb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+beta_samps
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+23.5 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+boundary_compute
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+5.3 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+build_augmented_observation_matrix
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+9.6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+c
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+compile_tmb_model
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+6.1 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Compute_Design
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+47.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Compute_Prec
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+143.7 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Compute_Prec_rev
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+24.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+compute_tiwp_psd_boxcox
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+5 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+d
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+data_CD3518_sample_2
+</td>
+<td style="text-align:left;">
+tbl_df;tbl;data.frame
+</td>
+<td style="text-align:left;">
+448.2 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+data_sim
+</td>
+<td style="text-align:left;">
+data.frame
+</td>
+<td style="text-align:left;">
+2.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+data_train
+</td>
+<td style="text-align:left;">
+data.frame
+</td>
+<td style="text-align:left;">
+2.1 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+datSub
+</td>
+<td style="text-align:left;">
+data.frame
+</td>
+<td style="text-align:left;">
+258 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+evaluate_global_interval_draws
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+5.2 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+evaluate_model_once
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+2.2 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+evaluate_regionwise_interval_draws
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+15.2 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+evaluate_train_prediction_draws
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+27.5 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+f
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+5.5 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+f_condition
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+f_deriv_condition
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+f_lower
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+10.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+f_mean
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+10.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+f_samps
+</td>
+<td style="text-align:left;">
+matrix;array
+</td>
+<td style="text-align:left;">
+31.8 Mb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+f_upper
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+10.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+fit_exact_known_sd_model
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+11 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+fit_iwp_known_sd
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+9.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+fit_mgp_fem_known_sd
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+14.7 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+fit_mgp_known_sd
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+12.3 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+fit_tiwp_known_sd
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+12 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+format_with_sd
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+5.8 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+haveData
+</td>
+<td style="text-align:left;">
+integer
+</td>
+<td style="text-align:left;">
+26.1 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+i
+</td>
+<td style="text-align:left;">
+integer
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+inter_coverage_plot_data
+</td>
+<td style="text-align:left;">
+tbl_df;tbl;data.frame
+</td>
+<td style="text-align:left;">
+3.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+inter_summary
+</td>
+<td style="text-align:left;">
+data.frame
+</td>
+<td style="text-align:left;">
+2.5 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+inter_summary_table
+</td>
+<td style="text-align:left;">
+data.frame
+</td>
+<td style="text-align:left;">
+2.1 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+IWP_joint_prec
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+419.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+iwp_subset_mode
+</td>
+<td style="text-align:left;">
+character
+</td>
+<td style="text-align:left;">
+112 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+iwp_summary
+</td>
+<td style="text-align:left;">
+data.frame
+</td>
+<td style="text-align:left;">
+4.2 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+iwp2
+</td>
+<td style="text-align:left;">
+list
+</td>
+<td style="text-align:left;">
+771 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+k
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+k_fem
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+1.6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m_deriv
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+3.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m_true
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+4.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+make_boxcox_transform
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+77.1 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+make_boxcox_transform_derivative
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+9.2 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mGP
+</td>
+<td style="text-align:left;">
+list
+</td>
+<td style="text-align:left;">
+772.6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mGP_FEM
+</td>
+<td style="text-align:left;">
+list
+</td>
+<td style="text-align:left;">
+701 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mGP_FEM_summary
+</td>
+<td style="text-align:left;">
+data.frame
+</td>
+<td style="text-align:left;">
+4.2 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mGP_joint_prec
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+259.7 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mGP_sim
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+108.8 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mGP_summary
+</td>
+<td style="text-align:left;">
+data.frame
+</td>
+<td style="text-align:left;">
+4.2 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mod_mgp
+</td>
+<td style="text-align:left;">
+FitResult
+</td>
+<td style="text-align:left;">
+2.7 Mb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_cov
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+14.6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_cov_c1
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+71 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_cov_c2
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+22.8 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_cov_c3
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+77.7 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_cov_c4
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+5.1 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_cov_c5
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+23.5 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_cov_c6
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+35.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_cross_cov
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+14.6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_cross_cov_c1
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+39.7 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_cross_cov_c2
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+14.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_cross_cov_c3
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+44.3 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_cross_cov_c4
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+4.3 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_cross_cov_c5
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+10.6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_cross_cov_c6
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+26.6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_deriv_cov
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+14.6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_deriv_cov_c1
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+8.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_deriv_cov_c2
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+6.2 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_deriv_cov_c3
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+14.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_deriv_cov_c4
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+1.8 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_deriv_cov_c5
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+3.2 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mspline_deriv_cov_c6
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+12.2 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+n
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NperStrata
+</td>
+<td style="text-align:left;">
+array
+</td>
+<td style="text-align:left;">
+114.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+obs_max
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+old_wd
+</td>
+<td style="text-align:left;">
+character
+</td>
+<td style="text-align:left;">
+168 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+p
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pred_coverage_plot_data
+</td>
+<td style="text-align:left;">
+tbl_df;tbl;data.frame
+</td>
+<td style="text-align:left;">
+3.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pred_summary
+</td>
+<td style="text-align:left;">
+data.frame
+</td>
+<td style="text-align:left;">
+2.5 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pred_summary_table
+</td>
+<td style="text-align:left;">
+data.frame
+</td>
+<td style="text-align:left;">
+2.1 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prior_conversion_mgp
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prior_median
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prior_psd
+</td>
+<td style="text-align:left;">
+list
+</td>
+<td style="text-align:left;">
+464 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PSD_compute
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+17.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+psd_factor_mgp
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+psd_iwp
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+psd_mgp
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+psd_tiwp2
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PSD_tIWP2_compute
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+2 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+R_trans_matrix
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+61.8 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+R_trans_matrix_c1
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+106.8 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+R_trans_matrix_c2
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+8.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+R_trans_matrix_c3
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+88.1 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+R_trans_matrix_c4
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+9.6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RE_list
+</td>
+<td style="text-align:left;">
+list
+</td>
+<td style="text-align:left;">
+13.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ref
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+replicate_comparison_B_times
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+36.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+replicate_comparison_B_times_B
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+36.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+resolve_curvature_parameter
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+22.2 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+result
+</td>
+<td style="text-align:left;">
+matrix;array
+</td>
+<td style="text-align:left;">
+87.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+result_neg
+</td>
+<td style="text-align:left;">
+matrix;array
+</td>
+<td style="text-align:left;">
+73.1 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+result_pos
+</td>
+<td style="text-align:left;">
+matrix;array
+</td>
+<td style="text-align:left;">
+18.1 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+result0
+</td>
+<td style="text-align:left;">
+matrix;array
+</td>
+<td style="text-align:left;">
+81.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+result1
+</td>
+<td style="text-align:left;">
+matrix;array
+</td>
+<td style="text-align:left;">
+80.7 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+result1_part1
+</td>
+<td style="text-align:left;">
+matrix;array
+</td>
+<td style="text-align:left;">
+71.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+result1_part2
+</td>
+<td style="text-align:left;">
+matrix;array
+</td>
+<td style="text-align:left;">
+16.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+rmle_results
+</td>
+<td style="text-align:left;">
+tbl_df;tbl;data.frame
+</td>
+<td style="text-align:left;">
+125.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+rmse_results
+</td>
+<td style="text-align:left;">
+tbl_df;tbl;data.frame
+</td>
+<td style="text-align:left;">
+125.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+samp_max
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sample_exact_known_sd_fit
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+7.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sample_mgp_fem_known_sd_fit
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+8.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+samples_iwp2
+</td>
+<td style="text-align:left;">
+dgeMatrix
+</td>
+<td style="text-align:left;">
+2.3 Mb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+samples_mGP
+</td>
+<td style="text-align:left;">
+dgeMatrix
+</td>
+<td style="text-align:left;">
+2.3 Mb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+samples_mGP_FEM
+</td>
+<td style="text-align:left;">
+dgeMatrix
+</td>
+<td style="text-align:left;">
+2.3 Mb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+samples_tiwp2
+</td>
+<td style="text-align:left;">
+dgeMatrix
+</td>
+<td style="text-align:left;">
+2.3 Mb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sampling_from_FEM
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+9.6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+samps_neg
+</td>
+<td style="text-align:left;">
+matrix;array
+</td>
+<td style="text-align:left;">
+2.7 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+samps_pos
+</td>
+<td style="text-align:left;">
+matrix;array
+</td>
+<td style="text-align:left;">
+1.1 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+samps0
+</td>
+<td style="text-align:left;">
+matrix;array
+</td>
+<td style="text-align:left;">
+3 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+samps1
+</td>
+<td style="text-align:left;">
+matrix;array
+</td>
+<td style="text-align:left;">
+3 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+samps1_part1
+</td>
+<td style="text-align:left;">
+matrix;array
+</td>
+<td style="text-align:left;">
+2.7 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+samps1_part2
+</td>
+<td style="text-align:left;">
+matrix;array
+</td>
+<td style="text-align:left;">
+1.1 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sd
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sd_noise
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sigma
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sim_data_once
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+6.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sim_data_once_B
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+6.7 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sim_IWp_Var
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+359.5 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+simulate_tiwp_boxcox
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+7.2 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Spm
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+856 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cov
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+110.5 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cov_c1
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+703.6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cov_c2
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+37.6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cov_c3
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+67 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cov_c4
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+10.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cov_c5
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+23 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cov_c6
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+636.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cov_mat
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+110.5 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cov_mat_c1
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+44.2 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cov_mat_c2
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+5.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cov_mat_c3
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+7.3 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cov_mat_c4
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+5.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cov_mat_c5
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+5.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cov_mat_c6
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+35.7 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cross_cov
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+14.6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cross_cov_c1
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+253.1 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cross_cov_c2
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+18 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cross_cov_c3
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+36.8 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cross_cov_c4
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+6.3 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cross_cov_c5
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+13.1 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_cross_cov_c6
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+466.3 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_deriv_cov
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+14.6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_deriv_cov_c1
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+36.5 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_deriv_cov_c2
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+8.8 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_deriv_cov_c3
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+10.6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_deriv_cov_c4
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+3.4 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_deriv_cov_c5
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+3.3 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SS_deriv_cov_c6
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+99.9 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+summarize_function_samples
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+3.2 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+t
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+928 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+t_trans
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+856 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+tilde_x
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+216 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+tiwp_summary
+</td>
+<td style="text-align:left;">
+data.frame
+</td>
+<td style="text-align:left;">
+4.2 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+tiwp2
+</td>
+<td style="text-align:left;">
+list
+</td>
+<td style="text-align:left;">
+772.6 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+true_psd
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+u
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+56 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+var0
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+856 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+var1
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+856 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+928 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+matrix;array
+</td>
+<td style="text-align:left;">
+11.1 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x_tilde
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+768 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x_trans
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+928 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x_trans_part1
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+768 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x_trans_part1_relative
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+768 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x_trans_part2
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+216 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x_trans_part2_relative
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+216 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+y
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+848 bytes
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20240619code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20240619)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20240619code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20240619)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongnoversioncontrol">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>Repository version:</strong> no
+version control </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongnoversioncontrol"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Tracking code development and connecting the code version to the
+results is critical for reproducibility. To start using Git, open the
+Terminal and type <code>git init</code> in your project directory.</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+This project is not being versioned with Git. To obtain the full
+reproducibility benefits of using workflowr, please see
+<code>?wflow_start</code>.
+</p>
+<hr>
+</div>
+</div>
+</div>
+<div id="introduction" class="section level2">
+<h2><strong>Introduction</strong></h2>
+<p>In this simulation study, we study the robustness of the tIWP2 and
+the mGP priors.</p>
+</div>
+<div id="simulation-a-true-model-is-mgp" class="section level2">
+<h2><strong>Simulation A: True model is mGP</strong></h2>
+<p>The simulation A is designed as follows, for each of the <span
+class="math inline">\(B = 1000\)</span> replications:</p>
+<ul>
+<li><span class="math inline">\(f\)</span> is simulated from a mGP
+process with <span class="math inline">\(a = 2\)</span>, with a true PSD
+<span class="math inline">\(\sigma_0(5) = 2\)</span>.</li>
+<li>For <span class="math inline">\(x_i\)</span> equally spaced between
+<span class="math inline">\([0,20]\)</span>, <span
+class="math inline">\(n = 100\)</span> observations are simulated from
+<span class="math inline">\(y_i = f(x_i) + \epsilon_i\)</span> with
+<span class="math inline">\(\epsilon_i \sim N(0, 2)\)</span>.</li>
+<li>The posterior <span
+class="math inline">\(\pi(f|\boldsymbol{y})\)</span> is obtained using
+both the tIWP2 and the mGP priors, only using data with <span
+class="math inline">\(x \in [0,15]\)</span>. The prior for the smoothing
+parameter is chosen as an Exponential prior centered at the true PSD
+<span class="math inline">\(\sigma_0(5)\)</span>.</li>
+<li>The pointwise coverage probabilities of the 50%, 80%, and 95%
+credible interval for <span class="math inline">\(f\)</span>, as well as
+the mean squared error and the mean relative error of the posterior mean
+of <span class="math inline">\(f\)</span> are all recorded for each
+replication.</li>
+</ul>
+<p>Visualize the RMSE result for interpolation and prediction:
+<img src="figure/simulation2.rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Visualize the MLE result for interpolation and prediction:
+<img src="figure/simulation2.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>A table of the summary statistics:</p>
+<table>
+<caption>Summary for Inter Scenario</caption>
+<colgroup>
+<col width="8%" />
+<col width="18%" />
+<col width="18%" />
+<col width="17%" />
+<col width="18%" />
+<col width="18%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Model</th>
+<th align="left">Coverage 50%</th>
+<th align="left">Coverage 80%</th>
+<th align="left">Coverage 95%</th>
+<th align="left">RMSE</th>
+<th align="left">MLE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">mGP</td>
+<td align="left">0.508 (0.016)</td>
+<td align="left">0.797 (0.013)</td>
+<td align="left">0.95 (0.007)</td>
+<td align="left">0.482 (0.143)</td>
+<td align="left">0.044 (0.02)</td>
+</tr>
+<tr class="even">
+<td align="left">tIWP2</td>
+<td align="left">0.417 (0.016)</td>
+<td align="left">0.696 (0.015)</td>
+<td align="left">0.882 (0.01)</td>
+<td align="left">0.524 (0.156)</td>
+<td align="left">0.047 (0.021)</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Summary for Pred Scenario</caption>
+<colgroup>
+<col width="7%" />
+<col width="18%" />
+<col width="18%" />
+<col width="18%" />
+<col width="18%" />
+<col width="18%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Model</th>
+<th align="left">Coverage 50%</th>
+<th align="left">Coverage 80%</th>
+<th align="left">Coverage 95%</th>
+<th align="left">RMSE</th>
+<th align="left">MLE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">mGP</td>
+<td align="left">0.479 (0.016)</td>
+<td align="left">0.789 (0.013)</td>
+<td align="left">0.955 (0.007)</td>
+<td align="left">2.142 (1.479)</td>
+<td align="left">0.103 (0.548)</td>
+</tr>
+<tr class="even">
+<td align="left">tIWP2</td>
+<td align="left">0.252 (0.014)</td>
+<td align="left">0.472 (0.016)</td>
+<td align="left">0.671 (0.015)</td>
+<td align="left">2.321 (1.635)</td>
+<td align="left">0.111 (0.511)</td>
+</tr>
+</tbody>
+</table>
+<p>Visualize the coverage probabilities for interpolation and
+prediction:
+<img src="figure/simulation2.rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/simulation2.rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="simulation-b-true-model-is-tiwp2" class="section level2">
+<h2><strong>Simulation B: True model is tIWP2</strong></h2>
+<p>The simulation B is designed similarly as the simulation A, except
+now:</p>
+<ul>
+<li><span class="math inline">\(f\)</span> is simulated from a tIWP2
+process generated by <span class="math inline">\(\sqrt{x+c}\)</span>,
+with a true PSD <span class="math inline">\(\sigma_0(5) =
+2\)</span>.</li>
+</ul>
+<p>Visualize the RMSE result for interpolation and prediction:
+<img src="figure/simulation2.rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Visualize the MLE result for interpolation and prediction:
+<img src="figure/simulation2.rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>A table of the summary statistics:</p>
+<table>
+<caption>Summary for Inter Scenario</caption>
+<colgroup>
+<col width="7%" />
+<col width="18%" />
+<col width="18%" />
+<col width="18%" />
+<col width="18%" />
+<col width="18%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Model</th>
+<th align="left">Coverage 50%</th>
+<th align="left">Coverage 80%</th>
+<th align="left">Coverage 95%</th>
+<th align="left">RMSE</th>
+<th align="left">MLE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">mGP</td>
+<td align="left">0.526 (0.016)</td>
+<td align="left">0.826 (0.012)</td>
+<td align="left">0.962 (0.006)</td>
+<td align="left">0.437 (0.14)</td>
+<td align="left">0.043 (0.019)</td>
+</tr>
+<tr class="even">
+<td align="left">tIWP2</td>
+<td align="left">0.502 (0.016)</td>
+<td align="left">0.804 (0.013)</td>
+<td align="left">0.954 (0.007)</td>
+<td align="left">0.426 (0.139)</td>
+<td align="left">0.043 (0.019)</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Summary for Pred Scenario</caption>
+<colgroup>
+<col width="7%" />
+<col width="18%" />
+<col width="18%" />
+<col width="18%" />
+<col width="18%" />
+<col width="18%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Model</th>
+<th align="left">Coverage 50%</th>
+<th align="left">Coverage 80%</th>
+<th align="left">Coverage 95%</th>
+<th align="left">RMSE</th>
+<th align="left">MLE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">mGP</td>
+<td align="left">0.633 (0.015)</td>
+<td align="left">0.923 (0.008)</td>
+<td align="left">0.996 (0.002)</td>
+<td align="left">1.182 (0.91)</td>
+<td align="left">0.044 (0.248)</td>
+</tr>
+<tr class="even">
+<td align="left">tIWP2</td>
+<td align="left">0.484 (0.016)</td>
+<td align="left">0.787 (0.013)</td>
+<td align="left">0.962 (0.006)</td>
+<td align="left">1.034 (0.731)</td>
+<td align="left">0.036 (0.132)</td>
+</tr>
+</tbody>
+</table>
+<p>Visualize the coverage probabilities for interpolation and
+prediction:
+<img src="figure/simulation2.rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/simulation2.rmd/unnamed-chunk-15-2.png" width="672" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.5.1 (2025-06-13)
+Platform: aarch64-apple-darwin20
+Running under: macOS Sequoia 15.6.1
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: America/Chicago
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] BayesGP_0.1.3   knitr_1.50      Matrix_1.7-4    lubridate_1.9.4
+ [5] forcats_1.0.1   stringr_1.6.0   dplyr_1.1.4     purrr_1.2.0    
+ [9] readr_2.1.6     tidyr_1.3.1     tibble_3.3.0    ggplot2_4.0.1  
+[13] tidyverse_2.0.0
+
+loaded via a namespace (and not attached):
+ [1] gtable_0.3.6         TMB_1.9.19           xfun_0.55           
+ [4] bslib_0.9.0          ks_1.15.1            lattice_0.22-7      
+ [7] numDeriv_2016.8-1.1  tzdb_0.5.0           bitops_1.0-9        
+[10] vctrs_0.6.5          tools_4.5.1          generics_0.1.4      
+[13] parallel_4.5.1       aghq_0.4.1           cluster_2.1.8.1     
+[16] pkgconfig_2.0.3      fds_1.8              KernSmooth_2.23-26  
+[19] data.table_1.17.8    RColorBrewer_1.1-3   S7_0.2.1            
+[22] lifecycle_1.0.4      compiler_4.5.1       farver_2.1.2        
+[25] git2r_0.36.2         statmod_1.5.1        mvQuad_1.0-8        
+[28] httpuv_1.6.16        htmltools_0.5.9      rainbow_3.8         
+[31] sass_0.4.10          RCurl_1.98-1.17      yaml_2.3.12         
+[34] pracma_2.4.6         later_1.4.4          pillar_1.11.1       
+[37] jquerylib_0.1.4      MASS_7.3-65          cachem_1.1.0        
+[40] mclust_6.1.2         tidyselect_1.2.1     digest_0.6.39       
+[43] mvtnorm_1.3-3        stringi_1.8.7        LaplacesDemon_16.1.6
+[46] labeling_0.4.3       splines_4.5.1        pcaPP_2.0-5         
+[49] rprojroot_2.1.1      fastmap_1.2.0        grid_4.5.1          
+[52] colorspace_2.1-2     cli_3.6.5            magrittr_2.0.4      
+[55] dichromat_2.0-0.1    withr_3.0.2          scales_1.4.0        
+[58] promises_1.5.0       timechange_0.3.0     rmarkdown_2.30      
+[61] otel_0.2.0           deSolve_1.40         workflowr_1.7.2     
+[64] hms_1.1.4            evaluate_1.0.5       rlang_1.1.6         
+[67] Rcpp_1.1.0           glue_1.8.0           fda_6.3.0           
+[70] hdrcde_3.4           jsonlite_2.0.0       R6_2.6.1            
+[73] fs_1.6.6            </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
