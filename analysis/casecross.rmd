@@ -18,14 +18,9 @@ NperStrata = tapply(data_CD3518_sample_2$dailymort_pulm_nonsenior, data_CD3518_s
 haveData = which(NperStrata > 0)
 
 datSub = as.data.frame(data_CD3518_sample_2[data_CD3518_sample_2$strata %in% names(haveData), ])
-datSub$sqrtPm = sqrt(datSub$pm25Sample)
-datSub$sqrtNo2 = sqrt(datSub$no2Sample)
-datSub$sqrtO3 = sqrt(datSub$o3Sample)
 
 datSub$dateFac = factor(as.character(datSub$Date))
 datSub$dateInt = as.integer(datSub$dateFac)
-
-Spm = seq(0, 60, len=101)
 ```
 
 
@@ -38,23 +33,32 @@ library(knitr)
 devtools::load_all("BayesGP", quiet = TRUE)
 ```
 
+In BayesGP, `c` is specified on the original PM2.5 scale, so with `a = 2` the
+base function is `sqrt(pm25Sample + c)`. We use `c = 0` so that the base
+function is `sqrt(pm25Sample)`, and place the PSD prior reference at the
+smallest observed PM2.5 value.
+
+```{r}
+datSub <- datSub %>% arrange(pm25Sample)
+pm25_min <- min(datSub$pm25Sample)
+```
 
 The fastest way to fit the model is to use the FEM approximation:
 
 ```{r}
-datSub <- datSub %>% arrange(no2Sample)
-c <- min(datSub$no2Sample)
 mod_mgp <- model_fit(
   formula = dailymort_pulm_nonsenior ~
     f(
-      no2Sample,
+      pm25Sample,
       model = "mgp",
       computation = "fem",
       a = 2,
-      c = c,
+      c = 0,
+      k = 50,
+      region = pm25_min + c(0, 40),
       normalized_boundary = TRUE,
       boundary.prior = list(mean = 0, prec = 0.001),
-      sd.prior = list(prior = "exp", param = list(u = 1e-5, alpha = 0.5), h = 5, x = 0)
+      sd.prior = list(prior = "exp", param = list(u = 0.01, alpha = 0.5), h = 5, x = pm25_min)
     ),
   family = "cc",
   strata = "strata",
@@ -80,10 +84,10 @@ mod_mgp2 <- model_fit(
       model = "mgp",
       computation = "state-space",
       a = 2,
-      c = c,
+      c = 0,
       normalized_boundary = TRUE,
       boundary.prior = list(mean = 0, prec = 0.001),
-      sd.prior = list(prior = "exp", param = list(u = 0.01, alpha = 0.5), h = 5, x = 0)
+      sd.prior = list(prior = "exp", param = list(u = 0.01, alpha = 0.5), h = 5, x = pm25_min)
     ),
   family = "cc",
   strata = "strata",
@@ -108,10 +112,12 @@ mod_tiwp2 <- model_fit(
       model = "tiwp2",
       computation = "fem",
       a = 2,
-      c = c,
+      c = 0,
+      k = 50,
+      region = pm25_min + c(0, 40),
       normalized_boundary = TRUE,
       boundary.prior = list(mean = 0, prec = 0.001),
-      sd.prior = list(prior = "exp", param = list(u = 0.01, alpha = 0.5), h = 5, x = 0)
+      sd.prior = list(prior = "exp", param = list(u = 0.01, alpha = 0.5), h = 5, x = pm25_min)
     ),
   family = "cc",
   strata = "strata",
@@ -124,20 +130,20 @@ mod_tiwp2 <- model_fit(
 plot(mod_tiwp2)
 ```
 
-Using the state-space representation:
+Using the state-space representation, again on the rounded PM2.5 values:
 
 ```{r}
 mod_tiwp2_ss <- model_fit(
   formula = dailymort_pulm_nonsenior ~
     f(
-      pm25Sample,
+      pm25Sample_rounded,
       model = "tiwp2",
       computation = "state-space",
       a = 2,
-      c = c,
+      c = 0,
       normalized_boundary = TRUE,
       boundary.prior = list(mean = 0, prec = 0.001),
-      sd.prior = list(prior = "exp", param = list(u = 0.01, alpha = 0.5), h = 5, x = 0)
+      sd.prior = list(prior = "exp", param = list(u = 0.01, alpha = 0.5), h = 5, x = pm25_min)
     ),
   family = "cc",
   strata = "strata",
