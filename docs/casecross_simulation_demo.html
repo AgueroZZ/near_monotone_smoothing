@@ -11,9 +11,9 @@
 
 <meta name="author" content="Ziang Zhang" />
 
-<meta name="date" content="2024-06-19" />
+<meta name="date" content="2026-04-24" />
 
-<title>Simulation 2</title>
+<title>Case-Crossover Simulation Demo</title>
 
 <script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -396,9 +396,9 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Simulation 2</h1>
+<h1 class="title toc-ignore">Case-Crossover Simulation Demo</h1>
 <h4 class="author">Ziang Zhang</h4>
-<h4 class="date">2024-06-19</h4>
+<h4 class="date">2026-04-24</h4>
 
 </div>
 
@@ -634,11 +634,12 @@ have uncommitted changes.
 <div id="versions" class="tab-pane fade">
 <p>
 These are the previous versions of the repository in which changes were
-made to the R Markdown (<code>analysis/simulation2.rmd</code>) and HTML
-(<code>docs/simulation2.html</code>) files. If you’ve configured a
-remote Git repository (see <code>?wflow_git_remote</code>), click on the
-hyperlinks in the table below to view the files as they were in that
-past version.
+made to the R Markdown
+(<code>analysis/casecross_simulation_demo.rmd</code>) and HTML
+(<code>docs/casecross_simulation_demo.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -667,7 +668,7 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/analysis/simulation2.rmd" target="_blank">e65c248</a>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/d9815006a91e0a7291b3ce4620ffeba82e98cae5/analysis/casecross_simulation_demo.rmd" target="_blank">d981500</a>
 </td>
 <td>
 Ziang Zhang
@@ -676,15 +677,15 @@ Ziang Zhang
 2026-10-03
 </td>
 <td>
-Initial commit of near-monotone smoothing workflowr project
+Remove iCloud duplicate files; load BayesGP fork in case-crossover demo
 </td>
 </tr>
 <tr>
 <td>
-html
+Rmd
 </td>
 <td>
-<a href="https://rawcdn.githack.com/AgueroZZ/near_monotone_smoothing/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/simulation2.html" target="_blank">e65c248</a>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/analysis/casecross_simulation_demo.rmd" target="_blank">e65c248</a>
 </td>
 <td>
 Ziang Zhang
@@ -703,517 +704,208 @@ Initial commit of near-monotone smoothing workflowr project
 </div>
 </div>
 </div>
-<div id="introduction" class="section level2">
-<h2><strong>Introduction</strong></h2>
-<p>In this simulation study, we study the robustness of the tIWP2 and
-the mGP priors.</p>
+<div id="goal" class="section level2">
+<h2>Goal</h2>
+<p>This file shows a minimal workflow for:</p>
+<ol style="list-style-type: decimal">
+<li>simulating <code>dailymort_pulm_nonsenior</code> with
+<code>simulate_casecrossover_data()</code>;</li>
+<li>fitting a case-crossover model with four simple smooth effects using
+<code>BayesGP</code>;</li>
+<li>extracting the posterior for each effect function with
+<code>predict()</code>;</li>
+<li>simulating and fitting a simpler PM2.5-only data-generating
+process.</li>
+</ol>
+<p>The simulation below uses deliberately high-contrast effects and sets
+the total case count in each stratum explicitly before the multinomial
+redistribution. The fit uses all strata under the grouped multinomial
+case-crossover likelihood.</p>
+<pre class="r"><code>knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.align = &quot;center&quot;
+)
+
+source(&quot;analysis/simulate_casecrossover_data.R&quot;)
+
+devtools::load_all(&quot;BayesGP&quot;, quiet = TRUE)</code></pre>
+<pre><code>Registered S3 method overwritten by &#39;LaplacesDemon&#39;:
+  method        from
+  print.laplace aghq</code></pre>
+<pre><code>Warning: package &#39;testthat&#39; was built under R version 4.5.2</code></pre>
+<p>Define small helpers for extracting and plotting posterior effects.
+Because the model uses <code>initial_location = pm25_reference</code>
+and <code>family = "cc"</code> has no intercept, <code>predict()</code>
+should already return an effect that is anchored at the reference
+value.</p>
+<pre class="r"><code>posterior_effect &lt;- function(fit, data, variable, true_fun, n_grid = 50,
+                             reference = NULL) {
+  variable_range &lt;- range(data[[variable]], na.rm = TRUE)
+  grid_values &lt;- seq(
+    variable_range[1],
+    variable_range[2],
+    length.out = n_grid
+  )
+
+  if (!is.null(reference)) {
+    if (!is.numeric(reference) || length(reference) != 1 || !is.finite(reference)) {
+      stop(&quot;`reference` must be NULL or a finite numeric scalar.&quot;, call. = FALSE)
+    }
+    if (reference &lt; variable_range[1] || reference &gt; variable_range[2]) {
+      stop(&quot;`reference` must lie inside the observed range of `variable`.&quot;, call. = FALSE)
+    }
+    grid_values &lt;- sort(unique(c(grid_values, reference)))
+  }
+
+  newdata &lt;- data.frame(grid_values)
+  names(newdata) &lt;- variable
+
+  summary_df &lt;- predict(
+    fit,
+    newdata = newdata,
+    variable = variable,
+    only.samples = FALSE
+  )
+
+  summary_df$true &lt;- true_fun(summary_df[[variable]])
+  summary_df
+}
+
+plot_effect &lt;- function(effect_df, variable, x_label) {
+  x &lt;- effect_df[[variable]]
+  y_range &lt;- range(
+    effect_df$q0.025,
+    effect_df$q0.975,
+    effect_df$true,
+    finite = TRUE
+  )
+
+  plot(
+    x,
+    effect_df$mean,
+    type = &quot;n&quot;,
+    ylim = y_range,
+    xlab = x_label,
+  ylab = &quot;Centered effect&quot;,
+    main = x_label
+  )
+
+  polygon(
+    c(x, rev(x)),
+    c(effect_df$q0.025, rev(effect_df$q0.975)),
+    col = grDevices::adjustcolor(&quot;grey70&quot;, alpha.f = 0.45),
+    border = NA
+  )
+  lines(x, effect_df$mean, lwd = 2)
+  lines(x, effect_df$true, col = &quot;red&quot;, lwd = 2, lty = 2)
+  legend(
+    &quot;topleft&quot;,
+    legend = c(&quot;Posterior mean&quot;, &quot;True function&quot;),
+    lty = c(1, 2),
+    lwd = 2,
+    col = c(&quot;black&quot;, &quot;red&quot;),
+    bty = &quot;n&quot;
+  )
+}</code></pre>
 </div>
-<div id="simulation-a-true-model-is-mgp" class="section level2">
-<h2><strong>Simulation A: True model is mGP</strong></h2>
-<p>The simulation A is designed as follows, for each of the <span
-class="math inline">\(B = 1000\)</span> replications:</p>
-<ul>
-<li><span class="math inline">\(f\)</span> is simulated from a mGP
-process with <span class="math inline">\(a = 2\)</span>, with a true PSD
-<span class="math inline">\(\sigma_0(5) = 2\)</span>.</li>
-<li>For <span class="math inline">\(x_i\)</span> equally spaced between
-<span class="math inline">\([0,20]\)</span>, <span
-class="math inline">\(n = 100\)</span> observations are simulated from
-<span class="math inline">\(y_i = f(x_i) + \epsilon_i\)</span> with
-<span class="math inline">\(\epsilon_i \sim N(0, 2)\)</span>.</li>
-<li>The posterior <span
-class="math inline">\(\pi(f|\boldsymbol{y})\)</span> is obtained using
-both the tIWP2 and the mGP priors, only using data with <span
-class="math inline">\(x \in [0,15]\)</span>. The prior for the smoothing
-parameter is chosen as an Exponential prior centered at the true PSD
-<span class="math inline">\(\sigma_0(5)\)</span>.</li>
-<li>The pointwise coverage probabilities of the 50%, 80%, and 95%
-credible interval for <span class="math inline">\(f\)</span>, as well as
-the mean squared error and the mean relative error of the posterior mean
-of <span class="math inline">\(f\)</span> are all recorded for each
-replication.</li>
-</ul>
-<p>Visualize the RMSE result for interpolation and prediction:
-<img src="figure/simulation2.rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
-Past versions of unnamed-chunk-5-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-5-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-5-1.png" target="_blank">e65c248</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2026-10-03
-</td>
-</tr>
-</tbody>
-</table>
+<div id="simulate-a-toy-case-crossover-dataset" class="section level2">
+<h2>Simulate A Toy Case-Crossover Dataset</h2>
+<pre class="r"><code>data_env &lt;- new.env(parent = emptyenv())
+load(&quot;data/data_CD3518_sample_2.RData&quot;, envir = data_env)
+base_data &lt;- data_env$data_CD3518_sample_2
+
+simulation_base_data &lt;- base_data
+simulation_base_data$strata &lt;- format(simulation_base_data$Date, &quot;%Y%b%A&quot;)
+cases_per_stratum &lt;- 50L
+pm25_reference &lt;- 5
+f_pm25_true &lt;- function(x) {
+  0.75 * (log1p(x) - log1p(pm25_reference))
+}
+
+true_deriv &lt;- 0.75 * 1/(pm25_reference + 1)</code></pre>
 </div>
-</div>
-<p>Visualize the MLE result for interpolation and prediction:
-<img src="figure/simulation2.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
-Past versions of unnamed-chunk-6-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-6-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-6-1.png" target="_blank">e65c248</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2026-10-03
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>A table of the summary statistics:</p>
-<table>
-<caption>Summary for Inter Scenario</caption>
-<colgroup>
-<col width="8%" />
-<col width="18%" />
-<col width="18%" />
-<col width="17%" />
-<col width="18%" />
-<col width="18%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Model</th>
-<th align="left">Coverage 50%</th>
-<th align="left">Coverage 80%</th>
-<th align="left">Coverage 95%</th>
-<th align="left">RMSE</th>
-<th align="left">MLE</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">mGP</td>
-<td align="left">0.508 (0.016)</td>
-<td align="left">0.797 (0.013)</td>
-<td align="left">0.95 (0.007)</td>
-<td align="left">0.482 (0.143)</td>
-<td align="left">0.044 (0.02)</td>
-</tr>
-<tr class="even">
-<td align="left">tIWP2</td>
-<td align="left">0.417 (0.016)</td>
-<td align="left">0.696 (0.015)</td>
-<td align="left">0.882 (0.01)</td>
-<td align="left">0.524 (0.156)</td>
-<td align="left">0.047 (0.021)</td>
-</tr>
-</tbody>
-</table>
-<table>
-<caption>Summary for Pred Scenario</caption>
-<colgroup>
-<col width="7%" />
-<col width="18%" />
-<col width="18%" />
-<col width="18%" />
-<col width="18%" />
-<col width="18%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Model</th>
-<th align="left">Coverage 50%</th>
-<th align="left">Coverage 80%</th>
-<th align="left">Coverage 95%</th>
-<th align="left">RMSE</th>
-<th align="left">MLE</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">mGP</td>
-<td align="left">0.479 (0.016)</td>
-<td align="left">0.789 (0.013)</td>
-<td align="left">0.955 (0.007)</td>
-<td align="left">2.142 (1.479)</td>
-<td align="left">0.103 (0.548)</td>
-</tr>
-<tr class="even">
-<td align="left">tIWP2</td>
-<td align="left">0.252 (0.014)</td>
-<td align="left">0.472 (0.016)</td>
-<td align="left">0.671 (0.015)</td>
-<td align="left">2.321 (1.635)</td>
-<td align="left">0.111 (0.511)</td>
-</tr>
-</tbody>
-</table>
-<p>Visualize the coverage probabilities for interpolation and
-prediction:
-<img src="figure/simulation2.rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
-Past versions of unnamed-chunk-8-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-8-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-8-1.png" target="_blank">e65c248</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2026-10-03
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/simulation2.rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-2">
-Past versions of unnamed-chunk-8-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-8-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-8-2.png" target="_blank">e65c248</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2026-10-03
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div id="simulation-b-true-model-is-tiwp2" class="section level2">
-<h2><strong>Simulation B: True model is tIWP2</strong></h2>
-<p>The simulation B is designed similarly as the simulation A, except
-now:</p>
-<ul>
-<li><span class="math inline">\(f\)</span> is simulated from a tIWP2
-process generated by <span class="math inline">\(\sqrt{x+c}\)</span>,
-with a true PSD <span class="math inline">\(\sigma_0(5) =
-2\)</span>.</li>
-</ul>
-<p>Visualize the RMSE result for interpolation and prediction:
-<img src="figure/simulation2.rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
-Past versions of unnamed-chunk-12-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-12-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-12-1.png" target="_blank">e65c248</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2026-10-03
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>Visualize the MLE result for interpolation and prediction:
-<img src="figure/simulation2.rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
-Past versions of unnamed-chunk-13-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-13-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-13-1.png" target="_blank">e65c248</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2026-10-03
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>A table of the summary statistics:</p>
-<table>
-<caption>Summary for Inter Scenario</caption>
-<colgroup>
-<col width="7%" />
-<col width="18%" />
-<col width="18%" />
-<col width="18%" />
-<col width="18%" />
-<col width="18%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Model</th>
-<th align="left">Coverage 50%</th>
-<th align="left">Coverage 80%</th>
-<th align="left">Coverage 95%</th>
-<th align="left">RMSE</th>
-<th align="left">MLE</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">mGP</td>
-<td align="left">0.526 (0.016)</td>
-<td align="left">0.826 (0.012)</td>
-<td align="left">0.962 (0.006)</td>
-<td align="left">0.437 (0.14)</td>
-<td align="left">0.043 (0.019)</td>
-</tr>
-<tr class="even">
-<td align="left">tIWP2</td>
-<td align="left">0.502 (0.016)</td>
-<td align="left">0.804 (0.013)</td>
-<td align="left">0.954 (0.007)</td>
-<td align="left">0.426 (0.139)</td>
-<td align="left">0.043 (0.019)</td>
-</tr>
-</tbody>
-</table>
-<table>
-<caption>Summary for Pred Scenario</caption>
-<colgroup>
-<col width="7%" />
-<col width="18%" />
-<col width="18%" />
-<col width="18%" />
-<col width="18%" />
-<col width="18%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Model</th>
-<th align="left">Coverage 50%</th>
-<th align="left">Coverage 80%</th>
-<th align="left">Coverage 95%</th>
-<th align="left">RMSE</th>
-<th align="left">MLE</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">mGP</td>
-<td align="left">0.633 (0.015)</td>
-<td align="left">0.923 (0.008)</td>
-<td align="left">0.996 (0.002)</td>
-<td align="left">1.182 (0.91)</td>
-<td align="left">0.044 (0.248)</td>
-</tr>
-<tr class="even">
-<td align="left">tIWP2</td>
-<td align="left">0.484 (0.016)</td>
-<td align="left">0.787 (0.013)</td>
-<td align="left">0.962 (0.006)</td>
-<td align="left">1.034 (0.731)</td>
-<td align="left">0.036 (0.132)</td>
-</tr>
-</tbody>
-</table>
-<p>Visualize the coverage probabilities for interpolation and
-prediction:
-<img src="figure/simulation2.rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-1">
-Past versions of unnamed-chunk-15-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-15-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-15-1.png" target="_blank">e65c248</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2026-10-03
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/simulation2.rmd/unnamed-chunk-15-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-2">
-Past versions of unnamed-chunk-15-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-15-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-15-2.png" target="_blank">e65c248</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2026-10-03
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<div id="pm2.5-only-diagnostic" class="section level2">
+<h2>PM2.5-Only Diagnostic</h2>
+<p>The simulation helper also accepts <code>NULL</code> effects. Any
+omitted effect is treated as zero in the true linear predictor. This
+makes it easy to create a one-function data-generating process and fit
+the matching one-function model.</p>
+<pre class="r"><code>pm25_only_data &lt;- simulate_casecrossover_data(
+  f_pm25 = f_pm25_true,
+  data = simulation_base_data,
+  seed = 20260425,
+  stratum_total_cases = cases_per_stratum
+)
+
+pm25_only_totals &lt;- tapply(
+  pm25_only_data$dailymort_pulm_nonsenior,
+  pm25_only_data$strata,
+  sum
+)
+
+stopifnot(all(pm25_only_totals == cases_per_stratum))
+
+pm25_only_fit_data &lt;- as.data.frame(
+  pm25_only_data[order(pm25_only_data$strata, pm25_only_data$Date), ]
+)
+
+data.frame(
+  rows = nrow(pm25_only_fit_data),
+  strata = length(unique(pm25_only_fit_data$strata)),
+  total_cases = sum(pm25_only_fit_data$dailymort_pulm_nonsenior),
+  min_cases_per_stratum = min(pm25_only_totals),
+  max_cases_per_stratum = max(pm25_only_totals)
+)</code></pre>
+<pre><code>  rows strata total_cases min_cases_per_stratum max_cases_per_stratum
+1 5970   1491       74550                    50                    50</code></pre>
+<p>Fit only the PM2.5 smooth term:</p>
+<pre class="r"><code>pm25_shift &lt;- pm25_reference
+
+fit_pm25_only &lt;- model_fit(
+  formula = dailymort_pulm_nonsenior ~
+    f(
+      pm25Sample,
+      model = &quot;tiwp2&quot;,
+      computation = &quot;fem&quot;,
+      initial_location = pm25_reference,
+      a = 2, # parameter for mgp or tiwp2 only, not for other models
+      # boundary.prior = list(mean = true_deriv, prec = 1e10),
+      normalized_boundary = TRUE
+    ),
+  family = &quot;cc&quot;,
+  strata = &quot;strata&quot;,
+  weight = NULL,
+  data = pm25_only_fit_data,
+  method = &quot;aghq&quot;,
+  aghq_k = 3
+)
+
+plot(fit_pm25_only)</code></pre>
+<p><img src="figure/casecross_simulation_demo.rmd/pm25-only-fit-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>est_derivative &lt;- mean(extract_boundary_samples(fit_pm25_only, &quot;pm25Sample&quot;))
+
+print(
+  data.frame(
+    true_derivative = true_deriv,
+    estimated_derivative = est_derivative
+  )
+)</code></pre>
+<pre><code>  true_derivative estimated_derivative
+1           0.125            0.1303994</code></pre>
+<p>Extract and plot the PM2.5 posterior curve from the simpler
+model:</p>
+<pre class="r"><code>pm25_only_posterior &lt;- posterior_effect(
+  fit = fit_pm25_only,
+  data = pm25_only_fit_data,
+  variable = &quot;pm25Sample&quot;,
+  true_fun = f_pm25_true,
+  reference = pm25_reference
+)
+
+plot_effect(pm25_only_posterior, &quot;pm25Sample&quot;, &quot;PM2.5 only&quot;)</code></pre>
+<p><img src="figure/casecross_simulation_demo.rmd/pm25-only-posterior-1.png" width="576" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1241,44 +933,43 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] BayesGP_0.1.3   testthat_3.3.1  knitr_1.50      Matrix_1.7-4   
- [5] lubridate_1.9.4 forcats_1.0.1   stringr_1.6.0   dplyr_1.1.4    
- [9] purrr_1.2.0     readr_2.1.6     tidyr_1.3.1     tibble_3.3.0   
-[13] ggplot2_4.0.3   tidyverse_2.0.0
+[1] BayesGP_0.1.3  testthat_3.3.1
 
 loaded via a namespace (and not attached):
- [1] bitops_1.0-9          gridExtra_2.3         remotes_2.5.0        
- [4] inline_0.3.21         rlang_1.2.0           magrittr_2.0.5       
- [7] git2r_0.36.2          otel_0.2.0            matrixStats_1.5.0    
-[10] LaplacesDemon_16.1.8  compiler_4.5.1        loo_2.8.0            
-[13] vctrs_0.7.3           pkgconfig_2.0.3       fastmap_1.2.0        
-[16] ellipsis_0.3.2        labeling_0.4.3        promises_1.5.0       
-[19] deSolve_1.40          rmarkdown_2.30        sessioninfo_1.2.3    
-[22] tzdb_0.5.0            pracma_2.4.6          xfun_0.55            
-[25] cachem_1.1.0          jsonlite_2.0.0        later_1.4.4          
-[28] parallel_4.5.1        cluster_2.1.8.1       R6_2.6.1             
-[31] bslib_0.9.0           stringi_1.8.9         RColorBrewer_1.1-3   
-[34] StanHeaders_2.32.10   pkgload_1.4.1         rainbow_3.8          
-[37] brio_1.1.5            jquerylib_0.1.4       numDeriv_2016.8-1.1  
-[40] Rcpp_1.1.1-1.1        rstan_2.32.7          usethis_3.2.1        
-[43] hdrcde_3.4            httpuv_1.6.16         splines_4.5.1        
-[46] timechange_0.3.0      tidyselect_1.2.1      rstudioapi_0.17.1    
-[49] dichromat_2.0-0.1     yaml_2.3.12           TMB_1.9.23           
-[52] codetools_0.2-20      curl_7.0.0            pkgbuild_1.4.8       
-[55] lattice_0.22-7        ks_1.15.1             withr_3.0.3          
-[58] S7_0.2.2              evaluate_1.0.5        desc_1.4.3           
-[61] RcppParallel_5.1.11-1 mclust_6.1.2          pillar_1.11.1        
-[64] fda_6.3.0             whisker_0.4.1         KernSmooth_2.23-26   
-[67] stats4_4.5.1          pcaPP_2.0-5           generics_0.1.4       
-[70] rprojroot_2.1.1       RCurl_1.98-1.17       hms_1.1.4            
-[73] scales_1.4.0          glue_1.8.1            tools_4.5.1          
-[76] fds_1.8               fs_1.6.6              mvtnorm_1.3-3        
-[79] grid_4.5.1            QuickJSR_1.8.1        devtools_2.4.6       
-[82] colorspace_2.1-2      sfsmisc_1.1-23        tmbstan_1.0.91       
-[85] cli_3.6.6             workflowr_1.7.2       V8_8.0.1             
-[88] gtable_0.3.6          sass_0.4.10           digest_0.6.39        
-[91] aghq_0.4.1            farver_2.1.2          memoise_2.0.1        
-[94] htmltools_0.5.9       lifecycle_1.0.5       MASS_7.3-65          </code></pre>
+  [1] tidyselect_1.2.1      hdrcde_3.4            dplyr_1.1.4          
+  [4] farver_2.1.2          loo_2.8.0             S7_0.2.2             
+  [7] bitops_1.0-9          fastmap_1.2.0         RCurl_1.98-1.17      
+ [10] pracma_2.4.6          promises_1.5.0        digest_0.6.39        
+ [13] lifecycle_1.0.5       cluster_2.1.8.1       StanHeaders_2.32.10  
+ [16] ellipsis_0.3.2        statmod_1.5.1         magrittr_2.0.5       
+ [19] compiler_4.5.1        rlang_1.2.0           sass_0.4.10          
+ [22] tools_4.5.1           yaml_2.3.12           data.table_1.17.8    
+ [25] knitr_1.50            curl_7.0.0            pkgbuild_1.4.8       
+ [28] mclust_6.1.2          RColorBrewer_1.1-3    rainbow_3.8          
+ [31] pkgload_1.4.1         KernSmooth_2.23-26    fda_6.3.0            
+ [34] numDeriv_2016.8-1.1   workflowr_1.7.2       purrr_1.2.0          
+ [37] desc_1.4.3            grid_4.5.1            pcaPP_2.0-5          
+ [40] stats4_4.5.1          git2r_0.36.2          colorspace_2.1-2     
+ [43] inline_0.3.21         ggplot2_4.0.3         scales_1.4.0         
+ [46] MASS_7.3-65           dichromat_2.0-0.1     cli_3.6.6            
+ [49] mvtnorm_1.3-3         rmarkdown_2.30        generics_0.1.4       
+ [52] remotes_2.5.0         mvQuad_1.0-8          otel_0.2.0           
+ [55] RcppParallel_5.1.11-1 rstudioapi_0.17.1     LaplacesDemon_16.1.8 
+ [58] sessioninfo_1.2.3     fds_1.8               polynom_1.4-1        
+ [61] cachem_1.1.0          rstan_2.32.7          stringr_1.6.0        
+ [64] tmbstan_1.0.91        splines_4.5.1         parallel_4.5.1       
+ [67] aghq_0.4.1            matrixStats_1.5.0     vctrs_0.7.3          
+ [70] devtools_2.4.6        V8_8.0.1              Matrix_1.7-4         
+ [73] jsonlite_2.0.0        jquerylib_0.1.4       glue_1.8.1           
+ [76] codetools_0.2-20      stringi_1.8.9         gtable_0.3.6         
+ [79] later_1.4.4           QuickJSR_1.8.1        sfsmisc_1.1-23       
+ [82] tibble_3.3.0          pillar_1.11.1         brio_1.1.5           
+ [85] htmltools_0.5.9       deSolve_1.40          R6_2.6.1             
+ [88] TMB_1.9.23            ks_1.15.1             rprojroot_2.1.1      
+ [91] evaluate_1.0.5        lattice_0.22-7        memoise_2.0.1        
+ [94] httpuv_1.6.16         bslib_0.9.0           Rcpp_1.1.1-1.1       
+ [97] gridExtra_2.3         whisker_0.4.1         xfun_0.55            
+[100] fs_1.6.6              usethis_3.2.1         pkgconfig_2.0.3      </code></pre>
 </div>
 </div>
 </div>

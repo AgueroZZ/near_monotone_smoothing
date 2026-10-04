@@ -406,7 +406,7 @@ div.tocify {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+workflowr <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -417,8 +417,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> </a>
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -427,13 +427,13 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2026-04-20
+<strong>Last updated:</strong> 2026-10-03
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 4
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 2
+aria-hidden="true"></span> 0
 </p>
 <p>
 <strong>Knit directory:</strong> <code>near_monotone_smoothing/</code>
@@ -456,1485 +456,35 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongobjectspresent">
-<span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> <strong>Environment:</strong> objects present
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
 </a>
 </p>
 </div>
-<div id="strongEnvironmentstrongobjectspresent"
+<div id="strongRMarkdownfilestronguptodate"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>
-The global environment had objects present when the code in the R
-Markdown file was run. These objects can affect the analysis in your R
-Markdown file in unknown ways. For reproduciblity it’s best to always
-run the code in an empty environment. Use <code>wflow_publish</code> or
-<code>wflow_build</code> to ensure that the code is always run in an
-empty environment.
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
 </p>
-<p>
-The following objects were defined in the global environment when these
-results were created:
-</p>
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th style="text-align:left;">
-Name
-</th>
-<th style="text-align:left;">
-Class
-</th>
-<th style="text-align:left;">
-Size
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-basis_samps
-</td>
-<td style="text-align:left;">
-matrix;array
-</td>
-<td style="text-align:left;">
-1.1 Mb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-beta_samps
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-23.5 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-boundary_compute
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-5.3 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-build_augmented_observation_matrix
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-36.6 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-c
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-56 bytes
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-compile_tmb_model
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-29.6 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Compute_Design
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-47.4 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Compute_Prec
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-143.7 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Compute_Prec_rev
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-24.9 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-compute_tiwp_psd_boxcox
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-5 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-d
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-56 bytes
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-data_CD3518_sample_2
-</td>
-<td style="text-align:left;">
-tbl_df;tbl;data.frame
-</td>
-<td style="text-align:left;">
-448.2 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-data_sim
-</td>
-<td style="text-align:left;">
-data.frame
-</td>
-<td style="text-align:left;">
-2.4 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-data_train
-</td>
-<td style="text-align:left;">
-data.frame
-</td>
-<td style="text-align:left;">
-2.1 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-datSub
-</td>
-<td style="text-align:left;">
-data.frame
-</td>
-<td style="text-align:left;">
-258 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-evaluate_global_interval_draws
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-5.2 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-evaluate_regionwise_interval_draws
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-15.2 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-evaluate_train_prediction_draws
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-27.5 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-f
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-5.5 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-f_lower
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-10.9 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-f_mean
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-10.9 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-f_samps
-</td>
-<td style="text-align:left;">
-matrix;array
-</td>
-<td style="text-align:left;">
-31.8 Mb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-f_upper
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-10.9 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-fit_exact_known_sd_model
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-55.9 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-fit_iwp_known_sd
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-56.5 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-fit_mgp_fem_known_sd
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-101 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-fit_mgp_known_sd
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-76.4 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-fit_tiwp_known_sd
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-71.5 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-haveData
-</td>
-<td style="text-align:left;">
-integer
-</td>
-<td style="text-align:left;">
-26.1 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-IWP_joint_prec
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-419.4 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-iwp_subset_mode
-</td>
-<td style="text-align:left;">
-character
-</td>
-<td style="text-align:left;">
-112 bytes
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-iwp_summary
-</td>
-<td style="text-align:left;">
-data.frame
-</td>
-<td style="text-align:left;">
-4.2 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-iwp2
-</td>
-<td style="text-align:left;">
-list
-</td>
-<td style="text-align:left;">
-771 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-k
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-56 bytes
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-k_fem
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-56 bytes
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-make_boxcox_transform
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-77.1 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-make_boxcox_transform_derivative
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-9.2 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mGP
-</td>
-<td style="text-align:left;">
-list
-</td>
-<td style="text-align:left;">
-772.6 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mGP_FEM
-</td>
-<td style="text-align:left;">
-list
-</td>
-<td style="text-align:left;">
-701 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mGP_FEM_summary
-</td>
-<td style="text-align:left;">
-data.frame
-</td>
-<td style="text-align:left;">
-4.2 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mGP_joint_prec
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-259.7 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mGP_sim
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-19 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mGP_summary
-</td>
-<td style="text-align:left;">
-data.frame
-</td>
-<td style="text-align:left;">
-4.2 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mod_mgp
-</td>
-<td style="text-align:left;">
-FitResult
-</td>
-<td style="text-align:left;">
-2.7 Mb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_cov
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-14.6 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_cov_c1
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-71 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_cov_c2
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-22.8 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_cov_c3
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-77.7 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_cov_c4
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-5.1 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_cov_c5
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-23.5 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_cov_c6
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-35.4 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_cross_cov
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-14.6 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_cross_cov_c1
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-39.7 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_cross_cov_c2
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-14.9 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_cross_cov_c3
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-44.3 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_cross_cov_c4
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-4.3 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_cross_cov_c5
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-10.6 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_cross_cov_c6
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-26.6 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_deriv_cov
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-14.6 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_deriv_cov_c1
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-8.9 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_deriv_cov_c2
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-6.2 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_deriv_cov_c3
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-14.4 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_deriv_cov_c4
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-1.8 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_deriv_cov_c5
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-3.2 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-mspline_deriv_cov_c6
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-12.2 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-n
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-56 bytes
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-NperStrata
-</td>
-<td style="text-align:left;">
-array
-</td>
-<td style="text-align:left;">
-114.4 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-obs_max
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-56 bytes
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-old_wd
-</td>
-<td style="text-align:left;">
-character
-</td>
-<td style="text-align:left;">
-168 bytes
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-p
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-56 bytes
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-prior_conversion_mgp
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-6 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-prior_median
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-56 bytes
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-PSD_compute
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-17.4 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-psd_iwp
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-56 bytes
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-psd_mgp
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-56 bytes
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-psd_tiwp2
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-56 bytes
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-PSD_tIWP2_compute
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-2 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-R_trans_matrix
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-61.8 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-R_trans_matrix_c1
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-106.8 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-R_trans_matrix_c2
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-8.9 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-R_trans_matrix_c3
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-15.6 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-R_trans_matrix_c4
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-9.6 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-RE_list
-</td>
-<td style="text-align:left;">
-list
-</td>
-<td style="text-align:left;">
-13.9 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-resolve_curvature_parameter
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-22.2 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-samp_max
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-56 bytes
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-sample_exact_known_sd_fit
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-33.6 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-sample_mgp_fem_known_sd_fit
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-35.9 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-samples_iwp2
-</td>
-<td style="text-align:left;">
-dgeMatrix
-</td>
-<td style="text-align:left;">
-2.3 Mb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-samples_mGP
-</td>
-<td style="text-align:left;">
-dgeMatrix
-</td>
-<td style="text-align:left;">
-2.3 Mb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-samples_mGP_FEM
-</td>
-<td style="text-align:left;">
-dgeMatrix
-</td>
-<td style="text-align:left;">
-2.3 Mb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-samples_tiwp2
-</td>
-<td style="text-align:left;">
-dgeMatrix
-</td>
-<td style="text-align:left;">
-2.3 Mb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-sampling_from_FEM
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-9.6 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-sd_noise
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-56 bytes
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-sim_IWp_Var
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-49.3 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-simulate_tiwp_boxcox
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-7.2 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Spm
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-856 bytes
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cov
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-110.5 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cov_c1
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-703.6 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cov_c2
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-37.6 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cov_c3
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-67 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cov_c4
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-10.4 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cov_c5
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-23 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cov_c6
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-58.1 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cov_mat
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-110.5 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cov_mat_c1
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-44.2 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cov_mat_c2
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-5.9 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cov_mat_c3
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-7.3 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cov_mat_c4
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-5.9 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cov_mat_c5
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-5.9 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cov_mat_c6
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-5.9 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cross_cov
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-14.6 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cross_cov_c1
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-253.1 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cross_cov_c2
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-18 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cross_cov_c3
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-36.8 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cross_cov_c4
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-6.3 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cross_cov_c5
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-13.1 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_cross_cov_c6
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-47.5 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_deriv_cov
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-14.6 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_deriv_cov_c1
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-36.5 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_deriv_cov_c2
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-8.8 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_deriv_cov_c3
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-10.6 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_deriv_cov_c4
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-3.4 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_deriv_cov_c5
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-3.3 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SS_deriv_cov_c6
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-14.2 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-summarize_function_samples
-</td>
-<td style="text-align:left;">
-function
-</td>
-<td style="text-align:left;">
-3.2 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-tiwp_summary
-</td>
-<td style="text-align:left;">
-data.frame
-</td>
-<td style="text-align:left;">
-4.2 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-tiwp2
-</td>
-<td style="text-align:left;">
-list
-</td>
-<td style="text-align:left;">
-772.6 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-u
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-56 bytes
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-x
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-848 bytes
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-matrix;array
-</td>
-<td style="text-align:left;">
-11.1 Kb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-y
-</td>
-<td style="text-align:left;">
-numeric
-</td>
-<td style="text-align:left;">
-848 bytes
-</td>
-</tr>
-</tbody>
-</table>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
 </div>
 </div>
 </div>
@@ -2008,18 +558,73 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongnoversioncontrol">
-<span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> <strong>Repository version:</strong> no
-version control </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZnearmonotonesmoothingtreec20e64c9ffef8dcc59313c5ba8e31ccc84761295targetblankc20e64ca">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/tree/c20e64c9ffef8dcc59313c5ba8e31ccc84761295" target="_blank">c20e64c</a>
+</a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongnoversioncontrol"
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZnearmonotonesmoothingtreec20e64c9ffef8dcc59313c5ba8e31ccc84761295targetblankc20e64ca"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>Tracking code development and connecting the code version to the
-results is critical for reproducibility. To start using Git, open the
-Terminal and type <code>git init</code> in your project directory.</p>
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/tree/c20e64c9ffef8dcc59313c5ba8e31ccc84761295" target="_blank">c20e64c</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .claude/
+    Ignored:    .vscode/
+    Ignored:    BayesGP.Rcheck/
+    Ignored:    BayesGP/
+    Ignored:    BayesGP_0.1.2.tar.gz
+    Ignored:    BayesGP_0.1.3.tar.gz
+    Ignored:    Rplots.pdf
+    Ignored:    analysis/.DS_Store
+    Ignored:    analysis/.RData
+    Ignored:    analysis/.Rhistory
+    Ignored:    analysis/casecross.html
+    Ignored:    code/.DS_Store
+    Ignored:    code/.Rhistory
+    Ignored:    code/fitGP_cc.o
+    Ignored:    code/fitGP_cc.so
+    Ignored:    code/fitGP_known_sd.o
+    Ignored:    code/fitGP_known_sd.so
+    Ignored:    code/sim_MGP.o
+    Ignored:    code/sim_MGP.so
+    Ignored:    outputs/
+    Ignored:    talk/.DS_Store
+    Ignored:    talk/BIRS-IMAG.key
+    Ignored:    talk/Template/
+    Ignored:    talk/presentation2024-latex-rebuild.pptx
+    Ignored:    talk/presentation2024.key
+    Ignored:    talk/presentation2024.key.backup-2026-05-11
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
 </div>
 </div>
 </div>
@@ -2028,10 +633,72 @@ Terminal and type <code>git init</code> in your project directory.</p>
 </div>
 <div id="versions" class="tab-pane fade">
 <p>
-This project is not being versioned with Git. To obtain the full
-reproducibility benefits of using workflowr, please see
-<code>?wflow_start</code>.
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/mGP_vs_tIWP2.rmd</code>) and HTML
+(<code>docs/mGP_vs_tIWP2.html</code>) files. If you’ve configured a
+remote Git repository (see <code>?wflow_git_remote</code>), click on the
+hyperlinks in the table below to view the files as they were in that
+past version.
 </p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/analysis/mGP_vs_tIWP2.rmd" target="_blank">e65c248</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-10-03
+</td>
+<td>
+Initial commit of near-monotone smoothing workflowr project
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/near_monotone_smoothing/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/mGP_vs_tIWP2.html" target="_blank">e65c248</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-10-03
+</td>
+<td>
+Initial commit of near-monotone smoothing workflowr project
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 </div>
@@ -2149,7 +816,7 @@ f_2(x)dx  \bigg].
 \sqrt{x+c}\)</span></h3>
 <pre class="r"><code>library(tidyverse)
 library(Matrix)
-source(&quot;code/06-model-helpers.R&quot;)</code></pre>
+devtools::load_all(&quot;BayesGP&quot;, quiet = TRUE)</code></pre>
 <p>To compare the two priors, we can simulate samples from the two
 priors and compare the samples when <span class="math inline">\(m(x) =
 \sqrt x\)</span>.</p>
@@ -2159,11 +826,8 @@ c &lt;- 1.1
 m &lt;- function(x) {sqrt(x+c)}
 m_deriv &lt;- function(x) {1/(2*sqrt(x+c))}
 
-samps0 &lt;- mGP_sim(mesh_size = 0.1, max_t = 10, alpha = (2), c = c, initial_vec = c(m(0),m_deriv(0)), sd = 0.1)</code></pre>
-<pre><code>Registered S3 method overwritten by &#39;LaplacesDemon&#39;:
-  method        from
-  print.laplace aghq</code></pre>
-<pre class="r"><code>result0 &lt;- samps0[,1:2]
+samps0 &lt;- mGP_sim(mesh_size = 0.1, max_t = 10, alpha = (2), c = c, initial_vec = c(m(0),m_deriv(0)), sd = 0.1)
+result0 &lt;- samps0[,1:2]
 for (i in 1:B) {
   samps0 &lt;- mGP_sim(mesh_size = 0.1, max_t = 10, alpha = (2), c = c, initial_vec = c(m(0),m_deriv(0)), sd = 0.1)
   result0 &lt;- cbind(result0, samps0[,2])
@@ -2172,6 +836,43 @@ for (i in 1:B) {
 matplot(x = result0[,1], y = result0[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, ylim = c(0,8), lty = &quot;dashed&quot;, col = &quot;pink&quot;)
 lines(x = result0[,1], y = m(result0[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+Past versions of unnamed-chunk-2-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-2-1.png" target="_blank">e65c248</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-10-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>For the t-IWP2 prior:</p>
 <pre class="r"><code># set the original grid
 t &lt;- seq(0, 10, by = 0.1)
@@ -2189,6 +890,43 @@ for (i in 1:B) {
 matplot(x = result1[,1], y = result1[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;tIWP2&quot;, ylim = c(0,8), lty = &quot;dashed&quot;, col = &quot;pink&quot;)
 lines(x = result1[,1], y = m(result1[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-3-1.png" target="_blank">e65c248</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-10-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Compare the variance of the two priors:</p>
 <pre class="r"><code>## Variance of overtime:
 var0 &lt;- apply(result0[,-1], 1, var)
@@ -2197,6 +935,43 @@ plot(x = result0[,1], y = var0, type = &#39;l&#39;, ylab = &quot;Variance&quot;,
 lines(x = result1[,1], y = var1, col = &quot;blue&quot;, lty = &quot;solid&quot;)
 legend(&quot;topright&quot;, legend=c(&quot;M-GP&quot;, &quot;tIWP2&quot;), col=c(&quot;red&quot;, &quot;blue&quot;), lty=1:1, cex=1)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-4-1.png" target="_blank">e65c248</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-10-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Let’s standardize by the variance at time 2 for each method:</p>
 <pre class="r"><code>var0 &lt;- apply(result0[,-1], 1, var)/var(result0[which(result0[,1] == 2),-1])
 var1 &lt;- apply(result1[,-1], 1, var)/var(result1[which(result1[,1] == 2),-1])
@@ -2204,10 +979,84 @@ plot(x = result0[,1], y = var0, type = &#39;l&#39;, ylab = &quot;Variance&quot;,
 lines(x = result1[,1], y = var1, col = &quot;blue&quot;, lty = &quot;solid&quot;)
 legend(&quot;topright&quot;, legend=c(&quot;M-GP&quot;, &quot;tIWP2&quot;), col=c(&quot;red&quot;, &quot;blue&quot;), lty=1:1, cex=1)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-5-1.png" target="_blank">e65c248</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-10-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot(x = result0[-1,1], y = var0[-1], type = &#39;l&#39;, ylab = &quot;Variance&quot;, xlab = &quot;x&quot;, main = &quot;Variance of samples (standardized at time 2)&quot;, lty = &quot;dashed&quot;, col = &quot;red&quot;, log = &quot;y&quot;)
 lines(x = result1[-1,1], y = var1[-1], col = &quot;blue&quot;, lty = &quot;solid&quot;)
 legend(&quot;bottomright&quot;, legend=c(&quot;M-GP&quot;, &quot;tIWP2&quot;), col=c(&quot;red&quot;, &quot;blue&quot;), lty=1:1, cex=1)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-6-1.png" target="_blank">e65c248</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-10-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="case-2-when-mx-xc3" class="section level3">
 <h3>Case 2: When <span class="math inline">\(m(x) =
@@ -2223,6 +1072,43 @@ for (i in 1:B) {
 matplot(x = result0[,1], y = result0[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = -1/2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;)
 lines(x = result0[,1], y = m(result0[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-7-1.png" target="_blank">e65c248</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-10-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># set the original grid
 t &lt;- seq(0, 10, by = 0.1)
 # compute the transformed grid
@@ -2237,6 +1123,43 @@ for (i in 1:B) {
 matplot(x = result1[,1], y = result1[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;tIWP2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;)
 lines(x = result1[,1], y = m(result1[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-8-1.png" target="_blank">e65c248</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-10-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Compare the variance of the two priors:</p>
 <pre class="r"><code>## Variance of overtime:
 var0 &lt;- apply(result0[,-1], 1, var)
@@ -2245,6 +1168,43 @@ plot(x = result0[,1], y = var0, type = &#39;l&#39;, ylab = &quot;Variance&quot;,
 lines(x = result1[,1], y = var1, col = &quot;blue&quot;, lty = &quot;solid&quot;)
 legend(&quot;topright&quot;, legend=c(&quot;M-GP&quot;, &quot;tIWP2&quot;), col=c(&quot;red&quot;, &quot;blue&quot;), lty=1:1, cex=1)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-9-1.png" target="_blank">e65c248</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-10-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Let’s standardize by the variance at time 2 for each method:</p>
 <pre class="r"><code>var0 &lt;- apply(result0[,-1], 1, var)/var(result0[which(result0[,1] == 2),-1])
 var1 &lt;- apply(result1[,-1], 1, var)/var(result1[which(result1[,1] == 2),-1])
@@ -2252,6 +1212,43 @@ plot(x = result0[,1], y = var0, type = &#39;l&#39;, ylab = &quot;Variance&quot;,
 lines(x = result1[,1], y = var1, col = &quot;blue&quot;, lty = &quot;solid&quot;)
 legend(&quot;topright&quot;, legend=c(&quot;M-GP&quot;, &quot;tIWP2&quot;), col=c(&quot;red&quot;, &quot;blue&quot;), lty=1:1, cex=1)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
+Past versions of unnamed-chunk-10-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-10-1.png" target="_blank">e65c248</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-10-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="constraint-when-x-neq-0" class="section level2">
@@ -2329,6 +1326,43 @@ m_true &lt;- function(x) b[1] + b[2]*sqrt(x)
 matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.05, 0.05))
 lines(x = result[,1], y = m_true(result[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-11-1.png" target="_blank">e65c248</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-10-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>The result does not look right…</p>
 <p>Because <span class="math inline">\(\sqrt{1-x} \neq b_1 +
 b_2\sqrt{x}\)</span> for some <span class="math inline">\(b_1,
@@ -2409,6 +1443,43 @@ m_true &lt;- function(x) b[1] + b[2]*sqrt(x)
 matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.05, 0.05))
 lines(x = result[,1], y = m_true(result[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
+Past versions of unnamed-chunk-13-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-13-1.png" target="_blank">e65c248</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-10-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Now, the result looks correct!</p>
 </div>
 <div id="using-t-iwp2" class="section level3">
@@ -2474,6 +1545,43 @@ result &lt;- result[order(result[,1]),]
 matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.05, 0.05))
 lines(x = result[,1], y = m_true(result[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-1">
+Past versions of unnamed-chunk-15-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-15-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-15-1.png" target="_blank">e65c248</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-10-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="which-one-is-easier" class="section level3">
 <h3><strong>Which one is easier?</strong></h3>
@@ -2510,11 +1618,11 @@ Platform: aarch64-apple-darwin20
 Running under: macOS Sequoia 15.6.1
 
 Matrix products: default
-BLAS:   /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRblas.0.dylib 
+BLAS:   /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib 
 LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
 
 locale:
-[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+[1] en_CA/en_CA/en_CA/C/en_CA/en_CA
 
 time zone: America/Chicago
 tzcode source: internal
@@ -2523,36 +1631,44 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] BayesGP_0.1.3   knitr_1.50      Matrix_1.7-4    lubridate_1.9.4
+ [1] BayesGP_0.1.3   testthat_3.3.1  Matrix_1.7-4    lubridate_1.9.4
  [5] forcats_1.0.1   stringr_1.6.0   dplyr_1.1.4     purrr_1.2.0    
- [9] readr_2.1.6     tidyr_1.3.1     tibble_3.3.0    ggplot2_4.0.1  
+ [9] readr_2.1.6     tidyr_1.3.1     tibble_3.3.0    ggplot2_4.0.3  
 [13] tidyverse_2.0.0
 
 loaded via a namespace (and not attached):
- [1] gtable_0.3.6         TMB_1.9.19           xfun_0.55           
- [4] bslib_0.9.0          ks_1.15.1            lattice_0.22-7      
- [7] numDeriv_2016.8-1.1  tzdb_0.5.0           bitops_1.0-9        
-[10] vctrs_0.6.5          tools_4.5.1          generics_0.1.4      
-[13] parallel_4.5.1       aghq_0.4.1           cluster_2.1.8.1     
-[16] pkgconfig_2.0.3      fds_1.8              KernSmooth_2.23-26  
-[19] data.table_1.17.8    RColorBrewer_1.1-3   S7_0.2.1            
-[22] lifecycle_1.0.4      compiler_4.5.1       farver_2.1.2        
-[25] git2r_0.36.2         statmod_1.5.1        mvQuad_1.0-8        
-[28] httpuv_1.6.16        htmltools_0.5.9      rainbow_3.8         
-[31] sass_0.4.10          RCurl_1.98-1.17      yaml_2.3.12         
-[34] pracma_2.4.6         later_1.4.4          pillar_1.11.1       
-[37] jquerylib_0.1.4      MASS_7.3-65          cachem_1.1.0        
-[40] mclust_6.1.2         tidyselect_1.2.1     digest_0.6.39       
-[43] mvtnorm_1.3-3        stringi_1.8.7        LaplacesDemon_16.1.6
-[46] splines_4.5.1        pcaPP_2.0-5          rprojroot_2.1.1     
-[49] fastmap_1.2.0        grid_4.5.1           colorspace_2.1-2    
-[52] cli_3.6.5            magrittr_2.0.4       dichromat_2.0-0.1   
-[55] withr_3.0.2          scales_1.4.0         promises_1.5.0      
-[58] timechange_0.3.0     rmarkdown_2.30       otel_0.2.0          
-[61] deSolve_1.40         workflowr_1.7.2      hms_1.1.4           
-[64] evaluate_1.0.5       rlang_1.1.6          Rcpp_1.1.0          
-[67] glue_1.8.0           fda_6.3.0            hdrcde_3.4          
-[70] jsonlite_2.0.0       R6_2.6.1             fs_1.6.6            </code></pre>
+ [1] bitops_1.0-9          gridExtra_2.3         remotes_2.5.0        
+ [4] inline_0.3.21         rlang_1.2.0           magrittr_2.0.5       
+ [7] git2r_0.36.2          otel_0.2.0            matrixStats_1.5.0    
+[10] LaplacesDemon_16.1.8  compiler_4.5.1        loo_2.8.0            
+[13] vctrs_0.7.3           pkgconfig_2.0.3       fastmap_1.2.0        
+[16] ellipsis_0.3.2        promises_1.5.0        deSolve_1.40         
+[19] rmarkdown_2.30        sessioninfo_1.2.3     tzdb_0.5.0           
+[22] pracma_2.4.6          xfun_0.55             cachem_1.1.0         
+[25] jsonlite_2.0.0        later_1.4.4           parallel_4.5.1       
+[28] cluster_2.1.8.1       R6_2.6.1              bslib_0.9.0          
+[31] stringi_1.8.9         RColorBrewer_1.1-3    StanHeaders_2.32.10  
+[34] pkgload_1.4.1         rainbow_3.8           brio_1.1.5           
+[37] jquerylib_0.1.4       numDeriv_2016.8-1.1   Rcpp_1.1.1-1.1       
+[40] rstan_2.32.7          knitr_1.50            usethis_3.2.1        
+[43] hdrcde_3.4            httpuv_1.6.16         splines_4.5.1        
+[46] timechange_0.3.0      tidyselect_1.2.1      rstudioapi_0.17.1    
+[49] dichromat_2.0-0.1     yaml_2.3.12           TMB_1.9.23           
+[52] codetools_0.2-20      curl_7.0.0            pkgbuild_1.4.8       
+[55] lattice_0.22-7        ks_1.15.1             withr_3.0.3          
+[58] S7_0.2.2              evaluate_1.0.5        desc_1.4.3           
+[61] RcppParallel_5.1.11-1 mclust_6.1.2          pillar_1.11.1        
+[64] fda_6.3.0             whisker_0.4.1         KernSmooth_2.23-26   
+[67] stats4_4.5.1          pcaPP_2.0-5           generics_0.1.4       
+[70] rprojroot_2.1.1       RCurl_1.98-1.17       hms_1.1.4            
+[73] scales_1.4.0          glue_1.8.1            tools_4.5.1          
+[76] fds_1.8               fs_1.6.6              mvtnorm_1.3-3        
+[79] grid_4.5.1            QuickJSR_1.8.1        devtools_2.4.6       
+[82] colorspace_2.1-2      sfsmisc_1.1-23        tmbstan_1.0.91       
+[85] cli_3.6.6             workflowr_1.7.2       V8_8.0.1             
+[88] gtable_0.3.6          sass_0.4.10           digest_0.6.39        
+[91] aghq_0.4.1            farver_2.1.2          memoise_2.0.1        
+[94] htmltools_0.5.9       lifecycle_1.0.5       MASS_7.3-65          </code></pre>
 </div>
 </div>
 </div>
