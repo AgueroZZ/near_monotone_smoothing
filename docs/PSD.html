@@ -415,7 +415,7 @@ div.tocify {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-ok text-success"
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -426,8 +426,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-</a>
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -440,9 +440,9 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 0
+aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>near_monotone_smoothing/</code>
@@ -465,18 +465,21 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
-<span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
-</a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate"
+<div id="strongRMarkdownfilestronguncommittedchanges"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git
-repository, you know the exact version of the code that produced these
-results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
 </div>
 </div>
 </div>
@@ -567,15 +570,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomaguerozznearmonotonesmoothingtree84a96043d621066295f56a6381e461b5f2b76482targetblank84a9604a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZnearmonotonesmoothingtree46d2d2e45afbc36efdf6dc0cf06e19ab5293680ctargetblank46d2d2ea">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/aguerozz/near_monotone_smoothing/tree/84a96043d621066295f56a6381e461b5f2b76482" target="_blank">84a9604</a>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/tree/46d2d2e45afbc36efdf6dc0cf06e19ab5293680c" target="_blank">46d2d2e</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomaguerozznearmonotonesmoothingtree84a96043d621066295f56a6381e461b5f2b76482targetblank84a9604a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZnearmonotonesmoothingtree46d2d2e45afbc36efdf6dc0cf06e19ab5293680ctargetblank46d2d2ea"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -585,7 +588,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/aguerozz/near_monotone_smoothing/tree/84a96043d621066295f56a6381e461b5f2b76482" target="_blank">84a9604</a>.
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/tree/46d2d2e45afbc36efdf6dc0cf06e19ab5293680c" target="_blank">46d2d2e</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -602,9 +605,20 @@ were generated:
 Ignored files:
     Ignored:    BayesGP
 
+Untracked files:
+    Untracked:  analysis/simulation_psd_calibration_check.R
+    Untracked:  log/2026-10-04_coverage_mcse_log.md
+    Untracked:  log/2026-10-04_simulation_psd_calibration_log.md
+    Untracked:  log/2026-10-04_tiwp2_fem_boundary_prediction_log.md
+    Untracked:  plan/2026-10-04_coverage_mcse_plan.md
+    Untracked:  plan/2026-10-04_psd_theory_tracked_revision_plan.md
+    Untracked:  plan/2026-10-04_simulation_psd_calibration_plan.md
+    Untracked:  plan/2026-10-04_tiwp2_fem_boundary_prediction_plan.md
+
 Unstaged changes:
-    Modified:   output/iwp_prior_covariance_convergence_metrics.csv
-    Modified:   output/prior_covariance_convergence_metrics.csv
+    Modified:   analysis/PSD.rmd
+    Modified:   analysis/simulation1.rmd
+    Modified:   analysis/simulation2.rmd
 
 </code></pre>
 <p>
@@ -653,7 +667,24 @@ Message
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/aguerozz/near_monotone_smoothing/2ba44ecb64946cf46a102f911bc4275bf275171b/docs/PSD.html" target="_blank">2ba44ec</a>
+<a href="https://rawcdn.githack.com/AgueroZZ/near_monotone_smoothing/c17d4d98077046acbbe051d8a01dbc2fdaa2d015/docs/PSD.html" target="_blank">c17d4d9</a>
+</td>
+<td>
+AgueroZZ
+</td>
+<td>
+2026-10-04
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/near_monotone_smoothing/2ba44ecb64946cf46a102f911bc4275bf275171b/docs/PSD.html" target="_blank">2ba44ec</a>
 </td>
 <td>
 Ziang Zhang
@@ -670,7 +701,7 @@ Build site.
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/aguerozz/near_monotone_smoothing/5eaa7eebd32fed91f69783b6f7f31b0d366c7d53/docs/PSD.html" target="_blank">5eaa7ee</a>
+<a href="https://rawcdn.githack.com/AgueroZZ/near_monotone_smoothing/5eaa7eebd32fed91f69783b6f7f31b0d366c7d53/docs/PSD.html" target="_blank">5eaa7ee</a>
 </td>
 <td>
 Ziang Zhang
@@ -687,7 +718,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/aguerozz/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/analysis/PSD.rmd" target="_blank">e65c248</a>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/analysis/PSD.rmd" target="_blank">e65c248</a>
 </td>
 <td>
 Ziang Zhang
@@ -704,7 +735,7 @@ Initial commit of near-monotone smoothing workflowr project
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/aguerozz/near_monotone_smoothing/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/PSD.html" target="_blank">e65c248</a>
+<a href="https://rawcdn.githack.com/AgueroZZ/near_monotone_smoothing/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/PSD.html" target="_blank">e65c248</a>
 </td>
 <td>
 Ziang Zhang
@@ -723,28 +754,99 @@ Initial commit of near-monotone smoothing workflowr project
 </div>
 </div>
 </div>
+<!-- PSD tracked-revision display: start -->
+<style>
+.psd-change-delete, .psd-change-add {
+  padding: 0.6em 0.8em;
+  margin: 0.6em 0;
+  border-left: 3px solid;
+}
+.psd-change-delete {
+  color: #8a3341;
+  background: #fff1f2;
+  border-color: #b94a48;
+  text-decoration: line-through;
+}
+.psd-change-delete p, .psd-change-delete .math {
+  text-decoration: line-through;
+}
+.psd-change-delete .math.display {
+  display: block;
+  position: relative;
+}
+.psd-change-delete .math.display::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: 1px solid #b94a48;
+  pointer-events: none;
+}
+.psd-change-add {
+  background: #fff3a3;
+  border-color: #b8860b;
+}
+</style>
+<div id="psd-review-legend" class="psd-change-add">
+<p><strong>Tracked revision (2026-10-04):</strong> Struck-through text
+records removed original wording or formulas. Yellow highlights mark
+rewritten or added content. Unmarked content is retained from the
+original page.</p>
+</div>
+<!-- PSD tracked-revision display: end -->
 <div id="introduction" class="section level2">
 <h2><strong>Introduction</strong></h2>
 <p>Recall that the M-GP is defined by: <span
-class="math display">\[L_af(x) = \sigma \xi(x),\]</span> where <span
-class="math inline">\(L_a = D^2 - \alpha(x)D\)</span> and <span
-class="math inline">\(\alpha(x) = -1/a(x+c)\)</span>. The monotone
-function implied by <span class="math inline">\(\alpha(x)\)</span> is
-<span class="math inline">\(g = D^{-1}[\exp(D^{-1}\alpha)]\)</span>.</p>
+class="math display">\[L_af(x) = \sigma \xi(x),\]</span></p>
+<div id="operator-curvature-delete" class="psd-change-delete">
+<p>where <span class="math inline">\(L_a = D^2 - \alpha(x)D\)</span> and
+<span class="math inline">\(\alpha(x) = -1/a(x+c)\)</span>.</p>
+</div>
+<div id="operator-curvature-add" class="psd-change-add">
+<p>where <span class="math inline">\(L_a = D^2 - \alpha(x)D\)</span> and
+<span class="math inline">\(\alpha(x) = -\frac{1}{a(x+c)}\)</span>.</p>
+</div>
+<p>The monotone function implied by <span
+class="math inline">\(\alpha(x)\)</span> is <span
+class="math inline">\(g = D^{-1}[\exp(D^{-1}\alpha)]\)</span>.</p>
 <p>The t-IWP2 can be defined by a similar SDE: <span
-class="math display">\[\tilde{L}_af(x) = \sigma \xi(x),\]</span> where
-<span class="math inline">\(\tilde{L}_a =
+class="math display">\[\tilde{L}_af(x) = \sigma \xi(x),\]</span></p>
+<div id="operator-name-delete" class="psd-change-delete">
+<p>where <span class="math inline">\(\tilde{L}_a =
 g&#39;(x)^{-3/2}L_\alpha\)</span>.</p>
+</div>
+<div id="operator-name-add" class="psd-change-add">
+<p>where <span class="math inline">\(\tilde{L}_a =
+g&#39;(x)^{-3/2}L_a\)</span>.</p>
+</div>
 <p>We want to put prior on the standard deviation parameter <span
 class="math inline">\(\sigma\)</span> hence on the function <span
 class="math inline">\(f\)</span> in an interpretable way. One way to do
 this is through the notion of <span
 class="math inline">\(h\)</span>-step predictive standard deviation
 (PSD) which is defined as: <span class="math display">\[\sigma_x(h) =
-\text{SD}[f(x+h)|f(u):u\leq x].\]</span> For process defined by time
-invariant differential operator, the PSD is invariant to the choice of
-<span class="math inline">\(x\)</span>. For example, the h-step PSD for
-an IWP-2 can be shown as <span
+\text{SD}[f(x+h)|f(u):u\leq x].\]</span></p>
+<div id="psd-conditions-add" class="psd-change-add">
+<p>We consider a right-unbounded domain <span
+class="math inline">\([x_0,\infty)\)</span> with <span
+class="math inline">\(x_0+c&gt;0\)</span>, and fix <span
+class="math inline">\(\sigma\geq0\)</span>, <span
+class="math inline">\(h&gt;0\)</span>, and an increasing transformation
+<span class="math inline">\(g\)</span> with <span
+class="math inline">\(g&#39;(x)&gt;0\)</span>. We also write <span
+class="math inline">\(m=g\)</span> below. The transformation’s scale and
+normalization are held fixed when taking the limit in <span
+class="math inline">\(x\)</span>. For interior starting locations, the
+exact past trajectory determines the current function value and
+derivative. At the initial boundary, the innovation PSD also conditions
+on the initial derivative (or uses a fixed initial state). It measures
+uncertainty from future innovations, rather than the full posterior
+uncertainty given noisy data.</p>
+</div>
+<p>For process defined by time invariant differential operator, the PSD
+is invariant to the choice of <span class="math inline">\(x\)</span>.
+For example, the h-step PSD for an IWP-2 can be shown as <span
 class="math inline">\(\sigma\sqrt{h^3/3}\)</span> (<a
 href="https://www.tandfonline.com/doi/full/10.1080/10618600.2023.2289532">Zhang
 et.al, 2024</a>). However for the M-GP and t-IWP2, since the
@@ -757,16 +859,43 @@ class="math inline">\(x\)</span>.</p>
 <p>In this section, we study the behavior of PSD for M-GP and t-IWP2.
 Let <span class="math inline">\(G_t(\tau)\)</span> denotes the Green
 function of the operator <span class="math inline">\(L_a\)</span>, the
-PSD <span class="math inline">\(\sigma_x(h)\)</span> can be written as:
-<span class="math display">\[\sigma^2_x(h) = \int_{x}^{x +
-h}G^2_{x+h}(t)dt.\]</span> Recall for the M-GP, the Green function is
-given by: <span class="math display">\[G_t(\tau) =
-\frac{1}{g&#39;(\tau)}[g(t)-g(\tau)].\]</span> Using property of the
-Green function (see <a
+PSD <span class="math inline">\(\sigma_x(h)\)</span> can be written
+as:</p>
+<div id="variance-scale-delete" class="psd-change-delete">
+<p><span class="math display">\[\sigma^2_x(h) = \int_{x}^{x +
+h}G^2_{x+h}(t)dt.\]</span></p>
+</div>
+<div id="variance-scale-add" class="psd-change-add">
+<p><span class="math display">\[\sigma^2_x(h) = \sigma^2\int_{x}^{x +
+h}G^2_{x+h}(t)dt.\]</span></p>
+</div>
+<p>Recall for the M-GP, the Green function is given by: <span
+class="math display">\[G_t(\tau) =
+\frac{1}{g&#39;(\tau)}[g(t)-g(\tau)].\]</span></p>
+<div id="green-reference-delete" class="psd-change-delete">
+<p>Using property of the Green function (see <a
 href="https://people.uncw.edu/hermanr/mat463/odebook/">textbook</a>
 Equation 8.36), we can show that the Green function of t-IWP2 is given
-by: <span class="math display">\[\tilde{G}_t(\tau) =
+by:</p>
+</div>
+<div id="green-reference-add" class="psd-change-add">
+<p>Using the initial-value Green function formula in the <a
+href="https://people.uncw.edu/hermanr/mat463/ODEBook/Book/ODE2.pdf#page=280">textbook</a>,
+Equation 8.38, we can show that the Green function of t-IWP2 is given
+by:</p>
+</div>
+<p><span class="math display">\[\tilde{G}_t(\tau) =
 g&#39;(\tau)^{1/2}[g(t)-g(\tau)].\]</span></p>
+<div id="tiwp2-exact-psd-add" class="psd-change-add">
+<p>For t-IWP2, the corresponding variance is <span
+class="math display">\[
+\sigma_x^2(h)
+=\sigma^2\int_x^{x+h}\tilde{G}_{x+h}^2(t)\,dt
+=\frac{\sigma^2}{3}\bigl[m(x+h)-m(x)\bigr]^3.
+\]</span> The last equality follows by substituting <span
+class="math inline">\(v=m(t)\)</span>, using <span
+class="math inline">\(m&#39;(t)&gt;0\)</span>.</p>
+</div>
 <div id="psd-of-m-gp-has-a-nice-limit" class="section level3">
 <h3><em>PSD of M-GP has a nice limit</em></h3>
 <p>As mentioned above, the PSD of M-GP generally depends on both the
@@ -780,12 +909,27 @@ PSD of M-GP has a nice limit as <span class="math inline">\(x\to
 specifying the location <span class="math inline">\(x\)</span>.</p>
 <blockquote>
 <p><strong>Corollary 1 (Limiting PSD of M-GP):</strong></p>
+</blockquote>
+<blockquote>
+<div id="mgp-limit-conditions-delete" class="psd-change-delete">
 <p>Assume <span class="math inline">\(\alpha(x) =
 -\frac{1}{a(x+c)}\)</span> where <span class="math inline">\(a \neq
 0\)</span>. For the M-GP defined by <span
 class="math inline">\(\alpha(x)\)</span> <span
 class="math display">\[\sigma^2(h) = \lim_{x \to \infty}\sigma_x^2(h) =
 \frac{\sigma^2 h^3}{3}.\]</span></p>
+</div>
+</blockquote>
+<blockquote>
+<div id="mgp-limit-conditions-add" class="psd-change-add">
+<p>Fix <span class="math inline">\(h&gt;0\)</span>, <span
+class="math inline">\(\sigma\geq0\)</span>, and a finite real <span
+class="math inline">\(a\neq0\)</span>. Assume <span
+class="math inline">\(\alpha(x)=-\frac{1}{a(x+c)}\)</span> on the domain
+specified above. For the M-GP defined by <span
+class="math inline">\(\alpha(x)\)</span>, <span
+class="math display">\[\sigma^2(h)=\lim_{x\to\infty}\sigma_x^2(h)=\frac{\sigma^2h^3}{3}.\]</span></p>
+</div>
 </blockquote>
 <p>The proof of corollary 1 is given in the appendix. The corollary
 shows that although the PSD of M-GP <span
@@ -803,6 +947,9 @@ to the PSD of IWP2 as <span class="math inline">\(x\to \infty\)</span>.
 However, the following corollary shows that this is not the case.</p>
 <blockquote>
 <p><strong>Corollary 2 (Limiting PSD of t-IWP2):</strong></p>
+</blockquote>
+<blockquote>
+<div id="tiwp2-limit-conditions-delete" class="psd-change-delete">
 <p>Assume <span class="math inline">\(\alpha(x) =
 -\frac{1}{a(x+c)}\)</span> where <span class="math inline">\(a \geq
 0\)</span>. For the t-IWP2 defined by a monotone transformation <span
@@ -810,11 +957,26 @@ class="math inline">\(m(x)\)</span> such that <span
 class="math inline">\(m&#39;&#39;(x)/m&#39;(x) = \alpha(x)\)</span>, the
 limiting PSD is <span class="math display">\[\sigma^2(h) = \lim_{x \to
 \infty}\sigma_x^2(h) = 0.\]</span></p>
+</div>
 </blockquote>
-<p>The proof of corollary 2 is also given in the appendix. This
-corollary implies as the starting time increases, the PSD of t-IWP2
-converges to zero, which means there is no uncertainty in the functional
-form of the <span class="math inline">\(f\)</span> as <span
+<blockquote>
+<div id="tiwp2-limit-conditions-add" class="psd-change-add">
+<p>Fix <span class="math inline">\(h&gt;0\)</span>, <span
+class="math inline">\(\sigma\geq0\)</span>, and a finite real <span
+class="math inline">\(a&gt;0\)</span>. Assume <span
+class="math inline">\(\alpha(x)=-\frac{1}{a(x+c)}\)</span> on the domain
+specified above. For t-IWP2 defined by a fixed increasing transformation
+<span class="math inline">\(m\)</span> with <span
+class="math inline">\(m&#39;(x)&gt;0\)</span> and <span
+class="math inline">\(m&#39;&#39;(x)/m&#39;(x)=\alpha(x)\)</span>, <span
+class="math display">\[\sigma^2(h)=\lim_{x\to\infty}\sigma_x^2(h)=0.\]</span></p>
+</div>
+</blockquote>
+<p>The proof of corollary 2 is also given in the appendix.</p>
+<div id="local-versus-global-delete" class="psd-change-delete">
+<p>This corollary implies as the starting time increases, the PSD of
+t-IWP2 converges to zero, which means there is no uncertainty in the
+functional form of the <span class="math inline">\(f\)</span> as <span
 class="math inline">\(x\to \infty\)</span>.</p>
 <p>In other words, the seemingly naive approach of transforming the
 coordinate of an IWP2 through a monotone function actually puts a
@@ -823,6 +985,42 @@ class="math inline">\(f\)</span>. Basically it assumes there will be
 (almost) <strong>no deviation from the base model</strong> <span
 class="math inline">\(\text{span}\{1,m(x)\}\)</span> at the right end of
 the domain when <span class="math inline">\(x\)</span> is large.</p>
+</div>
+<div id="local-versus-global-add" class="psd-change-add">
+<p>For every fixed <span class="math inline">\(h&gt;0\)</span>, this
+corollary shows that the conditional uncertainty from innovations over
+<span class="math inline">\([x,x+h]\)</span> decreases to zero as the
+starting location <span class="math inline">\(x\)</span> increases.
+Relative to M-GP at fixed process SD, t-IWP2 therefore has vanishing
+local innovation variability on intervals of a fixed length on the
+original scale.</p>
+<p>This conclusion does not imply that the marginal uncertainty of <span
+class="math inline">\(f(x)\)</span>, its posterior uncertainty given
+noisy data, or its accumulated deviation from a fixed base function
+vanishes. Randomness accumulated before <span
+class="math inline">\(x\)</span> and uncertainty in the current state
+can still contribute to these quantities. It also does not establish a
+limit for extrapolation from a fixed observation endpoint, where the
+prediction horizon increases with the target location.</p>
+<p>For example, take <span class="math inline">\(a=2\)</span>, <span
+class="math inline">\(c=1\)</span>, <span
+class="math inline">\(\sigma&gt;0\)</span>, and <span
+class="math inline">\(m(x)=2(\sqrt{x+1}-1)\)</span>, with <span
+class="math inline">\(m(0)=0\)</span> and <span
+class="math inline">\(m&#39;(0)=1\)</span>. With a fixed initial
+function value and derivative, write <span
+class="math inline">\(f(x)=\beta_0+\beta_1m(x)+r(x)\)</span>, where
+<span class="math inline">\(r\)</span> is an IWP-2 on the transformed
+scale with zero initial value and derivative. Then <span
+class="math display">\[
+\operatorname{Var}[f(x)\mid\beta_0,\beta_1]
+=\operatorname{Var}[r(x)]=\frac{\sigma^2m(x)^3}{3}\longrightarrow\infty,
+\]</span> while <span class="math display">\[
+\sigma_x^2(h)=\frac{\sigma^2[m(x+h)-m(x)]^3}{3}\longrightarrow0.
+\]</span> Thus, shrinking local innovations can coexist with increasing
+accumulated uncertainty and deviation from the boundary-implied base
+function.</p>
+</div>
 </div>
 </div>
 <div id="psd-computation" class="section level2">
@@ -889,17 +1087,40 @@ near-monotone term specification, for example:</p>
 <h3><em>Proof of Corollary 1</em></h3>
 <p>To prove the corollary, we will utilize the following two lemmas.</p>
 <blockquote>
+<div id="lemma-one-domain-delete" class="psd-change-delete">
 <p><strong>Lemma 1:</strong> Assume <span
 class="math inline">\(h\geq\tau&gt;0\)</span>, then for any <span
-class="math inline">\(x\)</span>: <span
-class="math display">\[\lim_{x\to \infty}
+class="math inline">\(x\)</span>:</p>
+</div>
+</blockquote>
+<blockquote>
+<div id="lemma-one-domain-add" class="psd-change-add">
+<p><strong>Lemma 1:</strong> Under the assumptions of Corollary 1, for
+fixed <span class="math inline">\(h&gt;0\)</span> and <span
+class="math inline">\(0\leq\tau\leq h\)</span>:</p>
+</div>
+</blockquote>
+<blockquote>
+<p><span class="math display">\[\lim_{x\to \infty}
 \frac{g(x+h)-g(x+\tau)}{g&#39;(x+\tau)} = h-\tau.\]</span></p>
 </blockquote>
-<p><em>Proof of Lemma 1:</em> Since <span
-class="math inline">\(g\)</span> is a continuously differentiable, by
-mean value theorem we know <span class="math display">\[g(x+h) -
-g(x+\tau)=g&#39;(x+\nu) (h-\tau),\]</span> where <span
-class="math inline">\(\nu \in (x+\tau, x+h)\)</span>.</p>
+<p><em>Proof of Lemma 1:</em></p>
+<div id="lemma-one-endpoint-add" class="psd-change-add">
+<p>When <span class="math inline">\(\tau=h\)</span>, the numerator is
+zero and the claim is immediate. We now consider <span
+class="math inline">\(\tau&lt;h\)</span>.</p>
+</div>
+<p>Since <span class="math inline">\(g\)</span> is a continuously
+differentiable, by mean value theorem we know <span
+class="math display">\[g(x+h) - g(x+\tau)=g&#39;(x+\nu)
+(h-\tau),\]</span></p>
+<div id="mean-value-point-delete" class="psd-change-delete">
+<p>where <span class="math inline">\(\nu \in (x+\tau, x+h)\)</span>.</p>
+</div>
+<div id="mean-value-point-add" class="psd-change-add">
+<p>where <span class="math inline">\(\nu \in (\tau,h)\)</span>.</p>
+</div>
+<div id="lemma-one-both-signs-delete" class="psd-change-delete">
 <p>Assume without the loss of generality that <span
 class="math inline">\(a &gt;0\)</span> so <span
 class="math inline">\(g\)</span> is concave function that is
@@ -910,7 +1131,30 @@ class="math display">\[g&#39;(x+h) (h-\tau) \leq g&#39;(x+\nu) (h-\tau)
 it is clear for the right hand side we have <span
 class="math display">\[\lim_{x\to \infty} \frac{g&#39;(x+\tau)
 (h-\tau)}{g&#39;(x+\tau)} = h-\tau.\]</span></p>
+</div>
+<div id="lemma-one-both-signs-add" class="psd-change-add">
+<p>Both signs of <span class="math inline">\(a\)</span> can be handled
+by monotonicity of <span class="math inline">\(g&#39;\)</span>. For
+<span class="math inline">\(a&gt;0\)</span>, <span
+class="math inline">\(g&#39;\)</span> is decreasing, so <span
+class="math display">\[
+\frac{g&#39;(x+h)}{g&#39;(x+\tau)}
+\leq\frac{g&#39;(x+\nu)}{g&#39;(x+\tau)}\leq1.
+\]</span> For <span class="math inline">\(a&lt;0\)</span>, <span
+class="math inline">\(g&#39;\)</span> is increasing, so <span
+class="math display">\[
+1\leq\frac{g&#39;(x+\nu)}{g&#39;(x+\tau)}
+\leq\frac{g&#39;(x+h)}{g&#39;(x+\tau)}.
+\]</span> In either case, the mean-value ratio is bounded by 1 and the
+endpoint ratio.</p>
+</div>
+<div id="lemma-one-ratio-delete" class="psd-change-delete">
 <p>For the left hand side, note that:</p>
+</div>
+<div id="lemma-one-ratio-add" class="psd-change-add">
+<p>For either sign of <span class="math inline">\(a\)</span>, the
+endpoint ratio satisfies:</p>
+</div>
 <p><span class="math display">\[\begin{equation}
 \begin{aligned}
 \lim_{x \to \infty}\frac{g&#39;(x+h)}{g&#39;(x+\tau)} &amp;= \lim_{x \to
@@ -939,6 +1183,7 @@ application of the dominated convergence theorem.</p>
 <p>First it is clear through a simple change of variable that <span
 class="math display">\[\int_{x}^{x+h} G^2_{x+h}(t)dt = \int_{0}^{h}
 G^2_{x+h}(x + t)dt.\]</span></p>
+<div id="lemma-two-dominator-delete" class="psd-change-delete">
 <p>Again, assume without the loss of generality that <span
 class="math inline">\(a &gt;0\)</span> so <span
 class="math inline">\(g\)</span> is concave. We have <span
@@ -953,6 +1198,30 @@ t)}{g&#39;(x+t)}\right| \\
 <p>Since <span class="math inline">\(|h - t|\)</span> is integrable over
 <span class="math inline">\([0,h]\)</span>, this lemma follows from the
 dominated convergence theorem.</p>
+</div>
+<div id="lemma-two-dominator-add" class="psd-change-add">
+<p>For either sign of <span class="math inline">\(a\neq0\)</span>, we
+have <span class="math display">\[
+G_{x+h}(x+t)=\int_t^h\frac{g&#39;(x+s)}{g&#39;(x+t)}\,ds,
+\qquad
+\frac{g&#39;(x+s)}{g&#39;(x+t)}
+=\left(\frac{x+s+c}{x+t+c}\right)^{-1/a}.
+\]</span> Choose a fixed <span class="math inline">\(X\geq x_0\)</span>
+with <span class="math inline">\(X+c\geq h\)</span>. For <span
+class="math inline">\(x\geq X\)</span> and <span
+class="math inline">\(0\leq t\leq s\leq h\)</span>, the ratio inside the
+power lies in <span class="math inline">\([1,2]\)</span>. Consequently,
+with <span class="math inline">\(K_a=2^{|1/a|}\)</span>, <span
+class="math display">\[
+0\leq G_{x+h}(x+t)\leq K_a(h-t),
+\qquad
+G_{x+h}^2(x+t)\leq K_a^2(h-t)^2.
+\]</span> This squared bound is independent of <span
+class="math inline">\(x\)</span> and integrable over <span
+class="math inline">\([0,h]\)</span>. The dominated convergence theorem
+therefore applies for both positive and negative <span
+class="math inline">\(a\)</span>.</p>
+</div>
 <p>With the above two lemmas, we can show that: <span
 class="math display">\[\begin{equation}
 \begin{aligned}
@@ -965,12 +1234,18 @@ class="math display">\[\begin{equation}
 \end{aligned}
 \end{equation}\]</span></p>
 <p>The proof of corollary 1 is hence completed.</p>
+<div id="mgp-proof-scale-add" class="psd-change-add">
+<p>The integral above is the unit-noise variance factor. Multiplying its
+limit by <span class="math inline">\(\sigma^2\)</span> gives the PSD
+variance asserted in Corollary 1.</p>
+</div>
 </div>
 <div id="proof-of-corollary-2" class="section level3">
 <h3><em>Proof of Corollary 2</em></h3>
 <p>To prove this corollary, we first note that the Green function of
 t-IWP2 is given by: <span class="math display">\[\tilde{G}_t(\tau) =
 g&#39;(\tau)^{1/2}[g(t)-g(\tau)].\]</span></p>
+<div id="tiwp2-proof-delete" class="psd-change-delete">
 <p>When <span class="math inline">\(a &gt; 0\)</span>, we know <span
 class="math inline">\(|g(x+h) - g(x+\tau)| \leq
 g&#39;(x+\tau)(h-\tau)\)</span> if <span class="math inline">\(h\geq
@@ -998,6 +1273,36 @@ class="math display">\[\lim_{x\to\infty}
 \lim_{x\to\infty}\int_{0}^{h}\tilde{G}^2_{x+h}(x + \tau)d\tau =
 \int_{0}^{h} \left[\lim_{x\to\infty} \tilde{G}^2_{x+h}(x+\tau)
 \right]d\tau = 0. \]</span></p>
+</div>
+<div id="tiwp2-proof-add" class="psd-change-add">
+<p>Writing <span class="math inline">\(m=g\)</span>, the Green-function
+variance and the substitution <span
+class="math inline">\(v=m(t)\)</span> give <span
+class="math display">\[\begin{equation}
+\begin{aligned}
+\sigma_x^2(h)
+&amp;=\sigma^2\int_x^{x+h}m&#39;(t)[m(x+h)-m(t)]^2\,dt\\
+&amp;=\sigma^2\int_{m(x)}^{m(x+h)}[m(x+h)-v]^2\,dv\\
+&amp;=\frac{\sigma^2}{3}[m(x+h)-m(x)]^3.
+\end{aligned}
+\end{equation}\]</span> Since <span
+class="math inline">\(m&#39;&#39;/m&#39;=-1/[a(x+c)]\)</span>,
+integration gives <span class="math display">\[
+m&#39;(x)=K(x+c)^{-1/a},\qquad K&gt;0,
+\]</span> where <span class="math inline">\(K\)</span> is fixed by the
+chosen transformation normalization. For finite <span
+class="math inline">\(a&gt;0\)</span>, <span
+class="math inline">\(m&#39;(x)\to0\)</span>. By the mean value theorem,
+for each fixed <span class="math inline">\(h&gt;0\)</span> there is
+<span class="math inline">\(\theta_x\in(0,h)\)</span> such that <span
+class="math display">\[
+0&lt;m(x+h)-m(x)=h\,m&#39;(x+\theta_x)
+\leq h\,m&#39;(x)\longrightarrow0.
+\]</span> Substituting this into the exact PSD formula proves the stated
+zero limit, without requiring a particular value of <span
+class="math inline">\(m&#39;(0)\)</span> or assuming that <span
+class="math inline">\(0\)</span> lies in the domain.</p>
+</div>
 <p>This completes the proof of corollary 2.</p>
 <br>
 <p>
@@ -1017,12 +1322,10 @@ BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3
 LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.32.so;  LAPACK version 3.12.0
 
 locale:
- [1] LC_CTYPE=en_CA.UTF-8       LC_NUMERIC=C              
- [3] LC_TIME=en_CA.UTF-8        LC_COLLATE=en_CA.UTF-8    
- [5] LC_MONETARY=en_CA.UTF-8    LC_MESSAGES=en_CA.UTF-8   
- [7] LC_PAPER=en_CA.UTF-8       LC_NAME=C                 
- [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-[11] LC_MEASUREMENT=en_CA.UTF-8 LC_IDENTIFICATION=C       
+ [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8
+ [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8
+ [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C
+[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C
 
 time zone: America/Toronto
 tzcode source: system (glibc)

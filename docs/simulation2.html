@@ -415,7 +415,7 @@ div.tocify {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-ok text-success"
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -426,8 +426,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-</a>
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -440,9 +440,9 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 0
+aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>near_monotone_smoothing/</code>
@@ -465,18 +465,21 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
-<span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
-</a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate"
+<div id="strongRMarkdownfilestronguncommittedchanges"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git
-repository, you know the exact version of the code that produced these
-results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
 </div>
 </div>
 </div>
@@ -567,15 +570,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomaguerozznearmonotonesmoothingtree84a96043d621066295f56a6381e461b5f2b76482targetblank84a9604a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZnearmonotonesmoothingtree46d2d2e45afbc36efdf6dc0cf06e19ab5293680ctargetblank46d2d2ea">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/aguerozz/near_monotone_smoothing/tree/84a96043d621066295f56a6381e461b5f2b76482" target="_blank">84a9604</a>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/tree/46d2d2e45afbc36efdf6dc0cf06e19ab5293680c" target="_blank">46d2d2e</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomaguerozznearmonotonesmoothingtree84a96043d621066295f56a6381e461b5f2b76482targetblank84a9604a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZnearmonotonesmoothingtree46d2d2e45afbc36efdf6dc0cf06e19ab5293680ctargetblank46d2d2ea"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -585,7 +588,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/aguerozz/near_monotone_smoothing/tree/84a96043d621066295f56a6381e461b5f2b76482" target="_blank">84a9604</a>.
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/tree/46d2d2e45afbc36efdf6dc0cf06e19ab5293680c" target="_blank">46d2d2e</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -602,9 +605,17 @@ were generated:
 Ignored files:
     Ignored:    BayesGP
 
+Untracked files:
+    Untracked:  analysis/simulation_psd_calibration_check.R
+    Untracked:  log/2026-10-04_simulation_psd_calibration_log.md
+    Untracked:  log/2026-10-04_tiwp2_fem_boundary_prediction_log.md
+    Untracked:  plan/2026-10-04_coverage_mcse_plan.md
+    Untracked:  plan/2026-10-04_simulation_psd_calibration_plan.md
+    Untracked:  plan/2026-10-04_tiwp2_fem_boundary_prediction_plan.md
+
 Unstaged changes:
-    Modified:   output/iwp_prior_covariance_convergence_metrics.csv
-    Modified:   output/prior_covariance_convergence_metrics.csv
+    Modified:   analysis/simulation1.rmd
+    Modified:   analysis/simulation2.rmd
 
 </code></pre>
 <p>
@@ -654,7 +665,24 @@ Message
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/aguerozz/near_monotone_smoothing/2ba44ecb64946cf46a102f911bc4275bf275171b/docs/simulation2.html" target="_blank">2ba44ec</a>
+<a href="https://rawcdn.githack.com/AgueroZZ/near_monotone_smoothing/c17d4d98077046acbbe051d8a01dbc2fdaa2d015/docs/simulation2.html" target="_blank">c17d4d9</a>
+</td>
+<td>
+AgueroZZ
+</td>
+<td>
+2026-10-04
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/near_monotone_smoothing/2ba44ecb64946cf46a102f911bc4275bf275171b/docs/simulation2.html" target="_blank">2ba44ec</a>
 </td>
 <td>
 Ziang Zhang
@@ -671,7 +699,7 @@ Build site.
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/aguerozz/near_monotone_smoothing/5eaa7eebd32fed91f69783b6f7f31b0d366c7d53/docs/simulation2.html" target="_blank">5eaa7ee</a>
+<a href="https://rawcdn.githack.com/AgueroZZ/near_monotone_smoothing/5eaa7eebd32fed91f69783b6f7f31b0d366c7d53/docs/simulation2.html" target="_blank">5eaa7ee</a>
 </td>
 <td>
 Ziang Zhang
@@ -688,7 +716,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/aguerozz/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/analysis/simulation2.rmd" target="_blank">e65c248</a>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/analysis/simulation2.rmd" target="_blank">e65c248</a>
 </td>
 <td>
 Ziang Zhang
@@ -705,7 +733,7 @@ Initial commit of near-monotone smoothing workflowr project
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/aguerozz/near_monotone_smoothing/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/simulation2.html" target="_blank">e65c248</a>
+<a href="https://rawcdn.githack.com/AgueroZZ/near_monotone_smoothing/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/simulation2.html" target="_blank">e65c248</a>
 </td>
 <td>
 Ziang Zhang
@@ -728,6 +756,13 @@ Initial commit of near-monotone smoothing workflowr project
 <h2><strong>Introduction</strong></h2>
 <p>In this simulation study, we study the robustness of the tIWP2 and
 the mGP priors.</p>
+<blockquote>
+<p><strong>Cached results:</strong> The code below specifies a true PSD
+and an exponential PSD prior median of 2. The figures and tables
+currently use historical caches that contain summary metrics but no
+parameter records. We cannot verify that those caches used the stated
+settings; a full rerun is needed to establish this.</p>
+</blockquote>
 </div>
 <div id="simulation-a-true-model-is-mgp" class="section level2">
 <h2><strong>Simulation A: True model is mGP</strong></h2>
@@ -745,9 +780,10 @@ class="math inline">\(n = 100\)</span> observations are simulated from
 <li>The posterior <span
 class="math inline">\(\pi(f|\boldsymbol{y})\)</span> is obtained using
 both the tIWP2 and the mGP priors, only using data with <span
-class="math inline">\(x \in [0,15]\)</span>. The prior for the smoothing
-parameter is chosen as an Exponential prior centered at the true PSD
-<span class="math inline">\(\sigma_0(5)\)</span>.</li>
+class="math inline">\(x \in [0,15]\)</span>. The prior on <span
+class="math inline">\(\sigma_0(5)\)</span> is Exponential with median
+equal to the true PSD, <span class="math inline">\(\sigma_0(5) =
+2\)</span>.</li>
 <li>The pointwise coverage probabilities of the 50%, 80%, and 95%
 credible interval for <span class="math inline">\(f\)</span>, as well as
 the mean squared error and the mean relative error of the posterior mean
@@ -780,7 +816,18 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/aguerozz/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-5-1.png" target="_blank">e65c248</a>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/c17d4d98077046acbbe051d8a01dbc2fdaa2d015/docs/figure/simulation2.rmd/unnamed-chunk-5-1.png" target="_blank">c17d4d9</a>
+</td>
+<td>
+AgueroZZ
+</td>
+<td>
+2026-10-04
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-5-1.png" target="_blank">e65c248</a>
 </td>
 <td>
 Ziang Zhang
@@ -819,7 +866,18 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/aguerozz/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-6-1.png" target="_blank">e65c248</a>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/c17d4d98077046acbbe051d8a01dbc2fdaa2d015/docs/figure/simulation2.rmd/unnamed-chunk-6-1.png" target="_blank">c17d4d9</a>
+</td>
+<td>
+AgueroZZ
+</td>
+<td>
+2026-10-04
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-6-1.png" target="_blank">e65c248</a>
 </td>
 <td>
 Ziang Zhang
@@ -832,14 +890,16 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<p>A table of the summary statistics:</p>
+<p>The tables report means, with Monte Carlo standard errors (MCSEs) in
+parentheses for coverage and standard deviations across replications for
+RMSE and mean relative error.</p>
 <table>
 <caption>Summary for Inter Scenario</caption>
 <colgroup>
-<col width="8%" />
+<col width="7%" />
 <col width="18%" />
 <col width="18%" />
-<col width="17%" />
+<col width="18%" />
 <col width="18%" />
 <col width="18%" />
 </colgroup>
@@ -856,17 +916,17 @@ Ziang Zhang
 <tbody>
 <tr class="odd">
 <td align="left">mGP</td>
-<td align="left">0.508 (0.016)</td>
-<td align="left">0.797 (0.013)</td>
-<td align="left">0.95 (0.007)</td>
+<td align="left">0.508 (0.006)</td>
+<td align="left">0.797 (0.005)</td>
+<td align="left">0.95 (0.003)</td>
 <td align="left">0.482 (0.143)</td>
 <td align="left">0.044 (0.02)</td>
 </tr>
 <tr class="even">
 <td align="left">tIWP2</td>
-<td align="left">0.417 (0.016)</td>
-<td align="left">0.696 (0.015)</td>
-<td align="left">0.882 (0.01)</td>
+<td align="left">0.417 (0.006)</td>
+<td align="left">0.696 (0.006)</td>
+<td align="left">0.882 (0.004)</td>
 <td align="left">0.524 (0.156)</td>
 <td align="left">0.047 (0.021)</td>
 </tr>
@@ -895,17 +955,17 @@ Ziang Zhang
 <tbody>
 <tr class="odd">
 <td align="left">mGP</td>
-<td align="left">0.479 (0.016)</td>
-<td align="left">0.789 (0.013)</td>
-<td align="left">0.955 (0.007)</td>
+<td align="left">0.479 (0.013)</td>
+<td align="left">0.789 (0.011)</td>
+<td align="left">0.955 (0.006)</td>
 <td align="left">2.142 (1.479)</td>
 <td align="left">0.103 (0.548)</td>
 </tr>
 <tr class="even">
 <td align="left">tIWP2</td>
-<td align="left">0.252 (0.014)</td>
-<td align="left">0.472 (0.016)</td>
-<td align="left">0.671 (0.015)</td>
+<td align="left">0.252 (0.011)</td>
+<td align="left">0.472 (0.013)</td>
+<td align="left">0.671 (0.013)</td>
 <td align="left">2.321 (1.635)</td>
 <td align="left">0.111 (0.511)</td>
 </tr>
@@ -938,7 +998,18 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/aguerozz/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-8-1.png" target="_blank">e65c248</a>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/c17d4d98077046acbbe051d8a01dbc2fdaa2d015/docs/figure/simulation2.rmd/unnamed-chunk-8-1.png" target="_blank">c17d4d9</a>
+</td>
+<td>
+AgueroZZ
+</td>
+<td>
+2026-10-04
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-8-1.png" target="_blank">e65c248</a>
 </td>
 <td>
 Ziang Zhang
@@ -976,7 +1047,18 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/aguerozz/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-8-2.png" target="_blank">e65c248</a>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/c17d4d98077046acbbe051d8a01dbc2fdaa2d015/docs/figure/simulation2.rmd/unnamed-chunk-8-2.png" target="_blank">c17d4d9</a>
+</td>
+<td>
+AgueroZZ
+</td>
+<td>
+2026-10-04
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-8-2.png" target="_blank">e65c248</a>
 </td>
 <td>
 Ziang Zhang
@@ -1026,7 +1108,18 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/aguerozz/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-12-1.png" target="_blank">e65c248</a>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/c17d4d98077046acbbe051d8a01dbc2fdaa2d015/docs/figure/simulation2.rmd/unnamed-chunk-12-1.png" target="_blank">c17d4d9</a>
+</td>
+<td>
+AgueroZZ
+</td>
+<td>
+2026-10-04
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-12-1.png" target="_blank">e65c248</a>
 </td>
 <td>
 Ziang Zhang
@@ -1065,7 +1158,18 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/aguerozz/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-13-1.png" target="_blank">e65c248</a>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/c17d4d98077046acbbe051d8a01dbc2fdaa2d015/docs/figure/simulation2.rmd/unnamed-chunk-13-1.png" target="_blank">c17d4d9</a>
+</td>
+<td>
+AgueroZZ
+</td>
+<td>
+2026-10-04
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-13-1.png" target="_blank">e65c248</a>
 </td>
 <td>
 Ziang Zhang
@@ -1078,7 +1182,9 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<p>A table of the summary statistics:</p>
+<p>The tables report means, with Monte Carlo standard errors (MCSEs) in
+parentheses for coverage and standard deviations across replications for
+RMSE and mean relative error.</p>
 <table>
 <caption>Summary for Inter Scenario</caption>
 <colgroup>
@@ -1102,17 +1208,17 @@ Ziang Zhang
 <tbody>
 <tr class="odd">
 <td align="left">mGP</td>
-<td align="left">0.526 (0.016)</td>
-<td align="left">0.826 (0.012)</td>
-<td align="left">0.962 (0.006)</td>
+<td align="left">0.526 (0.006)</td>
+<td align="left">0.826 (0.005)</td>
+<td align="left">0.962 (0.002)</td>
 <td align="left">0.437 (0.14)</td>
 <td align="left">0.043 (0.019)</td>
 </tr>
 <tr class="even">
 <td align="left">tIWP2</td>
-<td align="left">0.502 (0.016)</td>
-<td align="left">0.804 (0.013)</td>
-<td align="left">0.954 (0.007)</td>
+<td align="left">0.502 (0.006)</td>
+<td align="left">0.804 (0.006)</td>
+<td align="left">0.954 (0.003)</td>
 <td align="left">0.426 (0.139)</td>
 <td align="left">0.043 (0.019)</td>
 </tr>
@@ -1141,17 +1247,17 @@ Ziang Zhang
 <tbody>
 <tr class="odd">
 <td align="left">mGP</td>
-<td align="left">0.633 (0.015)</td>
-<td align="left">0.923 (0.008)</td>
-<td align="left">0.996 (0.002)</td>
+<td align="left">0.633 (0.014)</td>
+<td align="left">0.923 (0.007)</td>
+<td align="left">0.996 (0.001)</td>
 <td align="left">1.182 (0.91)</td>
 <td align="left">0.044 (0.248)</td>
 </tr>
 <tr class="even">
 <td align="left">tIWP2</td>
-<td align="left">0.484 (0.016)</td>
-<td align="left">0.787 (0.013)</td>
-<td align="left">0.962 (0.006)</td>
+<td align="left">0.484 (0.014)</td>
+<td align="left">0.787 (0.012)</td>
+<td align="left">0.962 (0.005)</td>
 <td align="left">1.034 (0.731)</td>
 <td align="left">0.036 (0.132)</td>
 </tr>
@@ -1184,7 +1290,18 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/aguerozz/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-15-1.png" target="_blank">e65c248</a>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/c17d4d98077046acbbe051d8a01dbc2fdaa2d015/docs/figure/simulation2.rmd/unnamed-chunk-15-1.png" target="_blank">c17d4d9</a>
+</td>
+<td>
+AgueroZZ
+</td>
+<td>
+2026-10-04
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-15-1.png" target="_blank">e65c248</a>
 </td>
 <td>
 Ziang Zhang
@@ -1222,7 +1339,18 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/aguerozz/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-15-2.png" target="_blank">e65c248</a>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/c17d4d98077046acbbe051d8a01dbc2fdaa2d015/docs/figure/simulation2.rmd/unnamed-chunk-15-2.png" target="_blank">c17d4d9</a>
+</td>
+<td>
+AgueroZZ
+</td>
+<td>
+2026-10-04
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/near_monotone_smoothing/blob/e65c2488a09aaa6ae4ba1974ff8857a6709ac19d/docs/figure/simulation2.rmd/unnamed-chunk-15-2.png" target="_blank">e65c248</a>
 </td>
 <td>
 Ziang Zhang
@@ -1253,12 +1381,10 @@ BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3
 LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.32.so;  LAPACK version 3.12.0
 
 locale:
- [1] LC_CTYPE=en_CA.UTF-8       LC_NUMERIC=C              
- [3] LC_TIME=en_CA.UTF-8        LC_COLLATE=en_CA.UTF-8    
- [5] LC_MONETARY=en_CA.UTF-8    LC_MESSAGES=en_CA.UTF-8   
- [7] LC_PAPER=en_CA.UTF-8       LC_NAME=C                 
- [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-[11] LC_MEASUREMENT=en_CA.UTF-8 LC_IDENTIFICATION=C       
+ [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8
+ [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8
+ [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C
+[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C
 
 time zone: America/Toronto
 tzcode source: system (glibc)
