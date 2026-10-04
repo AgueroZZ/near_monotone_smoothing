@@ -30,7 +30,7 @@ knitr::opts_chunk$set(
 
 source("analysis/simulate_casecrossover_data.R")
 
-library(BayesGP)
+devtools::load_all("BayesGP", quiet = TRUE)
 ```
 
 
