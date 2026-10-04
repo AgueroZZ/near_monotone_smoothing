@@ -34,3 +34,7 @@ talk/*.pptx
 outputs/
 talk/**/*.key
 talk/**/*.pptx
+
+# iCloud Drive conflict copies (Desktop is synced to iCloud)
+* 2
+* 2.*
