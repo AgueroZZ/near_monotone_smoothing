@@ -15,13 +15,14 @@ L_\alpha f(x) = \sigma \xi(x),
 \]
 where the differential operator is chosen so that its null space matches a monotone Box-Cox family. This allows the prior to favor shapes such as square-root, logarithmic, or power-law growth instead of defaulting to the linear base model of an IWP2.
 
-The repository currently contains three canonical method components:
+The project currently contains four canonical method components:
 
 - Exact mGP inference through the augmented state-space representation
-- Exact transformed-IWP2 (`t-IWP2`) inference as a comparison construction
+- Exact transformed-IWP2 (`t-IWP2`) inference on the transformed grid $m(x)$
 - A finite-element approximation for mGP based on cubic B-splines
+- A finite-element approximation for `t-IWP2` based on O-splines on the transformed scale
 
-The repository does **not** currently contain a first-class FEM implementation for `t-IWP2`.
+All four are available through the formula interface of the [BayesGP](https://github.com/Bayes-GP/BayesGP) package as `f(x, model = "mgp" | "tiwp2", computation = "fem" | "state-space")`, where FEM is the default computation. An exact state-space path for the order-2 `iwp` is also available as a reference for the native O-spline IWP2.
 
 The retained workflowr pages focus on:
 
@@ -30,4 +31,4 @@ The retained workflowr pages focus on:
 - an end-to-end illustration
 - a conceptual and numerical comparison between mGP and t-IWP2
 
-Additional simulation and application pages are kept as supporting analyses, while older debug/prototype materials are archived under `archive/` outside the active workflowr tree.
+Supporting pages cover the simulation studies, the FEM prior covariance convergence checks for mGP, `t-IWP2`, and IWP2, and the case-crossover application with its simulation demo. Older debug/prototype materials are archived under `archive/` outside the active workflowr tree.

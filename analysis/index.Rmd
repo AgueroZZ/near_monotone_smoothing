@@ -12,8 +12,8 @@ editor_options:
 
 This page is the local entry point for the mGP / t-IWP project website.
 
-- Implemented methods: exact mGP, exact t-IWP2, and mGP FEM
-- Supporting pages: simulation studies and the case-crossover application
+- Implemented methods: exact mGP, exact t-IWP2, mGP FEM, and t-IWP2 FEM
+- Supporting pages: simulation studies, FEM convergence checks, and the case-crossover application
 - Archived materials: older prototypes and debug notes are stored under `archive/`
 
 ### **Quick Access**
@@ -24,6 +24,8 @@ This page is the local entry point for the mGP / t-IWP project website.
 - [Illustration](illustration.html): end-to-end fitting examples
 - [Simulation 1](simulation1.html): supporting simulation study for interpolation and prediction
 - [Simulation 2](simulation2.html): additional robustness simulation study
+- [Prior Covariance Convergence (mGP / tIWP2)](prior_covariance_convergence.html): FEM prior covariance versus the exact state-space covariance across `a` and `c`
+- [Prior Covariance Convergence (IWP2)](iwp_prior_covariance_convergence.html): exact state-space IWP2 versus the native O-spline approximation
 - [Case-Crossover](casecross.html): PM2.5 case-crossover application comparing mGP and t-IWP2 under FEM and state-space computation
 - [Case-Crossover Simulation Demo](casecross_simulation_demo.html): simulated case-crossover data and BayesGP fits with known effects
 - [About](about.html): repository scope and implementation status
@@ -157,7 +159,9 @@ $$
 
 
 To further simplify the computation, we choose each basis function $\psi_k$ to be a cubic B-spline basis function, which makes each of the above $C$, $M$ and $G$ matrices to be sparse.
-In the current repository, this FEM approximation is implemented for the M-GP model. The transformed-IWP comparison is implemented through the exact transformed-grid construction rather than a separate FEM discretization.
+In `BayesGP`, this FEM approximation is the default `computation = "fem"` path for the M-GP model.
+For the t-IWP2, the FEM path is instead an O-spline approximation of the IWP2 on the transformed scale $m(x)$, with knots placed equally on that scale.
+Both models also support exact inference through `computation = "state-space"`.
 
 
 

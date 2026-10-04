@@ -19,6 +19,10 @@ navbar:
       href: simulation1.html
     - text: Simulation 2
       href: simulation2.html
+    - text: Prior Covariance Convergence (mGP / tIWP2)
+      href: prior_covariance_convergence.html
+    - text: Prior Covariance Convergence (IWP2)
+      href: iwp_prior_covariance_convergence.html
     - text: Case-Crossover
       href: casecross.html
     - text: Case-Crossover Simulation Demo
